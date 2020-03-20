@@ -6,6 +6,7 @@ import Bulma.Columns exposing (..)
 import Bulma.Elements exposing (..)
 import Bulma.Layout exposing (..)
 import Bulma.Modifiers exposing (..)
+import Bulma.Modifiers.Typography exposing (textCentered)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -66,7 +67,7 @@ view _ =
 
 exampleHero : Html msg
 exampleHero =
-    hero { heroModifiers | size = Large, color = Warning, bold = True }
+    hero { heroModifiers | size = Large, color = Light, bold = True }
         []
         [ heroBody []
             [ container []
@@ -84,10 +85,25 @@ header =
         []
         [ column columnModifiers
             []
-            [ text "Score"
+            []
+        , column columnModifiers
+            []
+            [ score
+            ]
+        , column columnModifiers
+            []
+            []
+        ]
+
+
+score : Html msg
+score =
+    container [ textCentered ]
+        [ p []
+            [ text "Score: 10"
             ]
         ]
-        
+
 
 stock : Html msg
 stock =
@@ -95,36 +111,59 @@ stock =
         []
         [ column columnModifiers
             []
-            [ text "Card 1"
+            [ card "Card 1"
             ]
         , column columnModifiers
             []
-            [ text "Card 2"
+            [ card "Card 2"
             ]
         , column columnModifiers
             []
-            [ text "Card 3"
+            [ card "Card 3"
+            ]
+        , column columnModifiers
+            []
+            [ card "Card 4"
             ]
         ]
-        
+
+
+card : String -> Html msg
+card content =
+    notification Primary
+        []
+        [ text content
+        ]
+
+
 panel : Html msg
 panel =
-    columns { columnsModifiers | gap = Gap3 }
+    columns columnsModifiers
         []
         [ column columnModifiers
             []
-            [ text "Profile"
-            ]
-        , column columnModifiers
-            []
-            [ text "Heart 1"
-            ]
-        , column columnModifiers
-            []
-            [ text "Heart 2"
-            ]
-        , column columnModifiers
-            []
-            [ text "Heart 3"
+            [ myGrid
             ]
         ]
+
+myGrid : Html msg
+myGrid
+  = tileAncestor Auto []
+    [ tileParent Width2 [] 
+      [ tileChild Auto [] [ profile ]
+      ]
+      , tileParent Width3 [] 
+      [ tileChild Auto [] [ heart ]
+      , tileChild Auto [] [ heart ]
+      , tileChild Auto [] [ heart ]
+      ]
+    ]
+
+profile : Html msg
+profile =
+    easyPlaceholderImage (OneByOne X128) []
+
+
+heart : Html msg
+heart =
+    easyPlaceholderImage (OneByOne X64) []
