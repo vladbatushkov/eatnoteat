@@ -6,7 +6,7 @@ import Bulma.Columns exposing (..)
 import Bulma.Elements exposing (..)
 import Bulma.Layout exposing (..)
 import Bulma.Modifiers exposing (..)
-import Bulma.Modifiers.Typography exposing (textCentered)
+import Bulma.Modifiers.Typography exposing (textAlignment, textCentered)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -71,93 +71,76 @@ exampleHero =
         []
         [ heroBody []
             [ container []
-                [ header
-                , stock
+                [ score
+                , deck
                 , panel
                 ]
             ]
         ]
 
 
-header : Html msg
-header =
-    columns columnsModifiers
-        []
-        [ column columnModifiers
-            []
-            []
-        , column columnModifiers
-            []
-            [ score
-            ]
-        , column columnModifiers
-            []
-            []
-        ]
-
-
 score : Html msg
 score =
     container [ textCentered ]
-        [ p []
+        [ Bulma.Elements.title H1
+            [ style "margin-bottom" "10%"]
             [ text "Score: 10"
             ]
         ]
 
 
-stock : Html msg
-stock =
+deck : Html msg
+deck =
     columns { columnsModifiers | gap = Gap3 }
         []
         [ column columnModifiers
             []
-            [ card "Card 1"
+            [ card
             ]
         , column columnModifiers
             []
-            [ card "Card 2"
+            [ card
             ]
         , column columnModifiers
             []
-            [ card "Card 3"
+            [ card
             ]
         , column columnModifiers
             []
-            [ card "Card 4"
+            [ card
             ]
         ]
 
 
-card : String -> Html msg
-card content =
+card : Html msg
+card =
     notification Primary
         []
-        [ text content
+        [ img
         ]
+
+
+img : Html msg
+img =
+    easyPlaceholderImage (OneByOne Unbounded) [ style "position" "static" ]
 
 
 panel : Html msg
 panel =
-    columns columnsModifiers
+    tileAncestor Auto
         []
-        [ column columnModifiers
+        [ tileParent Width2
             []
-            [ myGrid
+            [ tileChild Auto [] [ profile ]
+            ]
+        , tileParent Width3
+            []
+            [ tileChild Auto [] [ heart ]
+            , tileChild Auto [] [ heart ]
+            , tileChild Auto [] [ heart ]
             ]
         ]
 
-myGrid : Html msg
-myGrid
-  = tileAncestor Auto []
-    [ tileParent Width2 [] 
-      [ tileChild Auto [] [ profile ]
-      ]
-      , tileParent Width3 [] 
-      [ tileChild Auto [] [ heart ]
-      , tileChild Auto [] [ heart ]
-      , tileChild Auto [] [ heart ]
-      ]
-    ]
 
 profile : Html msg
 profile =
