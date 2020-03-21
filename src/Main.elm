@@ -6,7 +6,7 @@ import Bulma.Columns exposing (..)
 import Bulma.Elements exposing (..)
 import Bulma.Layout exposing (..)
 import Bulma.Modifiers exposing (..)
-import Bulma.Modifiers.Typography exposing (textAlignment, textCentered)
+import Bulma.Modifiers.Typography exposing (textCentered)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -18,7 +18,12 @@ import Html.Events exposing (..)
 
 main : Program () Model Msg
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.element
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
 
 
 
@@ -26,12 +31,37 @@ main =
 
 
 type alias Model =
-    Int
+    { score : Int
+    , hp : Int -- health points
+    , hero : Hero
+    }
 
 
-init : Model
-init =
-    0
+type alias Hero =
+    { name : String
+    , desc : String
+    , picture : String
+    }
+
+
+arnold : Hero
+arnold =
+    Hero "Arnold" "Eat all the trash and junk. Never touch normal food." "./images/Hero/arnold.png"
+
+
+chuck : Hero
+chuck =
+    Hero "Chuck" "Never smile. True vegeterian: fruits and vegetables only. Hate all the rest." "./images/Hero/chuck.png"
+
+
+terry : Hero
+terry =
+    Hero "Terry" "Fast-food maniac. Meat lover. Vomit for desserts." "./images/Hero/terry.png"
+
+
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( Model 0 3 chuck, Cmd.none )
 
 
 
@@ -39,18 +69,23 @@ init =
 
 
 type Msg
-    = Increment
-    | Decrement
+    = Eat
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Increment ->
-            model + 1
+        Eat ->
+            ( { model | score = model.score + 1, hp = model.hp - 1 }, Cmd.none )
 
-        Decrement ->
-            model - 1
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
 
 
 
@@ -58,20 +93,20 @@ update msg model =
 
 
 view : Model -> Html Msg
-view _ =
+view model =
     main_ []
         [ stylesheet
-        , exampleHero
+        , body model
         ]
 
 
-exampleHero : Html msg
-exampleHero =
+body : Model -> Html Msg
+body model =
     hero { heroModifiers | size = Large, color = Light, bold = True }
         []
         [ heroBody []
             [ container []
-                [ score
+                [ score model
                 , deck
                 , panel
                 ]
@@ -79,59 +114,54 @@ exampleHero =
         ]
 
 
-score : Html msg
-score =
+score : Model -> Html msg
+score model =
     container [ textCentered ]
         [ Bulma.Elements.title H1
-            [ style "margin-bottom" "10%"]
-            [ text "Score: 10"
+            [ style "margin-bottom" "10%" ]
+            [ text ("Score: " ++ String.fromInt model.score)
             ]
         ]
 
 
-deck : Html msg
+deck : Html Msg
 deck =
     columns { columnsModifiers | gap = Gap3 }
         []
-        [ column columnModifiers
-            []
-            [ card
-            ]
-        , column columnModifiers
-            []
-            [ card
-            ]
-        , column columnModifiers
-            []
-            [ card
-            ]
-        , column columnModifiers
-            []
-            [ card
-            ]
+        [ card
+        , card
+        , card
+        , card
         ]
 
 
-card : Html msg
+card : Html Msg
 card =
-    notification Primary
+    column columnModifiers
         []
-        [ img
+        [ notification Primary
+            [ onClick Eat ]
+            [ img
+            ]
         ]
 
 
-img : Html msg
+img : Html Msg
 img =
     easyPlaceholderImage (OneByOne Unbounded) [ style "position" "static" ]
 
 
-panel : Html msg
+panel : Html Msg
 panel =
     tileAncestor Auto
         []
         [ tileParent Width2
             []
-            [ tileChild Auto [] [ profile ]
+            [ tileChild Auto
+                []
+                [ profile
+                , text "Chuck"
+                ]
             ]
         , tileParent Width3
             []
@@ -142,11 +172,11 @@ panel =
         ]
 
 
-profile : Html msg
+profile : Html Msg
 profile =
     easyPlaceholderImage (OneByOne X128) []
 
 
-heart : Html msg
+heart : Html Msg
 heart =
     easyPlaceholderImage (OneByOne X64) []
