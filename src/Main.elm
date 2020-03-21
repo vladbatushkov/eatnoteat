@@ -136,7 +136,7 @@ score : Model -> Html msg
 score model =
     container [ textCentered ]
         [ Bulma.Elements.title H1
-            (List.append styleBold [ style "margin-bottom" "3%" ])
+            (List.append styleTitle [ style "margin-bottom" "3%" ])
             [ text "Chew Paper Box"
             ]
         , Bulma.Elements.title H2
@@ -227,6 +227,9 @@ heart =
 
 -- STYLE
 
+styleTitle : List (Attribute msg)
+styleTitle =
+    [ style "font-family" "font", style "font-weight" "bold", style "font-size" "500%" ]
 
 styleBold : List (Attribute msg)
 styleBold =

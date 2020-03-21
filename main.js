@@ -6541,6 +6541,12 @@ var $elm$core$List$append = F2(
 			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
 		}
 	});
+var $author$project$Main$styleTitle = _List_fromArray(
+	[
+		A2($elm$html$Html$Attributes$style, 'font-family', 'font'),
+		A2($elm$html$Html$Attributes$style, 'font-weight', 'bold'),
+		A2($elm$html$Html$Attributes$style, 'font-size', '500%')
+	]);
 var $surprisetalk$elm_bulma$Bulma$Classes$hasTextCentered = $elm$html$Html$Attributes$class('has-text-centered');
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered = $surprisetalk$elm_bulma$Bulma$Classes$hasTextCentered;
 var $author$project$Main$score = function (model) {
@@ -6555,7 +6561,7 @@ var $author$project$Main$score = function (model) {
 				$surprisetalk$elm_bulma$Bulma$Elements$H1,
 				A2(
 					$elm$core$List$append,
-					$author$project$Main$styleBold,
+					$author$project$Main$styleTitle,
 					_List_fromArray(
 						[
 							A2($elm$html$Html$Attributes$style, 'margin-bottom', '3%')
