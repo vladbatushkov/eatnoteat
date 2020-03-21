@@ -38,7 +38,8 @@ type alias Model =
 
 
 type alias Hero =
-    { name : String
+    { id : Int
+    , name : String
     , desc : String
     , picture : String
     }
@@ -46,22 +47,22 @@ type alias Hero =
 
 arnold : Hero
 arnold =
-    Hero "Arnold" "Eat all the trash and junk. Never touch normal food." "./images/Hero/arnold.png"
-
-
-chuck : Hero
-chuck =
-    Hero "Chuck" "Never smile. True vegeterian: fruits and vegetables only. Hate all the rest." "./images/Hero/chuck.png"
+    Hero 1 "Arnold" "Eat all the trash and junk. Never touch normal food." "../images/hero/arnold.png"
 
 
 terry : Hero
 terry =
-    Hero "Terry" "Fast-food maniac. Meat lover. Vomit for desserts." "./images/Hero/terry.png"
+    Hero 2 "Terry" "Fast-food maniac. Meat lover. Vomit for desserts." "../images/hero/terry.png"
+
+
+chuck : Hero
+chuck =
+    Hero 3 "Chuck" "Eat plant-based foods and dairy products." "../images/hero/chuck.png"
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model 0 3 chuck, Cmd.none )
+    ( Model 0 3 arnold, Cmd.none )
 
 
 
@@ -70,6 +71,7 @@ init _ =
 
 type Msg
     = Eat
+    | ChangeHero
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -77,6 +79,22 @@ update msg model =
     case msg of
         Eat ->
             ( { model | score = model.score + 1, hp = model.hp - 1 }, Cmd.none )
+
+        ChangeHero ->
+            ( { model | hero = nextHero model.hero, score = 0, hp = 3 }, Cmd.none )
+
+
+nextHero : Hero -> Hero
+nextHero hero =
+    case hero.id of
+        1 ->
+            terry
+
+        2 ->
+            chuck
+
+        _ ->
+            arnold
 
 
 
@@ -108,7 +126,7 @@ body model =
             [ container []
                 [ score model
                 , deck
-                , panel
+                , panel model
                 ]
             ]
         ]
@@ -118,7 +136,11 @@ score : Model -> Html msg
 score model =
     container [ textCentered ]
         [ Bulma.Elements.title H1
-            [ style "margin-bottom" "10%" ]
+            (List.append styleBold [ style "margin-bottom" "3%" ])
+            [ text "Chew Paper Box"
+            ]
+        , Bulma.Elements.title H2
+            (List.append styleNormal [ style "margin-bottom" "3%" ])
             [ text ("Score: " ++ String.fromInt model.score)
             ]
         ]
@@ -141,42 +163,76 @@ card =
         []
         [ notification Primary
             [ onClick Eat ]
-            [ img
+            [ cardPlaceholderImage
             ]
         ]
 
 
-img : Html Msg
-img =
+cardPlaceholderImage : Html Msg
+cardPlaceholderImage =
     easyPlaceholderImage (OneByOne Unbounded) [ style "position" "static" ]
 
 
-panel : Html Msg
-panel =
+panel : Model -> Html Msg
+panel model =
     tileAncestor Auto
         []
         [ tileParent Width2
             []
             [ tileChild Auto
-                []
-                [ profile
-                , text "Chuck"
+                [ style "text-align" "center" ]
+                [ profile model.hero
+                , Bulma.Elements.button { buttonModifiers | outlined = True, size = Small, color = Primary }
+                    [ onClick ChangeHero, style "margin-top" "5%" ]
+                    [ text "Change Hero" ]
                 ]
             ]
         , tileParent Width3
             []
-            [ tileChild Auto [] [ heart ]
-            , tileChild Auto [] [ heart ]
-            , tileChild Auto [] [ heart ]
+            (List.repeat model.hp (tileChild Auto [] [ heart ]))
+        ]
+
+
+toHeart : Html Msg
+toHeart =
+    tileChild Auto [] [ heart ]
+
+
+profile : Hero -> Html Msg
+profile model =
+    div [ style "text-align" "-webkit-center" ]
+        [ image (OneByOne X128)
+            []
+            [ img [ src model.picture, class "is-rounded" ] []
+            ]
+        , Bulma.Elements.title H1
+            styleBold
+            [ text model.name
+            ]
+        , Bulma.Elements.subtitle H3
+            styleNormal
+            [ text model.desc
             ]
         ]
 
 
-profile : Html Msg
-profile =
-    easyPlaceholderImage (OneByOne X128) []
-
-
 heart : Html Msg
 heart =
-    easyPlaceholderImage (OneByOne X64) []
+    image (OneByOne X64)
+        []
+        [ img [ src "../images/hero/heart.png" ] []
+        ]
+
+
+
+-- STYLE
+
+
+styleBold : List (Attribute msg)
+styleBold =
+    [ style "font-family" "font", style "font-weight" "bold" ]
+
+
+styleNormal : List (Attribute msg)
+styleNormal =
+    [ style "font-family" "font" ]
