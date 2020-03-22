@@ -1,5 +1,6 @@
 module Main exposing (..)
 
+import Animation exposing (percent, px, turn)
 import Browser
 import Bulma.CDN exposing (..)
 import Bulma.Columns exposing (..)
@@ -38,11 +39,18 @@ type alias Model =
     }
 
 
+type alias Widget =
+    { action : Msg
+    , state : Animation.State
+    }
+
+
 type alias Food =
     { id : Int
     , name : String
     , tags : List Tags
     , picture : String
+    , widget : Widget
     }
 
 
@@ -86,7 +94,19 @@ chuck =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model 0 3 arnold food, Cmd.none )
+    let
+        initialWidgetState =
+            Animation.style
+                [ Animation.translate (px 0) (px 0)
+                ]
+    in
+    ( Model
+        0
+        3
+        arnold
+        (allFood initialWidgetState)
+    , Cmd.none
+    )
 
 
 
@@ -96,16 +116,73 @@ init _ =
 type Msg
     = Eat
     | ChangeHero
+    | Shadow Int
+    | Animate Animation.Msg
+
+
+onState : (Animation.State -> Animation.State) -> Food -> Food
+onState stateFn food =
+    let
+        widget =
+            food.widget
+    in
+    { food | widget = { widget | state = stateFn widget.state } }
+
+
+onIndex : Int -> List a -> (a -> a) -> List a
+onIndex i list fn =
+    List.indexedMap
+        (\j val ->
+            if i == j then
+                fn val
+
+            else
+                val
+        )
+        list
+
+
+onWidgetState : Model -> Int -> (Animation.State -> Animation.State) -> Model
+onWidgetState model index fn =
+    { model
+        | food =
+            onIndex index model.food <|
+                onState fn
+    }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
+update action model =
+    case action of
         Eat ->
             ( { model | score = model.score + 1, hp = model.hp - 1 }, Cmd.none )
 
         ChangeHero ->
             ( { model | hero = nextHero model.hero, score = 0, hp = 3 }, Cmd.none )
+
+        Shadow i ->
+            ( onWidgetState model i <|
+                Animation.interrupt
+                    [ Animation.to
+                        [ Animation.translate (px 10) (px 10)
+                        , Animation.scale 1.1
+                        ]
+                    , Animation.to
+                        [ Animation.translate (px 0) (px 0)
+                        , Animation.scale 1
+                        ]
+                    ]
+            , Cmd.none
+            )
+
+        Animate time ->
+            ( { model
+                | food = 
+                    List.map (onState (Animation.update time))
+                        model.food
+              }
+            , Cmd.none
+            )
 
 
 nextHero : Hero -> Hero
@@ -126,8 +203,10 @@ nextHero hero =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
+subscriptions model =
+    Animation.subscription Animate <|
+        List.map .state <|
+            List.map .widget model.food
 
 
 
@@ -179,8 +258,19 @@ deck model =
 
 card : Food -> Html Msg
 card model =
+    let
+        widget =
+            model.widget
+    in
     column columnModifiers
-        []
+        (Animation.render widget.state
+            ++ [ style "position" "relative"
+               , style "text-align" "center"
+               , style "cursor" "pointer"
+               , style "vertical-align" "middle"
+               , onMouseEnter widget.action
+               ]
+        )
         [ image (OneByOne Unbounded)
             [ onClick Eat, style "cursor" "pointer" ]
             [ img [ src model.picture, style "border-radius" "10px" ] []
@@ -276,11 +366,41 @@ styleNormal =
 -- DATA
 
 
-food : List Food
-food =
-    [ Food 1 "Popcorn" [ NotHealthy ] "../images/food/popcorn.png"
-    , Food 2 "Happy Meal" [ FastFood, NotHealthy ] "../images/food/happymeal.png"
-    , Food 3 "Pizza" [ NotHealthy ] "../images/food/pizza.png"
-    , Food 4 "Tiramisu" [ Dessert, Sweets ] "../images/food/chocolatecake.png"
-    , Food 5 "Salad" [ Healthy ] "../images/food/salad.png"
+allFood : Animation.State -> List Food
+allFood initialWidgetState =
+    [ Food 0
+        "Popcorn"
+        [ NotHealthy ]
+        "../images/food/popcorn.png"
+        { action = Shadow 0
+        , state = initialWidgetState
+        }
+    , Food 1
+        "Happy Meal"
+        [ FastFood, NotHealthy ]
+        "../images/food/happymeal.png"
+        { action = Shadow 1
+        , state = initialWidgetState
+        }
+    , Food 2
+        "Pizza"
+        [ NotHealthy ]
+        "../images/food/pizza.png"
+        { action = Shadow 2
+        , state = initialWidgetState
+        }
+    , Food 3
+        "Tiramisu"
+        [ Dessert, Sweets ]
+        "../images/food/chocolatecake.png"
+        { action = Shadow 3
+        , state = initialWidgetState
+        }
+    , Food 4
+        "Salad"
+        [ Healthy ]
+        "../images/food/salad.png"
+        { action = Shadow 4
+        , state = initialWidgetState
+        }
     ]
