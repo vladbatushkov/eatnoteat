@@ -1,7 +1,9 @@
 module Main exposing (..)
 
 import Animation exposing (px)
-import Browser
+import Animation.Messenger exposing (send)
+import Array exposing (..)
+import Browser exposing (..)
 import Bulma.CDN exposing (..)
 import Bulma.Columns exposing (..)
 import Bulma.Elements exposing (..)
@@ -11,6 +13,56 @@ import Bulma.Modifiers.Typography exposing (textCentered)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Random exposing (..)
+
+
+extractValueHelper : List a -> Int -> List a -> Maybe ( a, List a )
+extractValueHelper values index accumulator =
+    case ( index, values ) of
+        ( _, [] ) ->
+            Nothing
+
+        ( 0, head :: tail ) ->
+            Just <| ( head, List.append (List.reverse accumulator) tail )
+
+        ( _, head :: tail ) ->
+            extractValueHelper tail (index - 1) <| head :: accumulator
+
+
+extractValue : List a -> Int -> Maybe ( a, List a )
+extractValue values index =
+    extractValueHelper values index []
+
+
+shuffle : a -> List a -> Generator (List a)
+shuffle defaultA values =
+    case values of
+        [] ->
+            Random.map (\_ -> []) (Random.weighted ( 80, True ) [ ( 20, False ) ])
+
+        vals ->
+            let
+                randomIndexGenerator =
+                    Random.int 0 <| List.length vals - 1
+
+                extractAndRecurse =
+                    \index ->
+                        let
+                            ( randomHead, remainder ) =
+                                case extractValue vals index of
+                                    Nothing ->
+                                        ( defaultA, [] )
+
+                                    Just a ->
+                                        a
+
+                            remainderGen =
+                                shuffle defaultA remainder
+                        in
+                        Random.map (\randomTail -> randomHead :: randomTail) remainderGen
+            in
+            randomIndexGenerator
+                |> Random.andThen extractAndRecurse
 
 
 
@@ -32,10 +84,17 @@ main =
 
 
 type alias Model =
-    { score : Int
+    { bestResult : Maybe BestResult
+    , score : Int
     , hp : Int -- health points
     , hero : Hero
     , food : List Food
+    }
+
+
+type alias BestResult =
+    { name : String
+    , score : Int
     }
 
 
@@ -78,6 +137,11 @@ type Tags
     | Fruits
 
 
+type GameState
+    = KeepPlaying
+    | GameOver
+
+
 arnold : Hero
 arnold =
     Hero 1 "Arnold" "Eat all the trash and junk. Never touch normal food." "../images/hero/arnold.png" [ Junk ] [ Healthy ]
@@ -96,6 +160,7 @@ chuck =
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( Model
+        Nothing
         0
         3
         arnold
@@ -109,11 +174,12 @@ init _ =
 
 
 type Msg
-    = Eat
+    = Eat (List Tags)
     | ChangeHero
     | Shadow Int
     | FadeOutFadeIn Int
     | Animate Animation.Msg
+    | Shuffle (List Food)
 
 
 onState : (Animation.State -> Animation.State) -> Food -> Food
@@ -158,11 +224,46 @@ onWidgetsState model fn =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
     case action of
-        Eat ->
-            ( { model | score = model.score + 1, hp = model.hp - 1 }, Cmd.none )
+        Eat tags ->
+            let
+                ( points, damage ) =
+                    calcEat model tags
+
+                newHp =
+                    model.hp - damage
+
+                gameState =
+                    if newHp == 0 then
+                        GameOver
+
+                    else
+                        KeepPlaying
+
+                hero =
+                    model.hero
+
+                result =
+                    selectBestResult model.bestResult (BestResult hero.name model.score)
+            in
+            case gameState of
+                GameOver ->
+                    ( { model | score = 0, hp = 3, bestResult = result }, generate Shuffle (shuffle defaultFood model.food) )
+
+                KeepPlaying ->
+                    ( { model | score = model.score + points, hp = newHp }, generate Shuffle (shuffle defaultFood model.food) )
+
+        Shuffle randomFood ->
+            ( { model | food = randomFood }, Cmd.none )
 
         ChangeHero ->
-            ( { model | hero = nextHero model.hero, score = 0, hp = 3 }, Cmd.none )
+            let
+                hero =
+                    model.hero
+
+                result =
+                    selectBestResult model.bestResult (BestResult hero.name model.score)
+            in
+            ( { model | hero = nextHero model.hero, score = 0, hp = 3, bestResult = result }, generate Shuffle (shuffle defaultFood model.food) )
 
         Shadow i ->
             ( onWidgetState model i <|
@@ -179,8 +280,17 @@ update action model =
             , Cmd.none
             )
 
-        FadeOutFadeIn _ ->
-            update Eat <|
+        FadeOutFadeIn i ->
+            let
+                tags =
+                    case Array.get i <| Array.fromList <| List.map .tags allFood of
+                        Just t ->
+                            t
+
+                        Nothing ->
+                            []
+            in
+            update (Eat tags) <|
                 onWidgetsState model <|
                     Animation.interrupt
                         [ Animation.to
@@ -199,6 +309,43 @@ update action model =
               }
             , Cmd.none
             )
+
+
+selectBestResult : Maybe BestResult -> BestResult -> Maybe BestResult
+selectBestResult current next =
+    case current of
+        Just br ->
+            if br.score > next.score then
+                Just br
+
+            else
+                Just next
+
+        Nothing ->
+            if next.score == 0 then
+                Nothing
+
+            else
+                Just next
+
+
+calcEat : Model -> List Tags -> ( Int, Int )
+calcEat model tags =
+    let
+        h =
+            model.hero
+
+        points =
+            List.length <| List.filter (\a -> List.any (\b -> b == a) tags) h.goodTags
+
+        damage =
+            if List.isEmpty <| List.filter (\a -> List.any (\b -> b == a) tags) h.badTags then
+                0
+
+            else
+                1
+    in
+    ( points, damage )
 
 
 nextHero : Hero -> Hero
@@ -251,7 +398,7 @@ body model =
         ]
 
 
-score : Model -> Html msg
+score : Model -> Html Msg
 score model =
     container [ textCentered ]
         [ Bulma.Elements.title H1
@@ -259,10 +406,27 @@ score model =
             [ text "Chew Paper Box"
             ]
         , Bulma.Elements.title H2
-            (List.append styleNormal [ style "margin-bottom" "50px" ])
+            (List.append styleNormal [ style "margin-bottom" "20px" ])
             [ text ("Score: " ++ String.fromInt model.score)
             ]
+        , bestResult model.bestResult
         ]
+
+
+bestResult : Maybe BestResult -> Html Msg
+bestResult result =
+    case result of
+        Nothing ->
+            Bulma.Elements.title H3
+                (List.append styleNormal [ style "margin-bottom" "10px" ])
+                [ text "No results yet"
+                ]
+
+        Just br ->
+            Bulma.Elements.title H3
+                (List.append styleNormal [ style "margin-bottom" "10px" ])
+                [ text ("Best result made with " ++ br.name ++ ": " ++ String.fromInt br.score)
+                ]
 
 
 deck : Model -> Html Msg
@@ -281,7 +445,7 @@ card model =
     column columnModifiers
         (Animation.render widget.state ++ [ style "cursor" "pointer", onClick widget.onClick ])
         [ image (OneByOne Unbounded)
-            (Animation.render widget.state ++ [ style "cursor" "pointer", onMouseEnter widget.onHover ])
+            (Animation.render widget.state ++ [ style "cursor" "pointer" ])
             [ img [ src model.picture, style "border-radius" "10px" ] []
             ]
         , div
@@ -387,13 +551,18 @@ wrapAnimation i =
     }
 
 
-allFood : List Food
-allFood =
-    [ Food 0
+defaultFood : Food
+defaultFood =
+    Food 0
         "Popcorn"
         [ NotHealthy ]
         "../images/food/popcorn.png"
         (wrapAnimation 0)
+
+
+allFood : List Food
+allFood =
+    [ defaultFood
     , Food 1
         "Happy Meal"
         [ FastFood, NotHealthy ]
