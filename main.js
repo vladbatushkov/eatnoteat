@@ -5156,87 +5156,42 @@ var $author$project$Main$Food = F5(
 	});
 var $author$project$Main$Healthy = {$: 'Healthy'};
 var $author$project$Main$NotHealthy = {$: 'NotHealthy'};
+var $author$project$Main$Sweets = {$: 'Sweets'};
+var $author$project$Main$FadeOutFadeIn = function (a) {
+	return {$: 'FadeOutFadeIn', a: a};
+};
 var $author$project$Main$Shadow = function (a) {
 	return {$: 'Shadow', a: a};
 };
-var $author$project$Main$Sweets = {$: 'Sweets'};
-var $author$project$Main$allFood = function (initialWidgetState) {
-	return _List_fromArray(
-		[
-			A5(
-			$author$project$Main$Food,
-			0,
-			'Popcorn',
-			_List_fromArray(
-				[$author$project$Main$NotHealthy]),
-			'../images/food/popcorn.png',
-			{
-				action: $author$project$Main$Shadow(0),
-				state: initialWidgetState
-			}),
-			A5(
-			$author$project$Main$Food,
-			1,
-			'Happy Meal',
-			_List_fromArray(
-				[$author$project$Main$FastFood, $author$project$Main$NotHealthy]),
-			'../images/food/happymeal.png',
-			{
-				action: $author$project$Main$Shadow(1),
-				state: initialWidgetState
-			}),
-			A5(
-			$author$project$Main$Food,
-			2,
-			'Pizza',
-			_List_fromArray(
-				[$author$project$Main$NotHealthy]),
-			'../images/food/pizza.png',
-			{
-				action: $author$project$Main$Shadow(2),
-				state: initialWidgetState
-			}),
-			A5(
-			$author$project$Main$Food,
-			3,
-			'Tiramisu',
-			_List_fromArray(
-				[$author$project$Main$Dessert, $author$project$Main$Sweets]),
-			'../images/food/chocolatecake.png',
-			{
-				action: $author$project$Main$Shadow(3),
-				state: initialWidgetState
-			}),
-			A5(
-			$author$project$Main$Food,
-			4,
-			'Salad',
-			_List_fromArray(
-				[$author$project$Main$Healthy]),
-			'../images/food/salad.png',
-			{
-				action: $author$project$Main$Shadow(4),
-				state: initialWidgetState
-			})
-		]);
-};
-var $author$project$Main$Hero = F6(
-	function (id, name, desc, picture, goodTags, badTags) {
-		return {badTags: badTags, desc: desc, goodTags: goodTags, id: id, name: name, picture: picture};
+var $mdgriffith$elm_style_animation$Animation$Model$Property = F2(
+	function (a, b) {
+		return {$: 'Property', a: a, b: b};
 	});
-var $author$project$Main$Junk = {$: 'Junk'};
-var $author$project$Main$arnold = A6(
-	$author$project$Main$Hero,
-	1,
-	'Arnold',
-	'Eat all the trash and junk. Never touch normal food.',
-	'../images/hero/arnold.png',
-	_List_fromArray(
-		[$author$project$Main$Junk]),
-	_List_fromArray(
-		[$author$project$Main$Healthy]));
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $mdgriffith$elm_style_animation$Animation$Model$Spring = function (a) {
+	return {$: 'Spring', a: a};
+};
+var $mdgriffith$elm_style_animation$Animation$initMotion = F2(
+	function (position, unit) {
+		return {
+			interpolation: $mdgriffith$elm_style_animation$Animation$Model$Spring(
+				{damping: 26, stiffness: 170}),
+			interpolationOverride: $elm$core$Maybe$Nothing,
+			position: position,
+			target: position,
+			unit: unit,
+			velocity: 0
+		};
+	});
+var $mdgriffith$elm_style_animation$Animation$custom = F3(
+	function (name, value, unit) {
+		return A2(
+			$mdgriffith$elm_style_animation$Animation$Model$Property,
+			name,
+			A2($mdgriffith$elm_style_animation$Animation$initMotion, value, unit));
+	});
+var $mdgriffith$elm_style_animation$Animation$opacity = function (val) {
+	return A3($mdgriffith$elm_style_animation$Animation$custom, 'opacity', val, '');
+};
 var $mdgriffith$elm_style_animation$Animation$Length = F2(
 	function (a, b) {
 		return {$: 'Length', a: a, b: b};
@@ -5267,9 +5222,6 @@ var $mdgriffith$elm_style_animation$Animation$initialState = function (current) 
 };
 var $mdgriffith$elm_style_animation$Animation$Model$Easing = function (a) {
 	return {$: 'Easing', a: a};
-};
-var $mdgriffith$elm_style_animation$Animation$Model$Spring = function (a) {
-	return {$: 'Spring', a: a};
 };
 var $elm$core$Basics$pi = _Basics_pi;
 var $mdgriffith$elm_style_animation$Animation$Model$AtSpeed = function (a) {
@@ -5330,10 +5282,6 @@ var $mdgriffith$elm_style_animation$Animation$Model$Path = function (a) {
 var $mdgriffith$elm_style_animation$Animation$Model$Points = function (a) {
 	return {$: 'Points', a: a};
 };
-var $mdgriffith$elm_style_animation$Animation$Model$Property = F2(
-	function (a, b) {
-		return {$: 'Property', a: a, b: b};
-	});
 var $mdgriffith$elm_style_animation$Animation$Model$Property2 = F3(
 	function (a, b, c) {
 		return {$: 'Property2', a: a, b: b, c: c};
@@ -5910,18 +5858,6 @@ var $mdgriffith$elm_style_animation$Animation$style = function (props) {
 			$mdgriffith$elm_style_animation$Animation$setDefaultInterpolation,
 			$mdgriffith$elm_style_animation$Animation$Render$warnForDoubleListedProperties(props)));
 };
-var $mdgriffith$elm_style_animation$Animation$initMotion = F2(
-	function (position, unit) {
-		return {
-			interpolation: $mdgriffith$elm_style_animation$Animation$Model$Spring(
-				{damping: 26, stiffness: 170}),
-			interpolationOverride: $elm$core$Maybe$Nothing,
-			position: position,
-			target: position,
-			unit: unit,
-			velocity: 0
-		};
-	});
 var $mdgriffith$elm_style_animation$Animation$length2 = F3(
 	function (name, _v0, _v1) {
 		var val = _v0.a;
@@ -5986,22 +5922,84 @@ var $mdgriffith$elm_style_animation$Animation$translate = F2(
 				valY,
 				$mdgriffith$elm_style_animation$Animation$lengthUnitName(len2)));
 	});
-var $author$project$Main$init = function (_v0) {
-	var initialWidgetState = $mdgriffith$elm_style_animation$Animation$style(
+var $author$project$Main$wrapAnimation = function (i) {
+	return {
+		onClick: $author$project$Main$FadeOutFadeIn(i),
+		onHover: $author$project$Main$Shadow(i),
+		state: $mdgriffith$elm_style_animation$Animation$style(
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_style_animation$Animation$translate,
+					$mdgriffith$elm_style_animation$Animation$px(0),
+					$mdgriffith$elm_style_animation$Animation$px(0)),
+					$mdgriffith$elm_style_animation$Animation$opacity(1)
+				]))
+	};
+};
+var $author$project$Main$allFood = _List_fromArray(
+	[
+		A5(
+		$author$project$Main$Food,
+		0,
+		'Popcorn',
 		_List_fromArray(
-			[
-				A2(
-				$mdgriffith$elm_style_animation$Animation$translate,
-				$mdgriffith$elm_style_animation$Animation$px(0),
-				$mdgriffith$elm_style_animation$Animation$px(0))
-			]));
+			[$author$project$Main$NotHealthy]),
+		'../images/food/popcorn.png',
+		$author$project$Main$wrapAnimation(0)),
+		A5(
+		$author$project$Main$Food,
+		1,
+		'Happy Meal',
+		_List_fromArray(
+			[$author$project$Main$FastFood, $author$project$Main$NotHealthy]),
+		'../images/food/happymeal.png',
+		$author$project$Main$wrapAnimation(1)),
+		A5(
+		$author$project$Main$Food,
+		2,
+		'Pizza',
+		_List_fromArray(
+			[$author$project$Main$NotHealthy]),
+		'../images/food/pizza.png',
+		$author$project$Main$wrapAnimation(2)),
+		A5(
+		$author$project$Main$Food,
+		3,
+		'Tiramisu',
+		_List_fromArray(
+			[$author$project$Main$Dessert, $author$project$Main$Sweets]),
+		'../images/food/chocolatecake.png',
+		$author$project$Main$wrapAnimation(3)),
+		A5(
+		$author$project$Main$Food,
+		4,
+		'Salad',
+		_List_fromArray(
+			[$author$project$Main$Healthy]),
+		'../images/food/salad.png',
+		$author$project$Main$wrapAnimation(4))
+	]);
+var $author$project$Main$Hero = F6(
+	function (id, name, desc, picture, goodTags, badTags) {
+		return {badTags: badTags, desc: desc, goodTags: goodTags, id: id, name: name, picture: picture};
+	});
+var $author$project$Main$Junk = {$: 'Junk'};
+var $author$project$Main$arnold = A6(
+	$author$project$Main$Hero,
+	1,
+	'Arnold',
+	'Eat all the trash and junk. Never touch normal food.',
+	'../images/hero/arnold.png',
+	_List_fromArray(
+		[$author$project$Main$Junk]),
+	_List_fromArray(
+		[$author$project$Main$Healthy]));
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		A4(
-			$author$project$Main$Model,
-			0,
-			3,
-			$author$project$Main$arnold,
-			$author$project$Main$allFood(initialWidgetState)),
+		A4($author$project$Main$Model, 0, 3, $author$project$Main$arnold, $author$project$Main$allFood),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$Animate = function (a) {
@@ -6170,6 +6168,7 @@ var $author$project$Main$subscriptions = function (model) {
 				},
 				model.food)));
 };
+var $author$project$Main$Eat = {$: 'Eat'};
 var $elm$core$List$drop = F2(
 	function (n, list) {
 		drop:
@@ -6304,12 +6303,16 @@ var $author$project$Main$onWidgetState = F3(
 					$author$project$Main$onState(fn))
 			});
 	});
-var $mdgriffith$elm_style_animation$Animation$custom = F3(
-	function (name, value, unit) {
-		return A2(
-			$mdgriffith$elm_style_animation$Animation$Model$Property,
-			name,
-			A2($mdgriffith$elm_style_animation$Animation$initMotion, value, unit));
+var $author$project$Main$onWidgetsState = F2(
+	function (model, fn) {
+		return _Utils_update(
+			model,
+			{
+				food: A2(
+					$elm$core$List$map,
+					$author$project$Main$onState(fn),
+					model.food)
+			});
 	});
 var $mdgriffith$elm_style_animation$Animation$scale = function (valX) {
 	return A3($mdgriffith$elm_style_animation$Animation$custom, 'scale', valX, '');
@@ -7888,7 +7891,7 @@ var $author$project$Main$update = F2(
 											$mdgriffith$elm_style_animation$Animation$translate,
 											$mdgriffith$elm_style_animation$Animation$px(10),
 											$mdgriffith$elm_style_animation$Animation$px(10)),
-											$mdgriffith$elm_style_animation$Animation$scale(1.1)
+											$mdgriffith$elm_style_animation$Animation$scale(1.5)
 										])),
 									$mdgriffith$elm_style_animation$Animation$to(
 									_List_fromArray(
@@ -7901,6 +7904,27 @@ var $author$project$Main$update = F2(
 										]))
 								]))),
 					$elm$core$Platform$Cmd$none);
+			case 'FadeOutFadeIn':
+				return A2(
+					$author$project$Main$update,
+					$author$project$Main$Eat,
+					A2(
+						$author$project$Main$onWidgetsState,
+						model,
+						$mdgriffith$elm_style_animation$Animation$interrupt(
+							_List_fromArray(
+								[
+									$mdgriffith$elm_style_animation$Animation$to(
+									_List_fromArray(
+										[
+											$mdgriffith$elm_style_animation$Animation$opacity(0)
+										])),
+									$mdgriffith$elm_style_animation$Animation$to(
+									_List_fromArray(
+										[
+											$mdgriffith$elm_style_animation$Animation$opacity(1)
+										]))
+								]))));
 			default:
 				var time = action.a;
 				return _Utils_Tuple2(
@@ -7946,7 +7970,6 @@ var $surprisetalk$elm_bulma$Bulma$Layout$container = A2(
 	_List_fromArray(
 		[$surprisetalk$elm_bulma$Bulma$Classes$container]));
 var $surprisetalk$elm_bulma$Bulma$Columns$Gap3 = {$: 'Gap3'};
-var $author$project$Main$Eat = {$: 'Eat'};
 var $surprisetalk$elm_bulma$Bulma$Elements$OneByOne = function (a) {
 	return {$: 'OneByOne', a: a};
 };
@@ -8963,22 +8986,21 @@ var $author$project$Main$card = function (model) {
 			$mdgriffith$elm_style_animation$Animation$render(widget.state),
 			_List_fromArray(
 				[
-					A2($elm$html$Html$Attributes$style, 'position', 'relative'),
-					A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
 					A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-					A2($elm$html$Html$Attributes$style, 'vertical-align', 'middle'),
-					$elm$html$Html$Events$onMouseEnter(widget.action)
+					$elm$html$Html$Events$onClick(widget.onClick)
 				])),
 		_List_fromArray(
 			[
 				A3(
 				$surprisetalk$elm_bulma$Bulma$Elements$image,
 				$surprisetalk$elm_bulma$Bulma$Elements$OneByOne($surprisetalk$elm_bulma$Bulma$Elements$Unbounded),
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick($author$project$Main$Eat),
-						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
-					]),
+				_Utils_ap(
+					$mdgriffith$elm_style_animation$Animation$render(widget.state),
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+							$elm$html$Html$Events$onMouseEnter(widget.onHover)
+						])),
 				_List_fromArray(
 					[
 						A2(

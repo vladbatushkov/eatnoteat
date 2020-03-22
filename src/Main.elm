@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Animation exposing (percent, px, turn)
+import Animation exposing (px)
 import Browser
 import Bulma.CDN exposing (..)
 import Bulma.Columns exposing (..)
@@ -40,7 +40,8 @@ type alias Model =
 
 
 type alias Widget =
-    { action : Msg
+    { onHover : Msg
+    , onClick : Msg
     , state : Animation.State
     }
 
@@ -94,17 +95,11 @@ chuck =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    let
-        initialWidgetState =
-            Animation.style
-                [ Animation.translate (px 0) (px 0)
-                ]
-    in
     ( Model
         0
         3
         arnold
-        (allFood initialWidgetState)
+        allFood
     , Cmd.none
     )
 
@@ -117,6 +112,7 @@ type Msg
     = Eat
     | ChangeHero
     | Shadow Int
+    | FadeOutFadeIn Int
     | Animate Animation.Msg
 
 
@@ -151,6 +147,14 @@ onWidgetState model index fn =
     }
 
 
+onWidgetsState : Model -> (Animation.State -> Animation.State) -> Model
+onWidgetsState model fn =
+    { model
+        | food =
+            List.map (onState fn) model.food
+    }
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
     case action of
@@ -165,7 +169,7 @@ update action model =
                 Animation.interrupt
                     [ Animation.to
                         [ Animation.translate (px 10) (px 10)
-                        , Animation.scale 1.1
+                        , Animation.scale 1.5
                         ]
                     , Animation.to
                         [ Animation.translate (px 0) (px 0)
@@ -175,9 +179,21 @@ update action model =
             , Cmd.none
             )
 
+        FadeOutFadeIn _ ->
+            update Eat <|
+                onWidgetsState model <|
+                    Animation.interrupt
+                        [ Animation.to
+                            [ Animation.opacity 0
+                            ]
+                        , Animation.to
+                            [ Animation.opacity 1
+                            ]
+                        ]
+
         Animate time ->
             ( { model
-                | food = 
+                | food =
                     List.map (onState (Animation.update time))
                         model.food
               }
@@ -263,16 +279,9 @@ card model =
             model.widget
     in
     column columnModifiers
-        (Animation.render widget.state
-            ++ [ style "position" "relative"
-               , style "text-align" "center"
-               , style "cursor" "pointer"
-               , style "vertical-align" "middle"
-               , onMouseEnter widget.action
-               ]
-        )
+        (Animation.render widget.state ++ [ style "cursor" "pointer", onClick widget.onClick ])
         [ image (OneByOne Unbounded)
-            [ onClick Eat, style "cursor" "pointer" ]
+            (Animation.render widget.state ++ [ style "cursor" "pointer", onMouseEnter widget.onHover ])
             [ img [ src model.picture, style "border-radius" "10px" ] []
             ]
         , div
@@ -366,41 +375,43 @@ styleNormal =
 -- DATA
 
 
-allFood : Animation.State -> List Food
-allFood initialWidgetState =
+wrapAnimation : Int -> Widget
+wrapAnimation i =
+    { onHover = Shadow i
+    , onClick = FadeOutFadeIn i
+    , state =
+        Animation.style
+            [ Animation.translate (px 0) (px 0)
+            , Animation.opacity 1
+            ]
+    }
+
+
+allFood : List Food
+allFood =
     [ Food 0
         "Popcorn"
         [ NotHealthy ]
         "../images/food/popcorn.png"
-        { action = Shadow 0
-        , state = initialWidgetState
-        }
+        (wrapAnimation 0)
     , Food 1
         "Happy Meal"
         [ FastFood, NotHealthy ]
         "../images/food/happymeal.png"
-        { action = Shadow 1
-        , state = initialWidgetState
-        }
+        (wrapAnimation 1)
     , Food 2
         "Pizza"
         [ NotHealthy ]
         "../images/food/pizza.png"
-        { action = Shadow 2
-        , state = initialWidgetState
-        }
+        (wrapAnimation 2)
     , Food 3
         "Tiramisu"
         [ Dessert, Sweets ]
         "../images/food/chocolatecake.png"
-        { action = Shadow 3
-        , state = initialWidgetState
-        }
+        (wrapAnimation 3)
     , Food 4
         "Salad"
         [ Healthy ]
         "../images/food/salad.png"
-        { action = Shadow 4
-        , state = initialWidgetState
-        }
+        (wrapAnimation 4)
     ]
