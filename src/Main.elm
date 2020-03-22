@@ -34,6 +34,15 @@ type alias Model =
     { score : Int
     , hp : Int -- health points
     , hero : Hero
+    , food : List Food
+    }
+
+
+type alias Food =
+    { id : Int
+    , name : String
+    , tags : List Tags
+    , picture : String
     }
 
 
@@ -42,27 +51,42 @@ type alias Hero =
     , name : String
     , desc : String
     , picture : String
+    , goodTags : List Tags
+    , badTags : List Tags
     }
+
+
+type Tags
+    = Healthy
+    | NotHealthy
+    | Meat
+    | Dairy
+    | Eggs
+    | Junk
+    | Dessert
+    | Sweets
+    | FastFood
+    | Fruits
 
 
 arnold : Hero
 arnold =
-    Hero 1 "Arnold" "Eat all the trash and junk. Never touch normal food." "../images/hero/arnold.png"
+    Hero 1 "Arnold" "Eat all the trash and junk. Never touch normal food." "../images/hero/arnold.png" [ Junk ] [ Healthy ]
 
 
 terry : Hero
 terry =
-    Hero 2 "Terry" "Fast-food maniac. Meat lover. Vomit for desserts." "../images/hero/terry.png"
+    Hero 2 "Terry" "Fast-food and unheathly food lover. Vomit for desserts." "../images/hero/terry.png" [ Meat, FastFood, NotHealthy ] [ Dessert, Sweets ]
 
 
 chuck : Hero
 chuck =
-    Hero 3 "Chuck" "Eat plant-based foods and dairy products." "../images/hero/chuck.png"
+    Hero 3 "Chuck" "Eat plant-based foods and dairy products, but not eggs." "../images/hero/chuck.png" [ Healthy, Dairy, Fruits ] [ Meat, FastFood, Eggs ]
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model 0 3 arnold, Cmd.none )
+    ( Model 0 3 arnold food, Cmd.none )
 
 
 
@@ -125,7 +149,7 @@ body model =
         [ heroBody []
             [ container []
                 [ score model
-                , deck
+                , deck model
                 , panel model
                 ]
             ]
@@ -136,41 +160,42 @@ score : Model -> Html msg
 score model =
     container [ textCentered ]
         [ Bulma.Elements.title H1
-            (List.append styleTitle [ style "margin-bottom" "3%" ])
+            (List.append styleTitle [ style "margin-bottom" "10px" ])
             [ text "Chew Paper Box"
             ]
         , Bulma.Elements.title H2
-            (List.append styleNormal [ style "margin-bottom" "3%" ])
+            (List.append styleNormal [ style "margin-bottom" "50px" ])
             [ text ("Score: " ++ String.fromInt model.score)
             ]
         ]
 
 
-deck : Html Msg
-deck =
+deck : Model -> Html Msg
+deck model =
     columns { columnsModifiers | gap = Gap3 }
         []
-        [ card
-        , card
-        , card
-        , card
-        ]
+        (List.take 5 (List.map card model.food))
 
 
-card : Html Msg
-card =
+card : Food -> Html Msg
+card model =
     column columnModifiers
         []
-        [ notification Primary
-            [ onClick Eat ]
-            [ cardPlaceholderImage
+        [ image (OneByOne Unbounded)
+            [ onClick Eat, style "cursor" "pointer" ]
+            [ img [ src model.picture, style "border-radius" "10px" ] []
+            ]
+        , div
+            (List.append styleBold
+                [ style "width" "100%"
+                , style "position" "relative"
+                , style "text-align" "center"
+                , style "font-size" "220%"
+                ]
+            )
+            [ text model.name
             ]
         ]
-
-
-cardPlaceholderImage : Html Msg
-cardPlaceholderImage =
-    easyPlaceholderImage (OneByOne Unbounded) [ style "position" "static" ]
 
 
 panel : Model -> Html Msg
@@ -183,7 +208,7 @@ panel model =
                 [ style "text-align" "center" ]
                 [ profile model.hero
                 , Bulma.Elements.button { buttonModifiers | outlined = True, size = Small, color = Primary }
-                    [ onClick ChangeHero, style "margin-top" "5%" ]
+                    [ onClick ChangeHero ]
                     [ text "Change Hero" ]
                 ]
             ]
@@ -205,14 +230,18 @@ profile model =
             []
             [ img [ src model.picture, class "is-rounded" ] []
             ]
-        , Bulma.Elements.title H1
-            styleBold
-            [ text model.name
-            ]
-        , Bulma.Elements.subtitle H3
-            styleNormal
-            [ text model.desc
-            ]
+        , div
+            (List.append styleBold
+                [ style "font-size" "250%"
+                ]
+            )
+            [ text model.name ]
+        , span
+            (List.append styleNormal
+                [ style "font-size" "180%"
+                ]
+            )
+            [ text model.desc ]
         ]
 
 
@@ -227,9 +256,11 @@ heart =
 
 -- STYLE
 
+
 styleTitle : List (Attribute msg)
 styleTitle =
     [ style "font-family" "font", style "font-weight" "bold", style "font-size" "500%" ]
+
 
 styleBold : List (Attribute msg)
 styleBold =
@@ -239,3 +270,17 @@ styleBold =
 styleNormal : List (Attribute msg)
 styleNormal =
     [ style "font-family" "font" ]
+
+
+
+-- DATA
+
+
+food : List Food
+food =
+    [ Food 1 "Popcorn" [ NotHealthy ] "../images/food/popcorn.png"
+    , Food 2 "Happy Meal" [ FastFood, NotHealthy ] "../images/food/happymeal.png"
+    , Food 3 "Pizza" [ NotHealthy ] "../images/food/pizza.png"
+    , Food 4 "Tiramisu" [ Dessert, Sweets ] "../images/food/chocolatecake.png"
+    , Food 5 "Salad" [ Healthy ] "../images/food/salad.png"
+    ]

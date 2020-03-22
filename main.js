@@ -5144,20 +5144,77 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Main$Model = F3(
-	function (score, hp, hero) {
-		return {hero: hero, hp: hp, score: score};
+var $author$project$Main$Model = F4(
+	function (score, hp, hero, food) {
+		return {food: food, hero: hero, hp: hp, score: score};
 	});
-var $author$project$Main$Hero = F4(
-	function (id, name, desc, picture) {
-		return {desc: desc, id: id, name: name, picture: picture};
+var $author$project$Main$Healthy = {$: 'Healthy'};
+var $author$project$Main$Hero = F6(
+	function (id, name, desc, picture, goodTags, badTags) {
+		return {badTags: badTags, desc: desc, goodTags: goodTags, id: id, name: name, picture: picture};
 	});
-var $author$project$Main$arnold = A4($author$project$Main$Hero, 1, 'Arnold', 'Eat all the trash and junk. Never touch normal food.', '../images/hero/arnold.png');
+var $author$project$Main$Junk = {$: 'Junk'};
+var $author$project$Main$arnold = A6(
+	$author$project$Main$Hero,
+	1,
+	'Arnold',
+	'Eat all the trash and junk. Never touch normal food.',
+	'../images/hero/arnold.png',
+	_List_fromArray(
+		[$author$project$Main$Junk]),
+	_List_fromArray(
+		[$author$project$Main$Healthy]));
+var $author$project$Main$Dessert = {$: 'Dessert'};
+var $author$project$Main$FastFood = {$: 'FastFood'};
+var $author$project$Main$Food = F4(
+	function (id, name, tags, picture) {
+		return {id: id, name: name, picture: picture, tags: tags};
+	});
+var $author$project$Main$NotHealthy = {$: 'NotHealthy'};
+var $author$project$Main$Sweets = {$: 'Sweets'};
+var $author$project$Main$food = _List_fromArray(
+	[
+		A4(
+		$author$project$Main$Food,
+		1,
+		'Popcorn',
+		_List_fromArray(
+			[$author$project$Main$NotHealthy]),
+		'../images/food/popcorn.png'),
+		A4(
+		$author$project$Main$Food,
+		2,
+		'Happy Meal',
+		_List_fromArray(
+			[$author$project$Main$FastFood, $author$project$Main$NotHealthy]),
+		'../images/food/happymeal.png'),
+		A4(
+		$author$project$Main$Food,
+		3,
+		'Pizza',
+		_List_fromArray(
+			[$author$project$Main$NotHealthy]),
+		'../images/food/pizza.png'),
+		A4(
+		$author$project$Main$Food,
+		4,
+		'Tiramisu',
+		_List_fromArray(
+			[$author$project$Main$Dessert, $author$project$Main$Sweets]),
+		'../images/food/chocolatecake.png'),
+		A4(
+		$author$project$Main$Food,
+		5,
+		'Salad',
+		_List_fromArray(
+			[$author$project$Main$Healthy]),
+		'../images/food/salad.png')
+	]);
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		A3($author$project$Main$Model, 0, 3, $author$project$Main$arnold),
+		A4($author$project$Main$Model, 0, 3, $author$project$Main$arnold, $author$project$Main$food),
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -5165,8 +5222,30 @@ var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$none;
 };
-var $author$project$Main$chuck = A4($author$project$Main$Hero, 3, 'Chuck', 'Eat plant-based foods and dairy products.', '../images/hero/chuck.png');
-var $author$project$Main$terry = A4($author$project$Main$Hero, 2, 'Terry', 'Fast-food maniac. Meat lover. Vomit for desserts.', '../images/hero/terry.png');
+var $author$project$Main$Dairy = {$: 'Dairy'};
+var $author$project$Main$Eggs = {$: 'Eggs'};
+var $author$project$Main$Fruits = {$: 'Fruits'};
+var $author$project$Main$Meat = {$: 'Meat'};
+var $author$project$Main$chuck = A6(
+	$author$project$Main$Hero,
+	3,
+	'Chuck',
+	'Eat plant-based foods and dairy products, but not eggs.',
+	'../images/hero/chuck.png',
+	_List_fromArray(
+		[$author$project$Main$Healthy, $author$project$Main$Dairy, $author$project$Main$Fruits]),
+	_List_fromArray(
+		[$author$project$Main$Meat, $author$project$Main$FastFood, $author$project$Main$Eggs]));
+var $author$project$Main$terry = A6(
+	$author$project$Main$Hero,
+	2,
+	'Terry',
+	'Fast-food and unheathly food lover. Vomit for desserts.',
+	'../images/hero/terry.png',
+	_List_fromArray(
+		[$author$project$Main$Meat, $author$project$Main$FastFood, $author$project$Main$NotHealthy]),
+	_List_fromArray(
+		[$author$project$Main$Dessert, $author$project$Main$Sweets]));
 var $author$project$Main$nextHero = function (hero) {
 	var _v0 = hero.id;
 	switch (_v0) {
@@ -5229,159 +5308,18 @@ var $surprisetalk$elm_bulma$Bulma$Layout$container = A2(
 		[$surprisetalk$elm_bulma$Bulma$Classes$container]));
 var $surprisetalk$elm_bulma$Bulma$Columns$Gap3 = {$: 'Gap3'};
 var $author$project$Main$Eat = {$: 'Eat'};
-var $surprisetalk$elm_bulma$Bulma$Modifiers$Primary = {$: 'Primary'};
 var $surprisetalk$elm_bulma$Bulma$Elements$OneByOne = function (a) {
 	return {$: 'OneByOne', a: a};
 };
 var $surprisetalk$elm_bulma$Bulma$Elements$Unbounded = {$: 'Unbounded'};
-var $surprisetalk$elm_bulma$Helpers$flip = F3(
-	function (f, a, b) {
-		return A2(f, b, a);
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
 	});
-var $surprisetalk$elm_bulma$Bulma$Classes$image = $elm$html$Html$Attributes$class('image');
-var $surprisetalk$elm_bulma$Bulma$Classes$is128x128 = $elm$html$Html$Attributes$class('is-128x128');
-var $surprisetalk$elm_bulma$Bulma$Classes$is16by9 = $elm$html$Html$Attributes$class('is-16by9');
-var $surprisetalk$elm_bulma$Bulma$Classes$is16x16 = $elm$html$Html$Attributes$class('is-16x16');
-var $surprisetalk$elm_bulma$Bulma$Classes$is1by1 = $elm$html$Html$Attributes$class('is-1by1');
-var $surprisetalk$elm_bulma$Bulma$Classes$is24x24 = $elm$html$Html$Attributes$class('is-24x24');
-var $surprisetalk$elm_bulma$Bulma$Classes$is2by1 = $elm$html$Html$Attributes$class('is-2by1');
-var $surprisetalk$elm_bulma$Bulma$Classes$is32x32 = $elm$html$Html$Attributes$class('is-32x32');
-var $surprisetalk$elm_bulma$Bulma$Classes$is3by2 = $elm$html$Html$Attributes$class('is-3by2');
-var $surprisetalk$elm_bulma$Bulma$Classes$is48x48 = $elm$html$Html$Attributes$class('is-48x48');
-var $surprisetalk$elm_bulma$Bulma$Classes$is4by3 = $elm$html$Html$Attributes$class('is-4by3');
-var $surprisetalk$elm_bulma$Bulma$Classes$is64x64 = $elm$html$Html$Attributes$class('is-64x64');
-var $surprisetalk$elm_bulma$Bulma$Classes$is96x96 = $elm$html$Html$Attributes$class('is-96x96');
-var $surprisetalk$elm_bulma$Bulma$Classes$none = $elm$html$Html$Attributes$class('');
-var $surprisetalk$elm_bulma$Bulma$Elements$image = function (shape) {
-	return A2(
-		$surprisetalk$elm_bulma$Helpers$node,
-		'figure',
-		_List_fromArray(
-			[
-				$surprisetalk$elm_bulma$Bulma$Classes$image,
-				function () {
-				switch (shape.$) {
-					case 'OneByOne':
-						switch (shape.a.$) {
-							case 'Unbounded':
-								var _v1 = shape.a;
-								return $surprisetalk$elm_bulma$Bulma$Classes$is1by1;
-							case 'X16':
-								var _v2 = shape.a;
-								return $surprisetalk$elm_bulma$Bulma$Classes$is16x16;
-							case 'X24':
-								var _v3 = shape.a;
-								return $surprisetalk$elm_bulma$Bulma$Classes$is24x24;
-							case 'X32':
-								var _v4 = shape.a;
-								return $surprisetalk$elm_bulma$Bulma$Classes$is32x32;
-							case 'X48':
-								var _v5 = shape.a;
-								return $surprisetalk$elm_bulma$Bulma$Classes$is48x48;
-							case 'X64':
-								var _v6 = shape.a;
-								return $surprisetalk$elm_bulma$Bulma$Classes$is64x64;
-							case 'X96':
-								var _v7 = shape.a;
-								return $surprisetalk$elm_bulma$Bulma$Classes$is96x96;
-							default:
-								var _v8 = shape.a;
-								return $surprisetalk$elm_bulma$Bulma$Classes$is128x128;
-						}
-					case 'FourByThree':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is4by3;
-					case 'ThreeByTwo':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is3by2;
-					case 'SixteenByNine':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is16by9;
-					case 'TwoByOne':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is2by1;
-					default:
-						return $surprisetalk$elm_bulma$Bulma$Classes$none;
-				}
-			}()
-			]));
-};
-var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
-var $surprisetalk$elm_bulma$Bulma$Elements$easyPlaceholderImage = F2(
-	function (shape, attrs) {
-		return A3(
-			$surprisetalk$elm_bulma$Bulma$Elements$image,
-			shape,
-			attrs,
-			_List_fromArray(
-				[
-					A3(
-					$surprisetalk$elm_bulma$Helpers$flip,
-					$elm$html$Html$img,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$src(
-							function (_v0) {
-								var h = _v0.a;
-								var w = _v0.b;
-								return 'http://bulma.io/images/placeholders/' + ($elm$core$String$fromInt(h) + ('x' + ($elm$core$String$fromInt(w) + '.png')));
-							}(
-								function () {
-									switch (shape.$) {
-										case 'OneByOne':
-											switch (shape.a.$) {
-												case 'X16':
-													var _v2 = shape.a;
-													return _Utils_Tuple2(16, 16);
-												case 'X24':
-													var _v3 = shape.a;
-													return _Utils_Tuple2(24, 24);
-												case 'X32':
-													var _v4 = shape.a;
-													return _Utils_Tuple2(32, 32);
-												case 'X48':
-													var _v5 = shape.a;
-													return _Utils_Tuple2(48, 48);
-												case 'X64':
-													var _v6 = shape.a;
-													return _Utils_Tuple2(64, 64);
-												case 'X96':
-													var _v7 = shape.a;
-													return _Utils_Tuple2(96, 96);
-												case 'X128':
-													var _v8 = shape.a;
-													return _Utils_Tuple2(128, 128);
-												default:
-													var _v9 = shape.a;
-													return _Utils_Tuple2(256, 256);
-											}
-										case 'FourByThree':
-											return _Utils_Tuple2(640, 480);
-										case 'ThreeByTwo':
-											return _Utils_Tuple2(480, 320);
-										case 'SixteenByNine':
-											return _Utils_Tuple2(640, 360);
-										case 'TwoByOne':
-											return _Utils_Tuple2(640, 320);
-										default:
-											return _Utils_Tuple2(256, 256);
-									}
-								}()))
-						]))
-				]));
-	});
-var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
-var $author$project$Main$cardPlaceholderImage = A2(
-	$surprisetalk$elm_bulma$Bulma$Elements$easyPlaceholderImage,
-	$surprisetalk$elm_bulma$Bulma$Elements$OneByOne($surprisetalk$elm_bulma$Bulma$Elements$Unbounded),
-	_List_fromArray(
-		[
-			A2($elm$html$Html$Attributes$style, 'position', 'static')
-		]));
 var $surprisetalk$elm_bulma$Bulma$Classes$column = $elm$html$Html$Attributes$class('column');
 var $surprisetalk$elm_bulma$Bulma$Classes$is01Desktop = $elm$html$Html$Attributes$class('is-1-desktop');
 var $surprisetalk$elm_bulma$Bulma$Classes$is01FullHD = $elm$html$Html$Attributes$class('is-1-fullhd');
@@ -5454,6 +5392,7 @@ var $surprisetalk$elm_bulma$Bulma$Classes$isOffset08 = $elm$html$Html$Attributes
 var $surprisetalk$elm_bulma$Bulma$Classes$isOffset09 = $elm$html$Html$Attributes$class('is-offset-9');
 var $surprisetalk$elm_bulma$Bulma$Classes$isOffset10 = $elm$html$Html$Attributes$class('is-offset-10');
 var $surprisetalk$elm_bulma$Bulma$Classes$isOffset11 = $elm$html$Html$Attributes$class('is-offset-11');
+var $surprisetalk$elm_bulma$Bulma$Classes$none = $elm$html$Html$Attributes$class('');
 var $surprisetalk$elm_bulma$Bulma$Columns$column = function (_v0) {
 	var widths = _v0.widths;
 	var offset = _v0.offset;
@@ -5729,52 +5668,71 @@ var $surprisetalk$elm_bulma$Bulma$Columns$columnModifiers = {
 		widescreen: $elm$core$Maybe$Just($surprisetalk$elm_bulma$Bulma$Modifiers$Auto)
 	}
 };
-var $surprisetalk$elm_bulma$Bulma$Classes$isBlack = $elm$html$Html$Attributes$class('is-black');
-var $surprisetalk$elm_bulma$Bulma$Classes$isDanger = $elm$html$Html$Attributes$class('is-danger');
-var $surprisetalk$elm_bulma$Bulma$Classes$isDark = $elm$html$Html$Attributes$class('is-dark');
-var $surprisetalk$elm_bulma$Bulma$Classes$isInfo = $elm$html$Html$Attributes$class('is-info');
-var $surprisetalk$elm_bulma$Bulma$Classes$isLight = $elm$html$Html$Attributes$class('is-light');
-var $surprisetalk$elm_bulma$Bulma$Classes$isLink = $elm$html$Html$Attributes$class('is-link');
-var $surprisetalk$elm_bulma$Bulma$Classes$isPrimary = $elm$html$Html$Attributes$class('is-primary');
-var $surprisetalk$elm_bulma$Bulma$Classes$isSuccess = $elm$html$Html$Attributes$class('is-success');
-var $surprisetalk$elm_bulma$Bulma$Classes$isWarning = $elm$html$Html$Attributes$class('is-warning');
-var $surprisetalk$elm_bulma$Bulma$Classes$isWhite = $elm$html$Html$Attributes$class('is-white');
-var $surprisetalk$elm_bulma$Bulma$Classes$notification = $elm$html$Html$Attributes$class('notification');
-var $surprisetalk$elm_bulma$Bulma$Elements$notification = function (color) {
+var $elm$html$Html$div = _VirtualDom_node('div');
+var $surprisetalk$elm_bulma$Bulma$Classes$image = $elm$html$Html$Attributes$class('image');
+var $surprisetalk$elm_bulma$Bulma$Classes$is128x128 = $elm$html$Html$Attributes$class('is-128x128');
+var $surprisetalk$elm_bulma$Bulma$Classes$is16by9 = $elm$html$Html$Attributes$class('is-16by9');
+var $surprisetalk$elm_bulma$Bulma$Classes$is16x16 = $elm$html$Html$Attributes$class('is-16x16');
+var $surprisetalk$elm_bulma$Bulma$Classes$is1by1 = $elm$html$Html$Attributes$class('is-1by1');
+var $surprisetalk$elm_bulma$Bulma$Classes$is24x24 = $elm$html$Html$Attributes$class('is-24x24');
+var $surprisetalk$elm_bulma$Bulma$Classes$is2by1 = $elm$html$Html$Attributes$class('is-2by1');
+var $surprisetalk$elm_bulma$Bulma$Classes$is32x32 = $elm$html$Html$Attributes$class('is-32x32');
+var $surprisetalk$elm_bulma$Bulma$Classes$is3by2 = $elm$html$Html$Attributes$class('is-3by2');
+var $surprisetalk$elm_bulma$Bulma$Classes$is48x48 = $elm$html$Html$Attributes$class('is-48x48');
+var $surprisetalk$elm_bulma$Bulma$Classes$is4by3 = $elm$html$Html$Attributes$class('is-4by3');
+var $surprisetalk$elm_bulma$Bulma$Classes$is64x64 = $elm$html$Html$Attributes$class('is-64x64');
+var $surprisetalk$elm_bulma$Bulma$Classes$is96x96 = $elm$html$Html$Attributes$class('is-96x96');
+var $surprisetalk$elm_bulma$Bulma$Elements$image = function (shape) {
 	return A2(
 		$surprisetalk$elm_bulma$Helpers$node,
-		'div',
+		'figure',
 		_List_fromArray(
 			[
-				$surprisetalk$elm_bulma$Bulma$Classes$notification,
+				$surprisetalk$elm_bulma$Bulma$Classes$image,
 				function () {
-				switch (color.$) {
-					case 'Default':
-						return $surprisetalk$elm_bulma$Bulma$Classes$none;
-					case 'White':
-						return $surprisetalk$elm_bulma$Bulma$Classes$isWhite;
-					case 'Light':
-						return $surprisetalk$elm_bulma$Bulma$Classes$isLight;
-					case 'Dark':
-						return $surprisetalk$elm_bulma$Bulma$Classes$isDark;
-					case 'Black':
-						return $surprisetalk$elm_bulma$Bulma$Classes$isBlack;
-					case 'Primary':
-						return $surprisetalk$elm_bulma$Bulma$Classes$isPrimary;
-					case 'Info':
-						return $surprisetalk$elm_bulma$Bulma$Classes$isInfo;
-					case 'Success':
-						return $surprisetalk$elm_bulma$Bulma$Classes$isSuccess;
-					case 'Warning':
-						return $surprisetalk$elm_bulma$Bulma$Classes$isWarning;
-					case 'Danger':
-						return $surprisetalk$elm_bulma$Bulma$Classes$isDanger;
+				switch (shape.$) {
+					case 'OneByOne':
+						switch (shape.a.$) {
+							case 'Unbounded':
+								var _v1 = shape.a;
+								return $surprisetalk$elm_bulma$Bulma$Classes$is1by1;
+							case 'X16':
+								var _v2 = shape.a;
+								return $surprisetalk$elm_bulma$Bulma$Classes$is16x16;
+							case 'X24':
+								var _v3 = shape.a;
+								return $surprisetalk$elm_bulma$Bulma$Classes$is24x24;
+							case 'X32':
+								var _v4 = shape.a;
+								return $surprisetalk$elm_bulma$Bulma$Classes$is32x32;
+							case 'X48':
+								var _v5 = shape.a;
+								return $surprisetalk$elm_bulma$Bulma$Classes$is48x48;
+							case 'X64':
+								var _v6 = shape.a;
+								return $surprisetalk$elm_bulma$Bulma$Classes$is64x64;
+							case 'X96':
+								var _v7 = shape.a;
+								return $surprisetalk$elm_bulma$Bulma$Classes$is96x96;
+							default:
+								var _v8 = shape.a;
+								return $surprisetalk$elm_bulma$Bulma$Classes$is128x128;
+						}
+					case 'FourByThree':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is4by3;
+					case 'ThreeByTwo':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is3by2;
+					case 'SixteenByNine':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is16by9;
+					case 'TwoByOne':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is2by1;
 					default:
-						return $surprisetalk$elm_bulma$Bulma$Classes$isLink;
+						return $surprisetalk$elm_bulma$Bulma$Classes$none;
 				}
 			}()
 			]));
 };
+var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -5792,22 +5750,65 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $author$project$Main$card = A3(
-	$surprisetalk$elm_bulma$Bulma$Columns$column,
-	$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
-	_List_Nil,
-	_List_fromArray(
-		[
-			A3(
-			$surprisetalk$elm_bulma$Bulma$Elements$notification,
-			$surprisetalk$elm_bulma$Bulma$Modifiers$Primary,
-			_List_fromArray(
-				[
-					$elm$html$Html$Events$onClick($author$project$Main$Eat)
-				]),
-			_List_fromArray(
-				[$author$project$Main$cardPlaceholderImage]))
-		]));
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $author$project$Main$styleBold = _List_fromArray(
+	[
+		A2($elm$html$Html$Attributes$style, 'font-family', 'font'),
+		A2($elm$html$Html$Attributes$style, 'font-weight', 'bold')
+	]);
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Main$card = function (model) {
+	return A3(
+		$surprisetalk$elm_bulma$Bulma$Columns$column,
+		$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A3(
+				$surprisetalk$elm_bulma$Bulma$Elements$image,
+				$surprisetalk$elm_bulma$Bulma$Elements$OneByOne($surprisetalk$elm_bulma$Bulma$Elements$Unbounded),
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$Eat),
+						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src(model.picture),
+								A2($elm$html$Html$Attributes$style, 'border-radius', '10px')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$div,
+				A2(
+					$elm$core$List$append,
+					$author$project$Main$styleBold,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$style, 'width', '100%'),
+							A2($elm$html$Html$Attributes$style, 'position', 'relative'),
+							A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
+							A2($elm$html$Html$Attributes$style, 'font-size', '220%')
+						])),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(model.name)
+					]))
+			]));
+};
 var $surprisetalk$elm_bulma$Bulma$Classes$columns = $elm$html$Html$Attributes$class('columns');
 var $surprisetalk$elm_bulma$Bulma$Classes$is0 = $elm$html$Html$Attributes$class('is-0');
 var $surprisetalk$elm_bulma$Bulma$Classes$is1 = $elm$html$Html$Attributes$class('is-1');
@@ -5890,19 +5891,159 @@ var $surprisetalk$elm_bulma$Bulma$Columns$columns = function (_v0) {
 };
 var $surprisetalk$elm_bulma$Bulma$Columns$TabletAndBeyond = {$: 'TabletAndBeyond'};
 var $surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers = {centered: false, display: $surprisetalk$elm_bulma$Bulma$Columns$TabletAndBeyond, gap: $surprisetalk$elm_bulma$Bulma$Columns$Gap3, multiline: false};
-var $author$project$Main$deck = A3(
-	$surprisetalk$elm_bulma$Bulma$Columns$columns,
-	_Utils_update(
-		$surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers,
-		{gap: $surprisetalk$elm_bulma$Bulma$Columns$Gap3}),
-	_List_Nil,
-	_List_fromArray(
-		[$author$project$Main$card, $author$project$Main$card, $author$project$Main$card, $author$project$Main$card]));
+var $elm$core$List$takeReverse = F3(
+	function (n, list, kept) {
+		takeReverse:
+		while (true) {
+			if (n <= 0) {
+				return kept;
+			} else {
+				if (!list.b) {
+					return kept;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs,
+						$temp$kept = A2($elm$core$List$cons, x, kept);
+					n = $temp$n;
+					list = $temp$list;
+					kept = $temp$kept;
+					continue takeReverse;
+				}
+			}
+		}
+	});
+var $elm$core$List$takeTailRec = F2(
+	function (n, list) {
+		return $elm$core$List$reverse(
+			A3($elm$core$List$takeReverse, n, list, _List_Nil));
+	});
+var $elm$core$List$takeFast = F3(
+	function (ctr, n, list) {
+		if (n <= 0) {
+			return _List_Nil;
+		} else {
+			var _v0 = _Utils_Tuple2(n, list);
+			_v0$1:
+			while (true) {
+				_v0$5:
+				while (true) {
+					if (!_v0.b.b) {
+						return list;
+					} else {
+						if (_v0.b.b.b) {
+							switch (_v0.a) {
+								case 1:
+									break _v0$1;
+								case 2:
+									var _v2 = _v0.b;
+									var x = _v2.a;
+									var _v3 = _v2.b;
+									var y = _v3.a;
+									return _List_fromArray(
+										[x, y]);
+								case 3:
+									if (_v0.b.b.b.b) {
+										var _v4 = _v0.b;
+										var x = _v4.a;
+										var _v5 = _v4.b;
+										var y = _v5.a;
+										var _v6 = _v5.b;
+										var z = _v6.a;
+										return _List_fromArray(
+											[x, y, z]);
+									} else {
+										break _v0$5;
+									}
+								default:
+									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
+										var _v7 = _v0.b;
+										var x = _v7.a;
+										var _v8 = _v7.b;
+										var y = _v8.a;
+										var _v9 = _v8.b;
+										var z = _v9.a;
+										var _v10 = _v9.b;
+										var w = _v10.a;
+										var tl = _v10.b;
+										return (ctr > 1000) ? A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
+									} else {
+										break _v0$5;
+									}
+							}
+						} else {
+							if (_v0.a === 1) {
+								break _v0$1;
+							} else {
+								break _v0$5;
+							}
+						}
+					}
+				}
+				return list;
+			}
+			var _v1 = _v0.b;
+			var x = _v1.a;
+			return _List_fromArray(
+				[x]);
+		}
+	});
+var $elm$core$List$take = F2(
+	function (n, list) {
+		return A3($elm$core$List$takeFast, 0, n, list);
+	});
+var $author$project$Main$deck = function (model) {
+	return A3(
+		$surprisetalk$elm_bulma$Bulma$Columns$columns,
+		_Utils_update(
+			$surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers,
+			{gap: $surprisetalk$elm_bulma$Bulma$Columns$Gap3}),
+		_List_Nil,
+		A2(
+			$elm$core$List$take,
+			5,
+			A2($elm$core$List$map, $author$project$Main$card, model.food)));
+};
 var $surprisetalk$elm_bulma$Bulma$Classes$hero = $elm$html$Html$Attributes$class('hero');
+var $surprisetalk$elm_bulma$Bulma$Classes$isBlack = $elm$html$Html$Attributes$class('is-black');
 var $surprisetalk$elm_bulma$Bulma$Classes$isBold = $elm$html$Html$Attributes$class('is-bold');
+var $surprisetalk$elm_bulma$Bulma$Classes$isDanger = $elm$html$Html$Attributes$class('is-danger');
+var $surprisetalk$elm_bulma$Bulma$Classes$isDark = $elm$html$Html$Attributes$class('is-dark');
 var $surprisetalk$elm_bulma$Bulma$Classes$isFullHeight = $elm$html$Html$Attributes$class('is-fullheight');
+var $surprisetalk$elm_bulma$Bulma$Classes$isInfo = $elm$html$Html$Attributes$class('is-info');
 var $surprisetalk$elm_bulma$Bulma$Classes$isLarge = $elm$html$Html$Attributes$class('is-large');
+var $surprisetalk$elm_bulma$Bulma$Classes$isLight = $elm$html$Html$Attributes$class('is-light');
+var $surprisetalk$elm_bulma$Bulma$Classes$isLink = $elm$html$Html$Attributes$class('is-link');
 var $surprisetalk$elm_bulma$Bulma$Classes$isMedium = $elm$html$Html$Attributes$class('is-medium');
+var $surprisetalk$elm_bulma$Bulma$Classes$isPrimary = $elm$html$Html$Attributes$class('is-primary');
+var $surprisetalk$elm_bulma$Bulma$Classes$isSuccess = $elm$html$Html$Attributes$class('is-success');
+var $surprisetalk$elm_bulma$Bulma$Classes$isWarning = $elm$html$Html$Attributes$class('is-warning');
+var $surprisetalk$elm_bulma$Bulma$Classes$isWhite = $elm$html$Html$Attributes$class('is-white');
 var $surprisetalk$elm_bulma$Bulma$Layout$hero = function (_v0) {
 	var bold = _v0.bold;
 	var size = _v0.size;
@@ -5970,6 +6111,7 @@ var $surprisetalk$elm_bulma$Bulma$Modifiers$Default = {$: 'Default'};
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Small = {$: 'Small'};
 var $surprisetalk$elm_bulma$Bulma$Layout$heroModifiers = {bold: false, color: $surprisetalk$elm_bulma$Bulma$Modifiers$Default, size: $surprisetalk$elm_bulma$Bulma$Modifiers$Small};
 var $author$project$Main$ChangeHero = {$: 'ChangeHero'};
+var $surprisetalk$elm_bulma$Bulma$Modifiers$Primary = {$: 'Primary'};
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Width2 = {$: 'Width2'};
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Width3 = {$: 'Width3'};
 var $surprisetalk$elm_bulma$Bulma$Classes$button = $elm$html$Html$Attributes$class('button');
@@ -6196,104 +6338,11 @@ var $author$project$Main$heart = A3(
 				]),
 			_List_Nil)
 		]));
-var $surprisetalk$elm_bulma$Bulma$Elements$H1 = {$: 'H1'};
-var $surprisetalk$elm_bulma$Bulma$Elements$H3 = {$: 'H3'};
 var $surprisetalk$elm_bulma$Bulma$Elements$X128 = {$: 'X128'};
-var $elm$html$Html$div = _VirtualDom_node('div');
-var $author$project$Main$styleBold = _List_fromArray(
-	[
-		A2($elm$html$Html$Attributes$style, 'font-family', 'font'),
-		A2($elm$html$Html$Attributes$style, 'font-weight', 'bold')
-	]);
 var $author$project$Main$styleNormal = _List_fromArray(
 	[
 		A2($elm$html$Html$Attributes$style, 'font-family', 'font')
 	]);
-var $surprisetalk$elm_bulma$Bulma$Classes$is3 = $elm$html$Html$Attributes$class('is-3');
-var $surprisetalk$elm_bulma$Bulma$Classes$subtitle = $elm$html$Html$Attributes$class('subtitle');
-var $surprisetalk$elm_bulma$Bulma$Elements$subtitle = function (size) {
-	return A2(
-		$surprisetalk$elm_bulma$Helpers$node,
-		function () {
-			switch (size.$) {
-				case 'H1':
-					return 'h1';
-				case 'H2':
-					return 'h2';
-				case 'H3':
-					return 'h3';
-				case 'H4':
-					return 'h4';
-				case 'H5':
-					return 'h5';
-				default:
-					return 'h6';
-			}
-		}(),
-		_List_fromArray(
-			[
-				$surprisetalk$elm_bulma$Bulma$Classes$subtitle,
-				function () {
-				switch (size.$) {
-					case 'H1':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is1;
-					case 'H2':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is2;
-					case 'H3':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is3;
-					case 'H4':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is4;
-					case 'H5':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is5;
-					default:
-						return $surprisetalk$elm_bulma$Bulma$Classes$is6;
-				}
-			}()
-			]));
-};
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $surprisetalk$elm_bulma$Bulma$Classes$title = $elm$html$Html$Attributes$class('title');
-var $surprisetalk$elm_bulma$Bulma$Elements$title = function (size) {
-	return A2(
-		$surprisetalk$elm_bulma$Helpers$node,
-		function () {
-			switch (size.$) {
-				case 'H1':
-					return 'h1';
-				case 'H2':
-					return 'h2';
-				case 'H3':
-					return 'h3';
-				case 'H4':
-					return 'h4';
-				case 'H5':
-					return 'h5';
-				default:
-					return 'h6';
-			}
-		}(),
-		_List_fromArray(
-			[
-				$surprisetalk$elm_bulma$Bulma$Classes$title,
-				function () {
-				switch (size.$) {
-					case 'H1':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is1;
-					case 'H2':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is2;
-					case 'H3':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is3;
-					case 'H4':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is4;
-					case 'H5':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is5;
-					default:
-						return $surprisetalk$elm_bulma$Bulma$Classes$is6;
-				}
-			}()
-			]));
-};
 var $author$project$Main$profile = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -6318,18 +6367,28 @@ var $author$project$Main$profile = function (model) {
 							]),
 						_List_Nil)
 					])),
-				A3(
-				$surprisetalk$elm_bulma$Bulma$Elements$title,
-				$surprisetalk$elm_bulma$Bulma$Elements$H1,
-				$author$project$Main$styleBold,
+				A2(
+				$elm$html$Html$div,
+				A2(
+					$elm$core$List$append,
+					$author$project$Main$styleBold,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$style, 'font-size', '250%')
+						])),
 				_List_fromArray(
 					[
 						$elm$html$Html$text(model.name)
 					])),
-				A3(
-				$surprisetalk$elm_bulma$Bulma$Elements$subtitle,
-				$surprisetalk$elm_bulma$Bulma$Elements$H3,
-				$author$project$Main$styleNormal,
+				A2(
+				$elm$html$Html$span,
+				A2(
+					$elm$core$List$append,
+					$author$project$Main$styleNormal,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$style, 'font-size', '180%')
+						])),
 				_List_fromArray(
 					[
 						$elm$html$Html$text(model.desc)
@@ -6359,6 +6418,7 @@ var $elm$core$List$repeat = F2(
 	});
 var $surprisetalk$elm_bulma$Bulma$Classes$is10 = $elm$html$Html$Attributes$class('is-10');
 var $surprisetalk$elm_bulma$Bulma$Classes$is11 = $elm$html$Html$Attributes$class('is-11');
+var $surprisetalk$elm_bulma$Bulma$Classes$is3 = $elm$html$Html$Attributes$class('is-3');
 var $surprisetalk$elm_bulma$Bulma$Classes$is9 = $elm$html$Html$Attributes$class('is-9');
 var $surprisetalk$elm_bulma$Bulma$Classes$isAncestor = $elm$html$Html$Attributes$class('is-ancestor');
 var $surprisetalk$elm_bulma$Bulma$Classes$tile = $elm$html$Html$Attributes$class('tile');
@@ -6508,8 +6568,7 @@ var $author$project$Main$panel = function (model) {
 									{color: $surprisetalk$elm_bulma$Bulma$Modifiers$Primary, outlined: true, size: $surprisetalk$elm_bulma$Bulma$Modifiers$Small}),
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick($author$project$Main$ChangeHero),
-										A2($elm$html$Html$Attributes$style, 'margin-top', '5%')
+										$elm$html$Html$Events$onClick($author$project$Main$ChangeHero)
 									]),
 								_List_fromArray(
 									[
@@ -6532,15 +6591,8 @@ var $author$project$Main$panel = function (model) {
 							[$author$project$Main$heart]))))
 			]));
 };
+var $surprisetalk$elm_bulma$Bulma$Elements$H1 = {$: 'H1'};
 var $surprisetalk$elm_bulma$Bulma$Elements$H2 = {$: 'H2'};
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
 var $author$project$Main$styleTitle = _List_fromArray(
 	[
 		A2($elm$html$Html$Attributes$style, 'font-family', 'font'),
@@ -6549,6 +6601,47 @@ var $author$project$Main$styleTitle = _List_fromArray(
 	]);
 var $surprisetalk$elm_bulma$Bulma$Classes$hasTextCentered = $elm$html$Html$Attributes$class('has-text-centered');
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered = $surprisetalk$elm_bulma$Bulma$Classes$hasTextCentered;
+var $surprisetalk$elm_bulma$Bulma$Classes$title = $elm$html$Html$Attributes$class('title');
+var $surprisetalk$elm_bulma$Bulma$Elements$title = function (size) {
+	return A2(
+		$surprisetalk$elm_bulma$Helpers$node,
+		function () {
+			switch (size.$) {
+				case 'H1':
+					return 'h1';
+				case 'H2':
+					return 'h2';
+				case 'H3':
+					return 'h3';
+				case 'H4':
+					return 'h4';
+				case 'H5':
+					return 'h5';
+				default:
+					return 'h6';
+			}
+		}(),
+		_List_fromArray(
+			[
+				$surprisetalk$elm_bulma$Bulma$Classes$title,
+				function () {
+				switch (size.$) {
+					case 'H1':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is1;
+					case 'H2':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is2;
+					case 'H3':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is3;
+					case 'H4':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is4;
+					case 'H5':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is5;
+					default:
+						return $surprisetalk$elm_bulma$Bulma$Classes$is6;
+				}
+			}()
+			]));
+};
 var $author$project$Main$score = function (model) {
 	return A2(
 		$surprisetalk$elm_bulma$Bulma$Layout$container,
@@ -6564,7 +6657,7 @@ var $author$project$Main$score = function (model) {
 					$author$project$Main$styleTitle,
 					_List_fromArray(
 						[
-							A2($elm$html$Html$Attributes$style, 'margin-bottom', '3%')
+							A2($elm$html$Html$Attributes$style, 'margin-bottom', '10px')
 						])),
 				_List_fromArray(
 					[
@@ -6578,7 +6671,7 @@ var $author$project$Main$score = function (model) {
 					$author$project$Main$styleNormal,
 					_List_fromArray(
 						[
-							A2($elm$html$Html$Attributes$style, 'margin-bottom', '3%')
+							A2($elm$html$Html$Attributes$style, 'margin-bottom', '50px')
 						])),
 				_List_fromArray(
 					[
@@ -6607,7 +6700,7 @@ var $author$project$Main$body = function (model) {
 						_List_fromArray(
 							[
 								$author$project$Main$score(model),
-								$author$project$Main$deck,
+								$author$project$Main$deck(model),
 								$author$project$Main$panel(model)
 							]))
 					]))
