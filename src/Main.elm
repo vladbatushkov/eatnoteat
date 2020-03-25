@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Animation exposing (px)
-import Animation.Messenger exposing (send)
+import Animation.Messenger
 import Array exposing (..)
 import Browser exposing (..)
 import Bulma.CDN exposing (..)
@@ -99,9 +99,8 @@ type alias BestResult =
 
 
 type alias Widget =
-    { onHover : Msg
-    , onClick : Msg
-    , state : Animation.State
+    { onClick : Msg
+    , state : Animation.Messenger.State Msg
     }
 
 
@@ -176,13 +175,12 @@ init _ =
 type Msg
     = Eat (List Tags)
     | ChangeHero
-    | Shadow Int
     | FadeOutFadeIn Int
     | Animate Animation.Msg
     | Shuffle (List Food)
 
 
-onState : (Animation.State -> Animation.State) -> Food -> Food
+onState : (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> Food -> Food
 onState stateFn food =
     let
         widget =
@@ -191,29 +189,7 @@ onState stateFn food =
     { food | widget = { widget | state = stateFn widget.state } }
 
 
-onIndex : Int -> List a -> (a -> a) -> List a
-onIndex i list fn =
-    List.indexedMap
-        (\j val ->
-            if i == j then
-                fn val
-
-            else
-                val
-        )
-        list
-
-
-onWidgetState : Model -> Int -> (Animation.State -> Animation.State) -> Model
-onWidgetState model index fn =
-    { model
-        | food =
-            onIndex index model.food <|
-                onState fn
-    }
-
-
-onWidgetsState : Model -> (Animation.State -> Animation.State) -> Model
+onWidgetsState : Model -> (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> Model
 onWidgetsState model fn =
     { model
         | food =
@@ -265,21 +241,6 @@ update action model =
             in
             ( { model | hero = nextHero model.hero, score = 0, hp = 3, bestResult = result }, generate Shuffle (shuffle defaultFood model.food) )
 
-        Shadow i ->
-            ( onWidgetState model i <|
-                Animation.interrupt
-                    [ Animation.to
-                        [ Animation.translate (px 10) (px 10)
-                        , Animation.scale 1.5
-                        ]
-                    , Animation.to
-                        [ Animation.translate (px 0) (px 0)
-                        , Animation.scale 1
-                        ]
-                    ]
-            , Cmd.none
-            )
-
         FadeOutFadeIn i ->
             let
                 tags =
@@ -290,21 +251,21 @@ update action model =
                         Nothing ->
                             []
             in
-            update (Eat tags) <|
-                onWidgetsState model <|
+                (onWidgetsState model <|
                     Animation.interrupt
                         [ Animation.to
                             [ Animation.opacity 0
                             ]
+                        , Animation.Messenger.send (Eat tags)
                         , Animation.to
                             [ Animation.opacity 1
                             ]
-                        ]
+                        ], Cmd.none)
 
-        Animate time ->
+        Animate aMsg ->
             ( { model
                 | food =
-                    List.map (onState (Animation.update time))
+                    List.map (onState (Animation.update aMsg))
                         model.food
               }
             , Cmd.none
@@ -370,7 +331,6 @@ subscriptions model =
     Animation.subscription Animate <|
         List.map .state <|
             List.map .widget model.food
-
 
 
 -- VIEW
@@ -541,8 +501,7 @@ styleNormal =
 
 wrapAnimation : Int -> Widget
 wrapAnimation i =
-    { onHover = Shadow i
-    , onClick = FadeOutFadeIn i
+    { onClick = FadeOutFadeIn i
     , state =
         Animation.style
             [ Animation.translate (px 0) (px 0)

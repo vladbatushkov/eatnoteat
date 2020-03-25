@@ -5243,9 +5243,6 @@ var $author$project$Main$Sweets = {$: 'Sweets'};
 var $author$project$Main$FadeOutFadeIn = function (a) {
 	return {$: 'FadeOutFadeIn', a: a};
 };
-var $author$project$Main$Shadow = function (a) {
-	return {$: 'Shadow', a: a};
-};
 var $mdgriffith$elm_style_animation$Animation$Model$Property = F2(
 	function (a, b) {
 		return {$: 'Property', a: a, b: b};
@@ -6008,7 +6005,6 @@ var $mdgriffith$elm_style_animation$Animation$translate = F2(
 var $author$project$Main$wrapAnimation = function (i) {
 	return {
 		onClick: $author$project$Main$FadeOutFadeIn(i),
-		onHover: $author$project$Main$Shadow(i),
 		state: $mdgriffith$elm_style_animation$Animation$style(
 			_List_fromArray(
 				[
@@ -6587,28 +6583,6 @@ var $author$project$Main$onState = F2(
 					})
 			});
 	});
-var $author$project$Main$onIndex = F3(
-	function (i, list, fn) {
-		return A2(
-			$elm$core$List$indexedMap,
-			F2(
-				function (j, val) {
-					return _Utils_eq(i, j) ? fn(val) : val;
-				}),
-			list);
-	});
-var $author$project$Main$onWidgetState = F3(
-	function (model, index, fn) {
-		return _Utils_update(
-			model,
-			{
-				food: A3(
-					$author$project$Main$onIndex,
-					index,
-					model.food,
-					$author$project$Main$onState(fn))
-			});
-	});
 var $author$project$Main$onWidgetsState = F2(
 	function (model, fn) {
 		return _Utils_update(
@@ -6620,9 +6594,6 @@ var $author$project$Main$onWidgetsState = F2(
 					model.food)
 			});
 	});
-var $mdgriffith$elm_style_animation$Animation$scale = function (valX) {
-	return A3($mdgriffith$elm_style_animation$Animation$custom, 'scale', valX, '');
-};
 var $author$project$Main$selectBestResult = F2(
 	function (current, next) {
 		if (current.$ === 'Just') {
@@ -6632,6 +6603,12 @@ var $author$project$Main$selectBestResult = F2(
 			return (!next.score) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(next);
 		}
 	});
+var $mdgriffith$elm_style_animation$Animation$Model$Send = function (a) {
+	return {$: 'Send', a: a};
+};
+var $mdgriffith$elm_style_animation$Animation$Messenger$send = function (msg) {
+	return $mdgriffith$elm_style_animation$Animation$Model$Send(msg);
+};
 var $elm$random$Random$andThen = F2(
 	function (callback, _v0) {
 		var genA = _v0.a;
@@ -8425,36 +8402,6 @@ var $author$project$Main$update = F2(
 						$elm$random$Random$generate,
 						$author$project$Main$Shuffle,
 						A2($author$project$Main$shuffle, $author$project$Main$defaultFood, model.food)));
-			case 'Shadow':
-				var i = action.a;
-				return _Utils_Tuple2(
-					A3(
-						$author$project$Main$onWidgetState,
-						model,
-						i,
-						$mdgriffith$elm_style_animation$Animation$interrupt(
-							_List_fromArray(
-								[
-									$mdgriffith$elm_style_animation$Animation$to(
-									_List_fromArray(
-										[
-											A2(
-											$mdgriffith$elm_style_animation$Animation$translate,
-											$mdgriffith$elm_style_animation$Animation$px(10),
-											$mdgriffith$elm_style_animation$Animation$px(10)),
-											$mdgriffith$elm_style_animation$Animation$scale(1.5)
-										])),
-									$mdgriffith$elm_style_animation$Animation$to(
-									_List_fromArray(
-										[
-											A2(
-											$mdgriffith$elm_style_animation$Animation$translate,
-											$mdgriffith$elm_style_animation$Animation$px(0),
-											$mdgriffith$elm_style_animation$Animation$px(0)),
-											$mdgriffith$elm_style_animation$Animation$scale(1)
-										]))
-								]))),
-					$elm$core$Platform$Cmd$none);
 			case 'FadeOutFadeIn':
 				var i = action.a;
 				var tags = function () {
@@ -8475,9 +8422,7 @@ var $author$project$Main$update = F2(
 						return _List_Nil;
 					}
 				}();
-				return A2(
-					$author$project$Main$update,
-					$author$project$Main$Eat(tags),
+				return _Utils_Tuple2(
 					A2(
 						$author$project$Main$onWidgetsState,
 						model,
@@ -8489,14 +8434,17 @@ var $author$project$Main$update = F2(
 										[
 											$mdgriffith$elm_style_animation$Animation$opacity(0)
 										])),
+									$mdgriffith$elm_style_animation$Animation$Messenger$send(
+									$author$project$Main$Eat(tags)),
 									$mdgriffith$elm_style_animation$Animation$to(
 									_List_fromArray(
 										[
 											$mdgriffith$elm_style_animation$Animation$opacity(1)
 										]))
-								]))));
+								]))),
+					$elm$core$Platform$Cmd$none);
 			default:
-				var time = action.a;
+				var aMsg = action.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -8504,7 +8452,7 @@ var $author$project$Main$update = F2(
 							food: A2(
 								$elm$core$List$map,
 								$author$project$Main$onState(
-									$mdgriffith$elm_style_animation$Animation$update(time)),
+									$mdgriffith$elm_style_animation$Animation$update(aMsg)),
 								model.food)
 						}),
 					$elm$core$Platform$Cmd$none);
