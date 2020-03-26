@@ -6193,17 +6193,6 @@ var $author$project$Main$KeepPlaying = {$: 'KeepPlaying'};
 var $author$project$Main$Shuffle = function (a) {
 	return {$: 'Shuffle', a: a};
 };
-var $author$project$Main$applyAnimationState = F2(
-	function (state, food) {
-		var widget = food.widget;
-		return _Utils_update(
-			food,
-			{
-				widget: _Utils_update(
-					widget,
-					{state: state})
-			});
-	});
 var $author$project$Main$applyAnimationToSingle = F2(
 	function (fn, food) {
 		var widget = food.widget;
@@ -8409,7 +8398,12 @@ var $author$project$Main$update = F2(
 								food: A2(
 									$elm$core$List$map,
 									function (x) {
-										return A2($author$project$Main$applyAnimationState, state, x);
+										return A2(
+											$author$project$Main$applyAnimationToSingle,
+											function (_v6) {
+												return state;
+											},
+											x);
 									},
 									model.food)
 							}),

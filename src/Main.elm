@@ -180,15 +180,6 @@ type Msg
     | Shuffle (List Food)
 
 
-applyAnimationState : Animation.Messenger.State Msg -> Food -> Food
-applyAnimationState state food =
-    let
-        widget =
-            food.widget
-    in
-    { food | widget = { widget | state = state } }
-
-
 applyAnimationToSingle : (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> Food -> Food
 applyAnimationToSingle fn food =
     let
@@ -284,7 +275,7 @@ update action model =
                     in
                         ( { model
                             | food =
-                                List.map (\x -> applyAnimationState state x)
+                                List.map (\x -> applyAnimationToSingle (\_ -> state) x)
                                     model.food
                         }
                         , cmd
