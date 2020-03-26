@@ -176,8 +176,17 @@ type Msg
     = Eat (List Tags)
     | ChangeHero
     | FadeOutFadeIn Int
-    | Animate Animation.Msg
+    | Animate Int Animation.Msg
     | Shuffle (List Food)
+
+
+applyAnimationState : Animation.Messenger.State Msg -> Food -> Food
+applyAnimationState state food =
+    let
+        widget =
+            food.widget
+    in
+    { food | widget = { widget | state = state } }
 
 
 applyAnimationToSingle : (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> Food -> Food
@@ -243,7 +252,8 @@ update action model =
 
         FadeOutFadeIn i ->
             let
-                tags = case Array.get i <| Array.fromList <| List.map .tags allFood of
+                tags =
+                    case Array.get i <| Array.fromList <| List.map .tags allFood of
                         Just t ->
                             t
 
@@ -255,22 +265,33 @@ update action model =
                     [ Animation.to
                         [ Animation.opacity 0
                         ]
+                    , Animation.Messenger.send (Eat tags)
                     , Animation.to
                         [ Animation.opacity 1
                         ]
-                    , Animation.Messenger.send (Eat tags)
                     ]
             , Cmd.none
             )
 
-        Animate aMsg ->
-            ( { model
-                | food =
-                    List.map (\f -> applyAnimationToSingle (Animation.update aMsg) f)
-                        model.food
-              }
-            , Cmd.none
-            )
+        Animate i aMsg ->
+            case Array.get i <| Array.fromList model.food of
+                Just f -> 
+                    let         
+                        widget = f.widget 
+
+                        ( state, cmd ) =
+                            Animation.Messenger.update aMsg widget.state 
+                    in
+                        ( { model
+                            | food =
+                                List.map (\x -> applyAnimationState state x)
+                                    model.food
+                        }
+                        , cmd
+                        )
+
+                Nothing ->
+                    (model, Cmd.none)
 
 
 selectBestResult : Maybe BestResult -> BestResult -> Maybe BestResult
@@ -329,9 +350,10 @@ nextHero hero =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Animation.subscription Animate <|
-        List.map .state <|
-            List.map .widget model.food
+    let
+        states = List.map (\x -> { state = x.widget.state, i = x.id }) <| List.map (\y ->  { id = y.id, widget = y.widget }) model.food
+    in
+        Sub.batch (List.map (\z -> Animation.subscription (Animate z.i) [ z.state ]) states)
 
 
 

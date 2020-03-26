@@ -6006,9 +6006,11 @@ var $author$project$Main$init = function (_v0) {
 		A5($author$project$Main$Model, $elm$core$Maybe$Nothing, 0, 3, $author$project$Main$arnold, $author$project$Main$allFood),
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Main$Animate = function (a) {
-	return {$: 'Animate', a: a};
-};
+var $author$project$Main$Animate = F2(
+	function (a, b) {
+		return {$: 'Animate', a: a, b: b};
+	});
+var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $mdgriffith$elm_style_animation$Animation$Model$Tick = function (a) {
 	return {$: 'Tick', a: a};
 };
@@ -6017,7 +6019,6 @@ var $mdgriffith$elm_style_animation$Animation$isRunning = function (_v0) {
 	return model.running;
 };
 var $elm$core$Platform$Sub$map = _Platform_map;
-var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $elm$browser$Browser$AnimationManager$Time = function (a) {
 	return {$: 'Time', a: a};
@@ -6157,20 +6158,28 @@ var $mdgriffith$elm_style_animation$Animation$subscription = F2(
 			$elm$browser$Browser$Events$onAnimationFrame($mdgriffith$elm_style_animation$Animation$Model$Tick)) : $elm$core$Platform$Sub$none;
 	});
 var $author$project$Main$subscriptions = function (model) {
-	return A2(
-		$mdgriffith$elm_style_animation$Animation$subscription,
-		$author$project$Main$Animate,
+	var states = A2(
+		$elm$core$List$map,
+		function (x) {
+			return {i: x.id, state: x.widget.state};
+		},
 		A2(
 			$elm$core$List$map,
-			function ($) {
-				return $.state;
+			function (y) {
+				return {id: y.id, widget: y.widget};
 			},
-			A2(
-				$elm$core$List$map,
-				function ($) {
-					return $.widget;
-				},
-				model.food)));
+			model.food));
+	return $elm$core$Platform$Sub$batch(
+		A2(
+			$elm$core$List$map,
+			function (z) {
+				return A2(
+					$mdgriffith$elm_style_animation$Animation$subscription,
+					$author$project$Main$Animate(z.i),
+					_List_fromArray(
+						[z.state]));
+			},
+			states));
 };
 var $author$project$Main$BestResult = F2(
 	function (name, score) {
@@ -6184,6 +6193,17 @@ var $author$project$Main$KeepPlaying = {$: 'KeepPlaying'};
 var $author$project$Main$Shuffle = function (a) {
 	return {$: 'Shuffle', a: a};
 };
+var $author$project$Main$applyAnimationState = F2(
+	function (state, food) {
+		var widget = food.widget;
+		return _Utils_update(
+			food,
+			{
+				widget: _Utils_update(
+					widget,
+					{state: state})
+			});
+	});
 var $author$project$Main$applyAnimationToSingle = F2(
 	function (fn, food) {
 		var widget = food.widget;
@@ -8264,9 +8284,9 @@ var $mdgriffith$elm_style_animation$Animation$Model$updateAnimation = F2(
 					},
 					sentMessages)));
 	});
-var $mdgriffith$elm_style_animation$Animation$update = F2(
+var $mdgriffith$elm_style_animation$Animation$Messenger$update = F2(
 	function (tick, animation) {
-		return A2($mdgriffith$elm_style_animation$Animation$Model$updateAnimation, tick, animation).a;
+		return A2($mdgriffith$elm_style_animation$Animation$Model$updateAnimation, tick, animation);
 	});
 var $author$project$Main$update = F2(
 	function (action, model) {
@@ -8360,32 +8380,43 @@ var $author$project$Main$update = F2(
 										[
 											$mdgriffith$elm_style_animation$Animation$opacity(0)
 										])),
+									$mdgriffith$elm_style_animation$Animation$Messenger$send(
+									$author$project$Main$Eat(tags)),
 									$mdgriffith$elm_style_animation$Animation$to(
 									_List_fromArray(
 										[
 											$mdgriffith$elm_style_animation$Animation$opacity(1)
-										])),
-									$mdgriffith$elm_style_animation$Animation$Messenger$send(
-									$author$project$Main$Eat(tags))
+										]))
 								]))),
 					$elm$core$Platform$Cmd$none);
 			default:
-				var aMsg = action.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							food: A2(
-								$elm$core$List$map,
-								function (f) {
-									return A2(
-										$author$project$Main$applyAnimationToSingle,
-										$mdgriffith$elm_style_animation$Animation$update(aMsg),
-										f);
-								},
-								model.food)
-						}),
-					$elm$core$Platform$Cmd$none);
+				var i = action.a;
+				var aMsg = action.b;
+				var _v4 = A2(
+					$elm$core$Array$get,
+					i,
+					$elm$core$Array$fromList(model.food));
+				if (_v4.$ === 'Just') {
+					var f = _v4.a;
+					var widget = f.widget;
+					var _v5 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, widget.state);
+					var state = _v5.a;
+					var cmd = _v5.b;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								food: A2(
+									$elm$core$List$map,
+									function (x) {
+										return A2($author$project$Main$applyAnimationState, state, x);
+									},
+									model.food)
+							}),
+						cmd);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Large = {$: 'Large'};
