@@ -5272,14 +5272,6 @@ var $mdgriffith$elm_style_animation$Animation$custom = F3(
 var $mdgriffith$elm_style_animation$Animation$opacity = function (val) {
 	return A3($mdgriffith$elm_style_animation$Animation$custom, 'opacity', val, '');
 };
-var $mdgriffith$elm_style_animation$Animation$Length = F2(
-	function (a, b) {
-		return {$: 'Length', a: a, b: b};
-	});
-var $mdgriffith$elm_style_animation$Animation$Px = {$: 'Px'};
-var $mdgriffith$elm_style_animation$Animation$px = function (myPx) {
-	return A2($mdgriffith$elm_style_animation$Animation$Length, myPx, $mdgriffith$elm_style_animation$Animation$Px);
-};
 var $mdgriffith$elm_style_animation$Animation$Model$Animation = function (a) {
 	return {$: 'Animation', a: a};
 };
@@ -5938,80 +5930,12 @@ var $mdgriffith$elm_style_animation$Animation$style = function (props) {
 			$mdgriffith$elm_style_animation$Animation$setDefaultInterpolation,
 			$mdgriffith$elm_style_animation$Animation$Render$warnForDoubleListedProperties(props)));
 };
-var $mdgriffith$elm_style_animation$Animation$length2 = F3(
-	function (name, _v0, _v1) {
-		var val = _v0.a;
-		var len = _v0.b;
-		var val2 = _v1.a;
-		var len2 = _v1.b;
-		return A3(
-			$mdgriffith$elm_style_animation$Animation$Model$Property2,
-			name,
-			A2($mdgriffith$elm_style_animation$Animation$initMotion, val, len),
-			A2($mdgriffith$elm_style_animation$Animation$initMotion, val2, len2));
-	});
-var $mdgriffith$elm_style_animation$Animation$lengthUnitName = function (unit) {
-	switch (unit.$) {
-		case 'NoUnit':
-			return '';
-		case 'Px':
-			return 'px';
-		case 'Percent':
-			return '%';
-		case 'Rem':
-			return 'rem';
-		case 'Em':
-			return 'em';
-		case 'Ex':
-			return 'ex';
-		case 'Ch':
-			return 'ch';
-		case 'Vh':
-			return 'vh';
-		case 'Vw':
-			return 'vw';
-		case 'Vmin':
-			return 'vmin';
-		case 'Vmax':
-			return 'vmax';
-		case 'Mm':
-			return 'mm';
-		case 'Cm':
-			return 'cm';
-		case 'In':
-			return 'in';
-		case 'Pt':
-			return 'pt';
-		default:
-			return 'pc';
-	}
-};
-var $mdgriffith$elm_style_animation$Animation$translate = F2(
-	function (_v0, _v1) {
-		var valX = _v0.a;
-		var len1 = _v0.b;
-		var valY = _v1.a;
-		var len2 = _v1.b;
-		return A3(
-			$mdgriffith$elm_style_animation$Animation$length2,
-			'translate',
-			_Utils_Tuple2(
-				valX,
-				$mdgriffith$elm_style_animation$Animation$lengthUnitName(len1)),
-			_Utils_Tuple2(
-				valY,
-				$mdgriffith$elm_style_animation$Animation$lengthUnitName(len2)));
-	});
 var $author$project$Main$wrapAnimation = function (i) {
 	return {
 		onClick: $author$project$Main$FadeOutFadeIn(i),
 		state: $mdgriffith$elm_style_animation$Animation$style(
 			_List_fromArray(
 				[
-					A2(
-					$mdgriffith$elm_style_animation$Animation$translate,
-					$mdgriffith$elm_style_animation$Animation$px(0),
-					$mdgriffith$elm_style_animation$Animation$px(0)),
 					$mdgriffith$elm_style_animation$Animation$opacity(1)
 				]))
 	};
@@ -6260,6 +6184,32 @@ var $author$project$Main$KeepPlaying = {$: 'KeepPlaying'};
 var $author$project$Main$Shuffle = function (a) {
 	return {$: 'Shuffle', a: a};
 };
+var $author$project$Main$applyAnimationToSingle = F2(
+	function (fn, food) {
+		var widget = food.widget;
+		return _Utils_update(
+			food,
+			{
+				widget: _Utils_update(
+					widget,
+					{
+						state: fn(widget.state)
+					})
+			});
+	});
+var $author$project$Main$applyAnimationToAll = F2(
+	function (model, fn) {
+		return _Utils_update(
+			model,
+			{
+				food: A2(
+					$elm$core$List$map,
+					function (f) {
+						return A2($author$project$Main$applyAnimationToSingle, fn, f);
+					},
+					model.food)
+			});
+	});
 var $elm$core$List$isEmpty = function (xs) {
 	if (!xs.b) {
 		return true;
@@ -6570,30 +6520,6 @@ var $author$project$Main$nextHero = function (hero) {
 			return $author$project$Main$arnold;
 	}
 };
-var $author$project$Main$onState = F2(
-	function (stateFn, food) {
-		var widget = food.widget;
-		return _Utils_update(
-			food,
-			{
-				widget: _Utils_update(
-					widget,
-					{
-						state: stateFn(widget.state)
-					})
-			});
-	});
-var $author$project$Main$onWidgetsState = F2(
-	function (model, fn) {
-		return _Utils_update(
-			model,
-			{
-				food: A2(
-					$elm$core$List$map,
-					$author$project$Main$onState(fn),
-					model.food)
-			});
-	});
 var $author$project$Main$selectBestResult = F2(
 	function (current, next) {
 		if (current.$ === 'Just') {
@@ -8424,7 +8350,7 @@ var $author$project$Main$update = F2(
 				}();
 				return _Utils_Tuple2(
 					A2(
-						$author$project$Main$onWidgetsState,
+						$author$project$Main$applyAnimationToAll,
 						model,
 						$mdgriffith$elm_style_animation$Animation$interrupt(
 							_List_fromArray(
@@ -8434,13 +8360,13 @@ var $author$project$Main$update = F2(
 										[
 											$mdgriffith$elm_style_animation$Animation$opacity(0)
 										])),
-									$mdgriffith$elm_style_animation$Animation$Messenger$send(
-									$author$project$Main$Eat(tags)),
 									$mdgriffith$elm_style_animation$Animation$to(
 									_List_fromArray(
 										[
 											$mdgriffith$elm_style_animation$Animation$opacity(1)
-										]))
+										])),
+									$mdgriffith$elm_style_animation$Animation$Messenger$send(
+									$author$project$Main$Eat(tags))
 								]))),
 					$elm$core$Platform$Cmd$none);
 			default:
@@ -8451,8 +8377,12 @@ var $author$project$Main$update = F2(
 						{
 							food: A2(
 								$elm$core$List$map,
-								$author$project$Main$onState(
-									$mdgriffith$elm_style_animation$Animation$update(aMsg)),
+								function (f) {
+									return A2(
+										$author$project$Main$applyAnimationToSingle,
+										$mdgriffith$elm_style_animation$Animation$update(aMsg),
+										f);
+								},
 								model.food)
 						}),
 					$elm$core$Platform$Cmd$none);
@@ -9491,12 +9421,10 @@ var $author$project$Main$card = function (model) {
 				A3(
 				$surprisetalk$elm_bulma$Bulma$Elements$image,
 				$surprisetalk$elm_bulma$Bulma$Elements$OneByOne($surprisetalk$elm_bulma$Bulma$Elements$Unbounded),
-				_Utils_ap(
-					$mdgriffith$elm_style_animation$Animation$render(widget.state),
-					_List_fromArray(
-						[
-							A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
-						])),
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+					]),
 				_List_fromArray(
 					[
 						A2(

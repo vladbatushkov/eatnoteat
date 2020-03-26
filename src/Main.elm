@@ -180,20 +180,20 @@ type Msg
     | Shuffle (List Food)
 
 
-onState : (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> Food -> Food
-onState stateFn food =
+applyAnimationToSingle : (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> Food -> Food
+applyAnimationToSingle fn food =
     let
         widget =
             food.widget
     in
-    { food | widget = { widget | state = stateFn widget.state } }
+    { food | widget = { widget | state = fn widget.state } }
 
 
-onWidgetsState : Model -> (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> Model
-onWidgetsState model fn =
+applyAnimationToAll : Model -> (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> Model
+applyAnimationToAll model fn =
     { model
         | food =
-            List.map (onState fn) model.food
+            List.map (\f -> applyAnimationToSingle fn f) model.food
     }
 
 
@@ -243,29 +243,30 @@ update action model =
 
         FadeOutFadeIn i ->
             let
-                tags =
-                    case Array.get i <| Array.fromList <| List.map .tags allFood of
+                tags = case Array.get i <| Array.fromList <| List.map .tags allFood of
                         Just t ->
                             t
 
                         Nothing ->
                             []
             in
-                (onWidgetsState model <|
-                    Animation.interrupt
-                        [ Animation.to
-                            [ Animation.opacity 0
-                            ]
-                        , Animation.Messenger.send (Eat tags)
-                        , Animation.to
-                            [ Animation.opacity 1
-                            ]
-                        ], Cmd.none)
+            ( applyAnimationToAll model <|
+                Animation.interrupt
+                    [ Animation.to
+                        [ Animation.opacity 0
+                        ]
+                    , Animation.to
+                        [ Animation.opacity 1
+                        ]
+                    , Animation.Messenger.send (Eat tags)
+                    ]
+            , Cmd.none
+            )
 
         Animate aMsg ->
             ( { model
                 | food =
-                    List.map (onState (Animation.update aMsg))
+                    List.map (\f -> applyAnimationToSingle (Animation.update aMsg) f)
                         model.food
               }
             , Cmd.none
@@ -331,6 +332,7 @@ subscriptions model =
     Animation.subscription Animate <|
         List.map .state <|
             List.map .widget model.food
+
 
 
 -- VIEW
@@ -405,7 +407,7 @@ card model =
     column columnModifiers
         (Animation.render widget.state ++ [ style "cursor" "pointer", onClick widget.onClick ])
         [ image (OneByOne Unbounded)
-            (Animation.render widget.state ++ [ style "cursor" "pointer" ])
+            [ style "cursor" "pointer" ]
             [ img [ src model.picture, style "border-radius" "10px" ] []
             ]
         , div
@@ -504,8 +506,7 @@ wrapAnimation i =
     { onClick = FadeOutFadeIn i
     , state =
         Animation.style
-            [ Animation.translate (px 0) (px 0)
-            , Animation.opacity 1
+            [ Animation.opacity 1
             ]
     }
 
