@@ -86,9 +86,10 @@ main =
 type alias Model =
     { bestResult : Maybe BestResult
     , score : Int
-    , hp : HealthPoint
+    , hp : Health
     , hero : Hero
     , food : List Food
+    , foodState : Animation.Messenger.State Msg
     }
 
 
@@ -98,15 +99,9 @@ type alias BestResult =
     }
 
 
-type alias Widget =
-    { onClick : Msg
-    , state : Animation.Messenger.State Msg
-    }
-
-
-type alias HealthPoint =
+type alias Health =
     { value : Int
-    , widget : Widget
+    , state : Animation.Messenger.State Msg
     }
 
 
@@ -115,7 +110,6 @@ type alias Food =
     , name : String
     , tags : List Tags
     , picture : String
-    , widget : Widget
     }
 
 
@@ -149,7 +143,7 @@ type GameState
 
 type AnimatedObject
     = FoodObject
-    | HealthPointObject
+    | HealthObject
 
 
 arnold : Hero
@@ -172,11 +166,24 @@ init _ =
     ( Model
         Nothing
         0
-        defaultHealth
+        initHealth
         arnold
         allFood
+        (Animation.style
+            [ Animation.opacity 1
+            ]
+        )
     , Cmd.none
     )
+
+
+initHealth : Health
+initHealth =
+    Health 3
+        (Animation.style
+            [ Animation.opacity 1
+            ]
+        )
 
 
 
@@ -188,20 +195,20 @@ type Msg
     | Damage Int
     | ChangeHero
     | Shuffle (List Food)
-    | FadeOutFadeIn Int
+    | FadeOutFadeIn (List Tags)
     | Disappear Int
     | Animate Int AnimatedObject Animation.Msg
     | DoNothing
 
 
-applyAnimationToSingle : Widget -> (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> Widget
-applyAnimationToSingle widget fn =
-    { widget | state = fn widget.state }
+applyAnimationToSingle : Animation.Messenger.State Msg -> (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> Animation.Messenger.State Msg
+applyAnimationToSingle state fn =
+    fn state
 
 
-applyAnimationToAll : List Widget -> (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> List Widget
-applyAnimationToAll widgets fn =
-    List.map (\x -> applyAnimationToSingle x fn) widgets
+applyAnimationToAll : List (Animation.Messenger.State Msg) -> (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> List (Animation.Messenger.State Msg)
+applyAnimationToAll states fn =
+    List.map fn states
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -212,11 +219,11 @@ update action model =
 
         Damage points ->
             let
-                hp =
+                healthLeft =
                     model.hp.value - points
 
                 gameState =
-                    if hp == 0 then
+                    if healthLeft == 0 then
                         GameOver
 
                     else
@@ -227,7 +234,7 @@ update action model =
                     update ChangeHero model
 
                 KeepPlaying ->
-                    ( { model | hp = HealthPoint hp wrapAnimationHealthPoint }, Cmd.none )
+                    ( { model | hp = Health healthLeft model.hp.state }, Cmd.none )
 
         Eat points ->
             let
@@ -239,8 +246,8 @@ update action model =
             in
             ( { model | score = model.score + points, bestResult = result }, generate Shuffle (shuffle defaultFood model.food) )
 
-        Shuffle randomFood ->
-            ( { model | food = randomFood }, Cmd.none )
+        Shuffle randomFoods ->
+            ( { model | food = randomFoods }, Cmd.none )
 
         ChangeHero ->
             let
@@ -250,18 +257,10 @@ update action model =
                 result =
                     selectBestResult model.bestResult (BestResult hero.name model.score)
             in
-            ( { model | hero = nextHero model.hero, score = 0, hp = defaultHealth, bestResult = result }, generate Shuffle (shuffle defaultFood model.food) )
+            ( { model | hero = nextHero model.hero, score = 0, hp = initHealth, bestResult = result }, generate Shuffle (shuffle defaultFood model.food) )
 
-        FadeOutFadeIn i ->
+        FadeOutFadeIn tags ->
             let
-                tags =
-                    case Array.get i <| Array.fromList <| List.map .tags allFood of
-                        Just t ->
-                            t
-
-                        Nothing ->
-                            []
-
                 ( eatPoints, damagePoints ) =
                     calcEat model tags
 
@@ -273,25 +272,18 @@ update action model =
                         DoNothing
             in
             ( { model
-                | food =
-                    List.map
-                        (\x ->
-                            { x
-                                | widget =
-                                    applyAnimationToSingle x.widget <|
-                                        Animation.queue
-                                            [ Animation.to
-                                                [ Animation.opacity 0
-                                                ]
-                                            , Animation.Messenger.send <| Eat eatPoints
-                                            , Animation.Messenger.send damageAnimation
-                                            , Animation.to
-                                                [ Animation.opacity 1
-                                                ]
-                                            ]
-                            }
-                        )
-                        model.food
+                | foodState =
+                    Animation.queue
+                        [ Animation.to
+                            [ Animation.opacity 0
+                            ]
+                        , Animation.Messenger.send <| Eat eatPoints
+                        , Animation.Messenger.send damageAnimation
+                        , Animation.to
+                            [ Animation.opacity 1
+                            ]
+                        ]
+                        model.foodState
               }
             , Cmd.none
             )
@@ -304,8 +296,8 @@ update action model =
             ( { model
                 | hp =
                     { hp
-                        | widget =
-                            applyAnimationToSingle hp.widget <|
+                        | state =
+                            applyAnimationToSingle model.hp.state <|
                                 Animation.interrupt
                                     [ Animation.to
                                         [ Animation.translate (px 100) (px 100)
@@ -317,43 +309,33 @@ update action model =
             , Cmd.none
             )
 
-        Animate i ao aMsg ->
-            case ao of
-                HealthPointObject ->
+        Animate _ aObject aMsg ->
+            case aObject of
+                HealthObject ->
                     let
                         hp =
                             model.hp
 
                         ( stateHp, cmdHp ) =
-                            Animation.Messenger.update aMsg hp.widget.state
+                            Animation.Messenger.update aMsg hp.state
                     in
                     ( { model
                         | hp =
-                            { hp | widget = applyAnimationToSingle hp.widget (\_ -> stateHp) }
+                            { hp | state = stateHp }
                       }
                     , cmdHp
                     )
 
                 FoodObject ->
-                    case Array.get i <| Array.fromList model.food of
-                        Just f ->
-                            let
-                                widget =
-                                    f.widget
-
-                                ( stateFood, cmdFood ) =
-                                    Animation.Messenger.update aMsg widget.state
-                            in
-                            ( { model
-                                | food =
-                                    List.map (\x -> { x | widget = applyAnimationToSingle x.widget (\_ -> stateFood) })
-                                        model.food
-                              }
-                            , cmdFood
-                            )
-
-                        Nothing ->
-                            ( model, Cmd.none )
+                    let
+                        ( stateFood, cmdFood ) =
+                            Animation.Messenger.update aMsg model.foodState
+                    in
+                    ( { model
+                        | foodState = stateFood
+                      }
+                    , cmdFood
+                    )
 
 
 selectBestResult : Maybe BestResult -> BestResult -> Maybe BestResult
@@ -410,14 +392,14 @@ nextHero hero =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     let
-        foodStates =
-            List.map (\x -> { state = x.widget.state, i = x.id, ao = FoodObject }) <| List.map (\y -> { id = y.id, widget = y.widget }) model.food
+        foodState =
+            { state = model.foodState, i = -1, ao = FoodObject }
 
         healthState =
-            { state = model.hp.widget.state, i = -1, ao = HealthPointObject }
+            { state = model.hp.state, i = -1, ao = HealthObject }
 
         all =
-            healthState :: foodStates
+            [ healthState, foodState ]
     in
     Sub.batch (List.map (\z -> Animation.subscription (Animate z.i z.ao) [ z.state ]) all)
 
@@ -482,21 +464,17 @@ bestResult result =
 deck : Model -> Html Msg
 deck model =
     columns { columnsModifiers | gap = Gap3 }
-        []
+        (Animation.render model.foodState)
         (List.take 5 (List.map card model.food))
 
 
 card : Food -> Html Msg
-card model =
-    let
-        widget =
-            model.widget
-    in
+card food =
     column columnModifiers
-        (Animation.render widget.state ++ [ style "cursor" "pointer", onClick widget.onClick ])
+        [ style "cursor" "pointer", onClick (FadeOutFadeIn food.tags) ]
         [ image (OneByOne Unbounded)
             [ style "cursor" "pointer" ]
-            [ img [ src model.picture, style "border-radius" "10px" ] []
+            [ img [ src food.picture, style "border-radius" "10px" ] []
             ]
         , div
             (List.append styleBold
@@ -506,7 +484,7 @@ card model =
                 , style "font-size" "220%"
                 ]
             )
-            [ text model.name
+            [ text food.name
             ]
         ]
 
@@ -557,13 +535,13 @@ healthContainer : Model -> List (Html Msg)
 healthContainer model =
     case model.hp.value of
         1 ->
-            [ tileChild Auto (Animation.render model.hp.widget.state) [ heart ], tileChild Auto [] [], tileChild Auto [] [] ]
+            [ tileChild Auto (Animation.render model.hp.state) [ heart ], tileChild Auto [] [], tileChild Auto [] [] ]
 
         2 ->
-            [ tileChild Auto (Animation.render model.hp.widget.state) [ heart ], tileChild Auto [] [ heart ], tileChild Auto [] [] ]
+            [ tileChild Auto (Animation.render model.hp.state) [ heart ], tileChild Auto [] [ heart ], tileChild Auto [] [] ]
 
         3 ->
-            [ tileChild Auto (Animation.render model.hp.widget.state) [ heart ], tileChild Auto [] [ heart ], tileChild Auto [] [ heart ] ]
+            [ tileChild Auto (Animation.render model.hp.state) [ heart ], tileChild Auto [] [ heart ], tileChild Auto [] [ heart ] ]
 
         _ ->
             []
@@ -602,38 +580,12 @@ styleNormal =
 -- DATA
 
 
-wrapAnimationHealthPoint : Widget
-wrapAnimationHealthPoint =
-    { onClick = DoNothing
-    , state =
-        Animation.style
-            [ Animation.opacity 1
-            ]
-    }
-
-
-defaultHealth : HealthPoint
-defaultHealth =
-    HealthPoint 3 wrapAnimationHealthPoint
-
-
-wrapAnimationFood : Int -> Widget
-wrapAnimationFood i =
-    { onClick = FadeOutFadeIn i
-    , state =
-        Animation.style
-            [ Animation.opacity 1
-            ]
-    }
-
-
 defaultFood : Food
 defaultFood =
     Food 0
         "Popcorn"
         [ NotHealthy ]
         "../images/food/popcorn.png"
-        (wrapAnimationFood 0)
 
 
 allFood : List Food
@@ -643,20 +595,16 @@ allFood =
         "Happy Meal"
         [ FastFood, NotHealthy ]
         "../images/food/happymeal.png"
-        (wrapAnimationFood 1)
     , Food 2
         "Pizza"
         [ NotHealthy ]
         "../images/food/pizza.png"
-        (wrapAnimationFood 2)
     , Food 3
         "Tiramisu"
         [ Dessert, Sweets ]
         "../images/food/chocolatecake.png"
-        (wrapAnimationFood 3)
     , Food 4
         "Salad"
         [ Healthy ]
         "../images/food/salad.png"
-        (wrapAnimationFood 4)
     ]
