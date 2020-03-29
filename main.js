@@ -6206,6 +6206,7 @@ var $author$project$Main$BestResult = F2(
 	function (name, score) {
 		return {name: name, score: score};
 	});
+var $author$project$Main$ChangeHero = {$: 'ChangeHero'};
 var $author$project$Main$Damage = function (a) {
 	return {$: 'Damage', a: a};
 };
@@ -8367,167 +8368,133 @@ var $mdgriffith$elm_style_animation$Animation$Messenger$update = F2(
 	});
 var $author$project$Main$update = F2(
 	function (action, model) {
-		switch (action.$) {
-			case 'DoNothing':
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			case 'Damage':
-				var points = action.a;
-				var hp = model.hp.value - points;
-				var gameState = (!hp) ? $author$project$Main$GameOver : $author$project$Main$KeepPlaying;
-				if (gameState.$ === 'GameOver') {
+		update:
+		while (true) {
+			switch (action.$) {
+				case 'DoNothing':
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				case 'Damage':
+					var points = action.a;
+					var hp = model.hp.value - points;
+					var gameState = (!hp) ? $author$project$Main$GameOver : $author$project$Main$KeepPlaying;
+					if (gameState.$ === 'GameOver') {
+						var $temp$action = $author$project$Main$ChangeHero,
+							$temp$model = model;
+						action = $temp$action;
+						model = $temp$model;
+						continue update;
+					} else {
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									hp: A2($author$project$Main$HealthPoint, hp, $author$project$Main$wrapAnimationHealthPoint)
+								}),
+							$elm$core$Platform$Cmd$none);
+					}
+				case 'Eat':
+					var points = action.a;
+					var hero = model.hero;
+					var result = A2(
+						$author$project$Main$selectBestResult,
+						model.bestResult,
+						A2($author$project$Main$BestResult, hero.name, model.score));
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{hp: $author$project$Main$defaultHealth}),
+							{bestResult: result, score: model.score + points}),
+						A2(
+							$elm$random$Random$generate,
+							$author$project$Main$Shuffle,
+							A2($author$project$Main$shuffle, $author$project$Main$defaultFood, model.food)));
+				case 'Shuffle':
+					var randomFood = action.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{food: randomFood}),
 						$elm$core$Platform$Cmd$none);
-				} else {
+				case 'ChangeHero':
+					var hero = model.hero;
+					var result = A2(
+						$author$project$Main$selectBestResult,
+						model.bestResult,
+						A2($author$project$Main$BestResult, hero.name, model.score));
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
-								hp: A2($author$project$Main$HealthPoint, hp, $author$project$Main$wrapAnimationHealthPoint)
+								bestResult: result,
+								hero: $author$project$Main$nextHero(model.hero),
+								hp: $author$project$Main$defaultHealth,
+								score: 0
+							}),
+						A2(
+							$elm$random$Random$generate,
+							$author$project$Main$Shuffle,
+							A2($author$project$Main$shuffle, $author$project$Main$defaultFood, model.food)));
+				case 'FadeOutFadeIn':
+					var i = action.a;
+					var tags = function () {
+						var _v3 = A2(
+							$elm$core$Array$get,
+							i,
+							$elm$core$Array$fromList(
+								A2(
+									$elm$core$List$map,
+									function ($) {
+										return $.tags;
+									},
+									$author$project$Main$allFood)));
+						if (_v3.$ === 'Just') {
+							var t = _v3.a;
+							return t;
+						} else {
+							return _List_Nil;
+						}
+					}();
+					var _v2 = A2($author$project$Main$calcEat, model, tags);
+					var eatPoints = _v2.a;
+					var damagePoints = _v2.b;
+					var damageAnimation = (damagePoints > 0) ? $author$project$Main$Disappear(damagePoints) : $author$project$Main$DoNothing;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								food: A2(
+									$elm$core$List$map,
+									function (x) {
+										return _Utils_update(
+											x,
+											{
+												widget: A2(
+													$author$project$Main$applyAnimationToSingle,
+													x.widget,
+													$mdgriffith$elm_style_animation$Animation$queue(
+														_List_fromArray(
+															[
+																$mdgriffith$elm_style_animation$Animation$to(
+																_List_fromArray(
+																	[
+																		$mdgriffith$elm_style_animation$Animation$opacity(0)
+																	])),
+																$mdgriffith$elm_style_animation$Animation$Messenger$send(
+																$author$project$Main$Eat(eatPoints)),
+																$mdgriffith$elm_style_animation$Animation$Messenger$send(damageAnimation),
+																$mdgriffith$elm_style_animation$Animation$to(
+																_List_fromArray(
+																	[
+																		$mdgriffith$elm_style_animation$Animation$opacity(1)
+																	]))
+															])))
+											});
+									},
+									model.food)
 							}),
 						$elm$core$Platform$Cmd$none);
-				}
-			case 'Eat':
-				var points = action.a;
-				var hero = model.hero;
-				var result = A2(
-					$author$project$Main$selectBestResult,
-					model.bestResult,
-					A2($author$project$Main$BestResult, hero.name, model.score));
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{bestResult: result, score: model.score + points}),
-					A2(
-						$elm$random$Random$generate,
-						$author$project$Main$Shuffle,
-						A2($author$project$Main$shuffle, $author$project$Main$defaultFood, model.food)));
-			case 'Shuffle':
-				var randomFood = action.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{food: randomFood}),
-					$elm$core$Platform$Cmd$none);
-			case 'ChangeHero':
-				var hero = model.hero;
-				var result = A2(
-					$author$project$Main$selectBestResult,
-					model.bestResult,
-					A2($author$project$Main$BestResult, hero.name, model.score));
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							bestResult: result,
-							hero: $author$project$Main$nextHero(model.hero),
-							hp: $author$project$Main$defaultHealth,
-							score: 0
-						}),
-					A2(
-						$elm$random$Random$generate,
-						$author$project$Main$Shuffle,
-						A2($author$project$Main$shuffle, $author$project$Main$defaultFood, model.food)));
-			case 'FadeOutFadeIn':
-				var i = action.a;
-				var tags = function () {
-					var _v3 = A2(
-						$elm$core$Array$get,
-						i,
-						$elm$core$Array$fromList(
-							A2(
-								$elm$core$List$map,
-								function ($) {
-									return $.tags;
-								},
-								$author$project$Main$allFood)));
-					if (_v3.$ === 'Just') {
-						var t = _v3.a;
-						return t;
-					} else {
-						return _List_Nil;
-					}
-				}();
-				var _v2 = A2($author$project$Main$calcEat, model, tags);
-				var eatPoints = _v2.a;
-				var damagePoints = _v2.b;
-				var damageAnimation = (damagePoints > 0) ? $author$project$Main$Disappear(damagePoints) : $author$project$Main$DoNothing;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							food: A2(
-								$elm$core$List$map,
-								function (x) {
-									return _Utils_update(
-										x,
-										{
-											widget: A2(
-												$author$project$Main$applyAnimationToSingle,
-												x.widget,
-												$mdgriffith$elm_style_animation$Animation$queue(
-													_List_fromArray(
-														[
-															$mdgriffith$elm_style_animation$Animation$to(
-															_List_fromArray(
-																[
-																	$mdgriffith$elm_style_animation$Animation$opacity(0)
-																])),
-															$mdgriffith$elm_style_animation$Animation$Messenger$send(
-															$author$project$Main$Eat(eatPoints)),
-															$mdgriffith$elm_style_animation$Animation$Messenger$send(damageAnimation),
-															$mdgriffith$elm_style_animation$Animation$to(
-															_List_fromArray(
-																[
-																	$mdgriffith$elm_style_animation$Animation$opacity(1)
-																]))
-														])))
-										});
-								},
-								model.food)
-						}),
-					$elm$core$Platform$Cmd$none);
-			case 'Disappear':
-				var damagePoints = action.a;
-				var hp = model.hp;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							hp: _Utils_update(
-								hp,
-								{
-									widget: A2(
-										$author$project$Main$applyAnimationToSingle,
-										hp.widget,
-										$mdgriffith$elm_style_animation$Animation$interrupt(
-											_List_fromArray(
-												[
-													$mdgriffith$elm_style_animation$Animation$to(
-													_List_fromArray(
-														[
-															A2(
-															$mdgriffith$elm_style_animation$Animation$translate,
-															$mdgriffith$elm_style_animation$Animation$px(100),
-															$mdgriffith$elm_style_animation$Animation$px(100))
-														])),
-													$mdgriffith$elm_style_animation$Animation$Messenger$send(
-													$author$project$Main$Damage(damagePoints))
-												])))
-								})
-						}),
-					$elm$core$Platform$Cmd$none);
-			default:
-				var i = action.a;
-				var ao = action.b;
-				var aMsg = action.c;
-				if (ao.$ === 'HealthPointObject') {
+				case 'Disappear':
+					var damagePoints = action.a;
 					var hp = model.hp;
-					var _v5 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, hp.widget.state);
-					var stateHp = _v5.a;
-					var cmdHp = _v5.b;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8538,48 +8505,85 @@ var $author$project$Main$update = F2(
 										widget: A2(
 											$author$project$Main$applyAnimationToSingle,
 											hp.widget,
-											function (_v6) {
-												return stateHp;
-											})
+											$mdgriffith$elm_style_animation$Animation$interrupt(
+												_List_fromArray(
+													[
+														$mdgriffith$elm_style_animation$Animation$to(
+														_List_fromArray(
+															[
+																A2(
+																$mdgriffith$elm_style_animation$Animation$translate,
+																$mdgriffith$elm_style_animation$Animation$px(100),
+																$mdgriffith$elm_style_animation$Animation$px(100))
+															])),
+														$mdgriffith$elm_style_animation$Animation$Messenger$send(
+														$author$project$Main$Damage(damagePoints))
+													])))
 									})
 							}),
-						cmdHp);
-				} else {
-					var _v7 = A2(
-						$elm$core$Array$get,
-						i,
-						$elm$core$Array$fromList(model.food));
-					if (_v7.$ === 'Just') {
-						var f = _v7.a;
-						var widget = f.widget;
-						var _v8 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, widget.state);
-						var stateFood = _v8.a;
-						var cmdFood = _v8.b;
+						$elm$core$Platform$Cmd$none);
+				default:
+					var i = action.a;
+					var ao = action.b;
+					var aMsg = action.c;
+					if (ao.$ === 'HealthPointObject') {
+						var hp = model.hp;
+						var _v5 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, hp.widget.state);
+						var stateHp = _v5.a;
+						var cmdHp = _v5.b;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
 								{
-									food: A2(
-										$elm$core$List$map,
-										function (x) {
-											return _Utils_update(
-												x,
-												{
-													widget: A2(
-														$author$project$Main$applyAnimationToSingle,
-														x.widget,
-														function (_v9) {
-															return stateFood;
-														})
-												});
-										},
-										model.food)
+									hp: _Utils_update(
+										hp,
+										{
+											widget: A2(
+												$author$project$Main$applyAnimationToSingle,
+												hp.widget,
+												function (_v6) {
+													return stateHp;
+												})
+										})
 								}),
-							cmdFood);
+							cmdHp);
 					} else {
-						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						var _v7 = A2(
+							$elm$core$Array$get,
+							i,
+							$elm$core$Array$fromList(model.food));
+						if (_v7.$ === 'Just') {
+							var f = _v7.a;
+							var widget = f.widget;
+							var _v8 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, widget.state);
+							var stateFood = _v8.a;
+							var cmdFood = _v8.b;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										food: A2(
+											$elm$core$List$map,
+											function (x) {
+												return _Utils_update(
+													x,
+													{
+														widget: A2(
+															$author$project$Main$applyAnimationToSingle,
+															x.widget,
+															function (_v9) {
+																return stateFood;
+															})
+													});
+											},
+											model.food)
+									}),
+								cmdFood);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
 					}
-				}
+			}
 		}
 	});
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Large = {$: 'Large'};
@@ -9949,84 +9953,9 @@ var $surprisetalk$elm_bulma$Bulma$Layout$heroBody = A2(
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Default = {$: 'Default'};
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Small = {$: 'Small'};
 var $surprisetalk$elm_bulma$Bulma$Layout$heroModifiers = {bold: false, color: $surprisetalk$elm_bulma$Bulma$Modifiers$Default, size: $surprisetalk$elm_bulma$Bulma$Modifiers$Small};
-var $author$project$Main$ChangeHero = {$: 'ChangeHero'};
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Primary = {$: 'Primary'};
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Width2 = {$: 'Width2'};
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Width3 = {$: 'Width3'};
-var $surprisetalk$elm_bulma$Bulma$Elements$X64 = {$: 'X64'};
-var $surprisetalk$elm_bulma$Bulma$Classes$is10 = $elm$html$Html$Attributes$class('is-10');
-var $surprisetalk$elm_bulma$Bulma$Classes$is11 = $elm$html$Html$Attributes$class('is-11');
-var $surprisetalk$elm_bulma$Bulma$Classes$is3 = $elm$html$Html$Attributes$class('is-3');
-var $surprisetalk$elm_bulma$Bulma$Classes$is9 = $elm$html$Html$Attributes$class('is-9');
-var $surprisetalk$elm_bulma$Bulma$Classes$isChild = $elm$html$Html$Attributes$class('is-child');
-var $surprisetalk$elm_bulma$Bulma$Classes$tile = $elm$html$Html$Attributes$class('tile');
-var $surprisetalk$elm_bulma$Bulma$Layout$tileChild = function (width) {
-	return A2(
-		$surprisetalk$elm_bulma$Helpers$node,
-		'div',
-		_List_fromArray(
-			[
-				$surprisetalk$elm_bulma$Bulma$Classes$tile,
-				$surprisetalk$elm_bulma$Bulma$Classes$isChild,
-				function () {
-				switch (width.$) {
-					case 'Auto':
-						return $surprisetalk$elm_bulma$Bulma$Classes$none;
-					case 'Width1':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is1;
-					case 'Width2':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is2;
-					case 'Width3':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is3;
-					case 'Width4':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is4;
-					case 'Width5':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is5;
-					case 'Width6':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is6;
-					case 'Width7':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is7;
-					case 'Width8':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is8;
-					case 'Width9':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is9;
-					case 'Width10':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is10;
-					default:
-						return $surprisetalk$elm_bulma$Bulma$Classes$is11;
-				}
-			}()
-			]));
-};
-var $author$project$Main$animatedHeart = function (widget) {
-	return A3(
-		$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
-		$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				$mdgriffith$elm_style_animation$Animation$render(widget.state),
-				_List_fromArray(
-					[
-						A3(
-						$surprisetalk$elm_bulma$Bulma$Elements$image,
-						$surprisetalk$elm_bulma$Bulma$Elements$OneByOne($surprisetalk$elm_bulma$Bulma$Elements$X64),
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$img,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$src('../images/hero/heart.png')
-									]),
-								_List_Nil)
-							]))
-					]))
-			]));
-};
 var $surprisetalk$elm_bulma$Bulma$Classes$button = $elm$html$Html$Attributes$class('button');
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
@@ -10236,6 +10165,7 @@ var $surprisetalk$elm_bulma$Bulma$Elements$button = F3(
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Blur = {$: 'Blur'};
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Standard = {$: 'Standard'};
 var $surprisetalk$elm_bulma$Bulma$Elements$buttonModifiers = {color: $surprisetalk$elm_bulma$Bulma$Modifiers$Default, disabled: false, iconLeft: $elm$core$Maybe$Nothing, iconRight: $elm$core$Maybe$Nothing, inverted: false, outlined: false, rounded: false, size: $surprisetalk$elm_bulma$Bulma$Modifiers$Standard, state: $surprisetalk$elm_bulma$Bulma$Modifiers$Blur, _static: false};
+var $surprisetalk$elm_bulma$Bulma$Elements$X64 = {$: 'X64'};
 var $author$project$Main$heart = A2(
 	$elm$html$Html$div,
 	_List_Nil,
@@ -10256,6 +10186,108 @@ var $author$project$Main$heart = A2(
 					_List_Nil)
 				]))
 		]));
+var $surprisetalk$elm_bulma$Bulma$Classes$is10 = $elm$html$Html$Attributes$class('is-10');
+var $surprisetalk$elm_bulma$Bulma$Classes$is11 = $elm$html$Html$Attributes$class('is-11');
+var $surprisetalk$elm_bulma$Bulma$Classes$is3 = $elm$html$Html$Attributes$class('is-3');
+var $surprisetalk$elm_bulma$Bulma$Classes$is9 = $elm$html$Html$Attributes$class('is-9');
+var $surprisetalk$elm_bulma$Bulma$Classes$isChild = $elm$html$Html$Attributes$class('is-child');
+var $surprisetalk$elm_bulma$Bulma$Classes$tile = $elm$html$Html$Attributes$class('tile');
+var $surprisetalk$elm_bulma$Bulma$Layout$tileChild = function (width) {
+	return A2(
+		$surprisetalk$elm_bulma$Helpers$node,
+		'div',
+		_List_fromArray(
+			[
+				$surprisetalk$elm_bulma$Bulma$Classes$tile,
+				$surprisetalk$elm_bulma$Bulma$Classes$isChild,
+				function () {
+				switch (width.$) {
+					case 'Auto':
+						return $surprisetalk$elm_bulma$Bulma$Classes$none;
+					case 'Width1':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is1;
+					case 'Width2':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is2;
+					case 'Width3':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is3;
+					case 'Width4':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is4;
+					case 'Width5':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is5;
+					case 'Width6':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is6;
+					case 'Width7':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is7;
+					case 'Width8':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is8;
+					case 'Width9':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is9;
+					case 'Width10':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is10;
+					default:
+						return $surprisetalk$elm_bulma$Bulma$Classes$is11;
+				}
+			}()
+			]));
+};
+var $author$project$Main$healthContainer = function (model) {
+	var _v0 = model.hp.value;
+	switch (_v0) {
+		case 1:
+			return _List_fromArray(
+				[
+					A3(
+					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
+					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
+					$mdgriffith$elm_style_animation$Animation$render(model.hp.widget.state),
+					_List_fromArray(
+						[$author$project$Main$heart])),
+					A3($surprisetalk$elm_bulma$Bulma$Layout$tileChild, $surprisetalk$elm_bulma$Bulma$Modifiers$Auto, _List_Nil, _List_Nil),
+					A3($surprisetalk$elm_bulma$Bulma$Layout$tileChild, $surprisetalk$elm_bulma$Bulma$Modifiers$Auto, _List_Nil, _List_Nil)
+				]);
+		case 2:
+			return _List_fromArray(
+				[
+					A3(
+					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
+					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
+					$mdgriffith$elm_style_animation$Animation$render(model.hp.widget.state),
+					_List_fromArray(
+						[$author$project$Main$heart])),
+					A3(
+					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
+					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
+					_List_Nil,
+					_List_fromArray(
+						[$author$project$Main$heart])),
+					A3($surprisetalk$elm_bulma$Bulma$Layout$tileChild, $surprisetalk$elm_bulma$Bulma$Modifiers$Auto, _List_Nil, _List_Nil)
+				]);
+		case 3:
+			return _List_fromArray(
+				[
+					A3(
+					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
+					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
+					$mdgriffith$elm_style_animation$Animation$render(model.hp.widget.state),
+					_List_fromArray(
+						[$author$project$Main$heart])),
+					A3(
+					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
+					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
+					_List_Nil,
+					_List_fromArray(
+						[$author$project$Main$heart])),
+					A3(
+					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
+					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
+					_List_Nil,
+					_List_fromArray(
+						[$author$project$Main$heart]))
+				]);
+		default:
+			return _List_Nil;
+	}
+};
 var $surprisetalk$elm_bulma$Bulma$Elements$X128 = {$: 'X128'};
 var $author$project$Main$styleNormal = _List_fromArray(
 	[
@@ -10433,18 +10465,7 @@ var $author$project$Main$panel = function (model) {
 				$surprisetalk$elm_bulma$Bulma$Layout$tileParent,
 				$surprisetalk$elm_bulma$Bulma$Modifiers$Width3,
 				_List_Nil,
-				A2(
-					$elm$core$List$cons,
-					$author$project$Main$animatedHeart(model.hp.widget),
-					A2(
-						$elm$core$List$repeat,
-						model.hp.value - 1,
-						A3(
-							$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
-							$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
-							_List_Nil,
-							_List_fromArray(
-								[$author$project$Main$heart])))))
+				$author$project$Main$healthContainer(model))
 			]));
 };
 var $surprisetalk$elm_bulma$Bulma$Elements$H1 = {$: 'H1'};

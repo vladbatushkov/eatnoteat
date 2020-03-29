@@ -224,7 +224,7 @@ update action model =
             in
             case gameState of
                 GameOver ->
-                    ( { model | hp = defaultHealth }, Cmd.none )
+                    update ChangeHero model
 
                 KeepPlaying ->
                     ( { model | hp = HealthPoint hp wrapAnimationHealthPoint }, Cmd.none )
@@ -527,7 +527,7 @@ panel model =
             ]
         , tileParent Width3
             []
-            (animatedHeart model.hp.widget :: List.repeat (model.hp.value - 1) (tileChild Auto [] [ heart ]))
+            (healthContainer model)
         ]
 
 
@@ -553,18 +553,20 @@ profile model =
         ]
 
 
-animatedHeart : Widget -> Html Msg
-animatedHeart widget =
-    tileChild Auto
-        []
-        [ div
-            (Animation.render widget.state)
-            [ image (OneByOne X64)
-                []
-                [ img [ src "../images/hero/heart.png" ] []
-                ]
-            ]
-        ]
+healthContainer : Model -> List (Html Msg)
+healthContainer model =
+    case model.hp.value of
+        1 ->
+            [ tileChild Auto (Animation.render model.hp.widget.state) [ heart ], tileChild Auto [] [], tileChild Auto [] [] ]
+
+        2 ->
+            [ tileChild Auto (Animation.render model.hp.widget.state) [ heart ], tileChild Auto [] [ heart ], tileChild Auto [] [] ]
+
+        3 ->
+            [ tileChild Auto (Animation.render model.hp.widget.state) [ heart ], tileChild Auto [] [ heart ], tileChild Auto [] [ heart ] ]
+
+        _ ->
+            []
 
 
 heart : Html Msg
