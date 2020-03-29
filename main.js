@@ -5327,6 +5327,14 @@ var $mdgriffith$elm_style_animation$Animation$custom = F3(
 var $mdgriffith$elm_style_animation$Animation$opacity = function (val) {
 	return A3($mdgriffith$elm_style_animation$Animation$custom, 'opacity', val, '');
 };
+var $mdgriffith$elm_style_animation$Animation$Length = F2(
+	function (a, b) {
+		return {$: 'Length', a: a, b: b};
+	});
+var $mdgriffith$elm_style_animation$Animation$Px = {$: 'Px'};
+var $mdgriffith$elm_style_animation$Animation$px = function (myPx) {
+	return A2($mdgriffith$elm_style_animation$Animation$Length, myPx, $mdgriffith$elm_style_animation$Animation$Px);
+};
 var $mdgriffith$elm_style_animation$Animation$Model$Animation = function (a) {
 	return {$: 'Animation', a: a};
 };
@@ -5985,14 +5993,84 @@ var $mdgriffith$elm_style_animation$Animation$style = function (props) {
 			$mdgriffith$elm_style_animation$Animation$setDefaultInterpolation,
 			$mdgriffith$elm_style_animation$Animation$Render$warnForDoubleListedProperties(props)));
 };
-var $author$project$Main$initHealth = A2(
-	$author$project$Main$Health,
-	3,
-	$mdgriffith$elm_style_animation$Animation$style(
-		_List_fromArray(
-			[
-				$mdgriffith$elm_style_animation$Animation$opacity(1)
-			])));
+var $mdgriffith$elm_style_animation$Animation$length2 = F3(
+	function (name, _v0, _v1) {
+		var val = _v0.a;
+		var len = _v0.b;
+		var val2 = _v1.a;
+		var len2 = _v1.b;
+		return A3(
+			$mdgriffith$elm_style_animation$Animation$Model$Property2,
+			name,
+			A2($mdgriffith$elm_style_animation$Animation$initMotion, val, len),
+			A2($mdgriffith$elm_style_animation$Animation$initMotion, val2, len2));
+	});
+var $mdgriffith$elm_style_animation$Animation$lengthUnitName = function (unit) {
+	switch (unit.$) {
+		case 'NoUnit':
+			return '';
+		case 'Px':
+			return 'px';
+		case 'Percent':
+			return '%';
+		case 'Rem':
+			return 'rem';
+		case 'Em':
+			return 'em';
+		case 'Ex':
+			return 'ex';
+		case 'Ch':
+			return 'ch';
+		case 'Vh':
+			return 'vh';
+		case 'Vw':
+			return 'vw';
+		case 'Vmin':
+			return 'vmin';
+		case 'Vmax':
+			return 'vmax';
+		case 'Mm':
+			return 'mm';
+		case 'Cm':
+			return 'cm';
+		case 'In':
+			return 'in';
+		case 'Pt':
+			return 'pt';
+		default:
+			return 'pc';
+	}
+};
+var $mdgriffith$elm_style_animation$Animation$translate = F2(
+	function (_v0, _v1) {
+		var valX = _v0.a;
+		var len1 = _v0.b;
+		var valY = _v1.a;
+		var len2 = _v1.b;
+		return A3(
+			$mdgriffith$elm_style_animation$Animation$length2,
+			'translate',
+			_Utils_Tuple2(
+				valX,
+				$mdgriffith$elm_style_animation$Animation$lengthUnitName(len1)),
+			_Utils_Tuple2(
+				valY,
+				$mdgriffith$elm_style_animation$Animation$lengthUnitName(len2)));
+	});
+var $author$project$Main$initHealth = function (hp) {
+	return A2(
+		$author$project$Main$Health,
+		hp,
+		$mdgriffith$elm_style_animation$Animation$style(
+			_List_fromArray(
+				[
+					$mdgriffith$elm_style_animation$Animation$opacity(1),
+					A2(
+					$mdgriffith$elm_style_animation$Animation$translate,
+					$mdgriffith$elm_style_animation$Animation$px(0),
+					$mdgriffith$elm_style_animation$Animation$px(0))
+				])));
+};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (_v0) {
@@ -6001,7 +6079,7 @@ var $author$project$Main$init = function (_v0) {
 			$author$project$Main$Model,
 			$elm$core$Maybe$Nothing,
 			0,
-			$author$project$Main$initHealth,
+			$author$project$Main$initHealth(3),
 			$author$project$Main$arnold,
 			$author$project$Main$allFood,
 			$mdgriffith$elm_style_animation$Animation$style(
@@ -6011,16 +6089,13 @@ var $author$project$Main$init = function (_v0) {
 					]))),
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Main$Animate = F3(
-	function (a, b, c) {
-		return {$: 'Animate', a: a, b: b, c: c};
+var $author$project$Main$Animate = F2(
+	function (a, b) {
+		return {$: 'Animate', a: a, b: b};
 	});
 var $author$project$Main$FoodObject = {$: 'FoodObject'};
 var $author$project$Main$HealthObject = {$: 'HealthObject'};
 var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$core$Basics$negate = function (n) {
-	return -n;
-};
 var $mdgriffith$elm_style_animation$Animation$Model$Tick = function (a) {
 	return {$: 'Tick', a: a};
 };
@@ -6168,8 +6243,8 @@ var $mdgriffith$elm_style_animation$Animation$subscription = F2(
 			$elm$browser$Browser$Events$onAnimationFrame($mdgriffith$elm_style_animation$Animation$Model$Tick)) : $elm$core$Platform$Sub$none;
 	});
 var $author$project$Main$subscriptions = function (model) {
-	var healthState = {ao: $author$project$Main$HealthObject, i: -1, state: model.hp.state};
-	var foodState = {ao: $author$project$Main$FoodObject, i: -1, state: model.foodState};
+	var healthState = {ao: $author$project$Main$HealthObject, state: model.hp.state};
+	var foodState = {ao: $author$project$Main$FoodObject, state: model.foodState};
 	var all = _List_fromArray(
 		[healthState, foodState]);
 	return $elm$core$Platform$Sub$batch(
@@ -6178,7 +6253,7 @@ var $author$project$Main$subscriptions = function (model) {
 			function (z) {
 				return A2(
 					$mdgriffith$elm_style_animation$Animation$subscription,
-					A2($author$project$Main$Animate, z.i, z.ao),
+					$author$project$Main$Animate(z.ao),
 					_List_fromArray(
 						[z.state]));
 			},
@@ -6441,14 +6516,6 @@ var $author$project$Main$nextHero = function (hero) {
 			return $author$project$Main$arnold;
 	}
 };
-var $mdgriffith$elm_style_animation$Animation$Length = F2(
-	function (a, b) {
-		return {$: 'Length', a: a, b: b};
-	});
-var $mdgriffith$elm_style_animation$Animation$Px = {$: 'Px'};
-var $mdgriffith$elm_style_animation$Animation$px = function (myPx) {
-	return A2($mdgriffith$elm_style_animation$Animation$Length, myPx, $mdgriffith$elm_style_animation$Animation$Px);
-};
 var $mdgriffith$elm_style_animation$Animation$queue = F2(
 	function (steps, _v0) {
 		var model = _v0.a;
@@ -6530,6 +6597,9 @@ var $author$project$Main$extractValue = F2(
 		return A3($author$project$Main$extractValueHelper, values, index, _List_Nil);
 	});
 var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Basics$negate = function (n) {
+	return -n;
+};
 var $elm$core$Bitwise$xor = _Bitwise_xor;
 var $elm$random$Random$peel = function (_v0) {
 	var state = _v0.a;
@@ -6681,70 +6751,6 @@ var $mdgriffith$elm_style_animation$Animation$Model$To = function (a) {
 var $mdgriffith$elm_style_animation$Animation$to = function (props) {
 	return $mdgriffith$elm_style_animation$Animation$Model$To(props);
 };
-var $mdgriffith$elm_style_animation$Animation$length2 = F3(
-	function (name, _v0, _v1) {
-		var val = _v0.a;
-		var len = _v0.b;
-		var val2 = _v1.a;
-		var len2 = _v1.b;
-		return A3(
-			$mdgriffith$elm_style_animation$Animation$Model$Property2,
-			name,
-			A2($mdgriffith$elm_style_animation$Animation$initMotion, val, len),
-			A2($mdgriffith$elm_style_animation$Animation$initMotion, val2, len2));
-	});
-var $mdgriffith$elm_style_animation$Animation$lengthUnitName = function (unit) {
-	switch (unit.$) {
-		case 'NoUnit':
-			return '';
-		case 'Px':
-			return 'px';
-		case 'Percent':
-			return '%';
-		case 'Rem':
-			return 'rem';
-		case 'Em':
-			return 'em';
-		case 'Ex':
-			return 'ex';
-		case 'Ch':
-			return 'ch';
-		case 'Vh':
-			return 'vh';
-		case 'Vw':
-			return 'vw';
-		case 'Vmin':
-			return 'vmin';
-		case 'Vmax':
-			return 'vmax';
-		case 'Mm':
-			return 'mm';
-		case 'Cm':
-			return 'cm';
-		case 'In':
-			return 'in';
-		case 'Pt':
-			return 'pt';
-		default:
-			return 'pc';
-	}
-};
-var $mdgriffith$elm_style_animation$Animation$translate = F2(
-	function (_v0, _v1) {
-		var valX = _v0.a;
-		var len1 = _v0.b;
-		var valY = _v1.a;
-		var len2 = _v1.b;
-		return A3(
-			$mdgriffith$elm_style_animation$Animation$length2,
-			'translate',
-			_Utils_Tuple2(
-				valX,
-				$mdgriffith$elm_style_animation$Animation$lengthUnitName(len1)),
-			_Utils_Tuple2(
-				valY,
-				$mdgriffith$elm_style_animation$Animation$lengthUnitName(len2)));
-	});
 var $elm$core$Basics$neq = _Utils_notEqual;
 var $elm$core$List$partition = F2(
 	function (pred, list) {
@@ -8280,11 +8286,17 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				case 'Damage':
 					var points = action.a;
+					var result = A2(
+						$author$project$Main$selectBestResult,
+						model.bestResult,
+						A2($author$project$Main$BestResult, model.hero.name, model.score));
 					var healthLeft = model.hp.value - points;
 					var gameState = (!healthLeft) ? $author$project$Main$GameOver : $author$project$Main$KeepPlaying;
 					if (gameState.$ === 'GameOver') {
 						var $temp$action = $author$project$Main$ChangeHero,
-							$temp$model = model;
+							$temp$model = _Utils_update(
+							model,
+							{bestResult: result});
 						action = $temp$action;
 						model = $temp$model;
 						continue update;
@@ -8293,21 +8305,16 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									hp: A2($author$project$Main$Health, healthLeft, model.hp.state)
+									hp: $author$project$Main$initHealth(healthLeft)
 								}),
 							$elm$core$Platform$Cmd$none);
 					}
 				case 'Eat':
 					var points = action.a;
-					var hero = model.hero;
-					var result = A2(
-						$author$project$Main$selectBestResult,
-						model.bestResult,
-						A2($author$project$Main$BestResult, hero.name, model.score));
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{bestResult: result, score: model.score + points}),
+							{score: model.score + points}),
 						A2(
 							$elm$random$Random$generate,
 							$author$project$Main$Shuffle,
@@ -8331,7 +8338,7 @@ var $author$project$Main$update = F2(
 							{
 								bestResult: result,
 								hero: $author$project$Main$nextHero(model.hero),
-								hp: $author$project$Main$initHealth,
+								hp: $author$project$Main$initHealth(3),
 								score: 0
 							}),
 						A2(
@@ -8390,8 +8397,9 @@ var $author$project$Main$update = F2(
 															[
 																A2(
 																$mdgriffith$elm_style_animation$Animation$translate,
-																$mdgriffith$elm_style_animation$Animation$px(100),
-																$mdgriffith$elm_style_animation$Animation$px(100))
+																$mdgriffith$elm_style_animation$Animation$px(0),
+																$mdgriffith$elm_style_animation$Animation$px(100)),
+																$mdgriffith$elm_style_animation$Animation$opacity(0)
 															])),
 														$mdgriffith$elm_style_animation$Animation$Messenger$send(
 														$author$project$Main$Damage(damagePoints))
@@ -8400,8 +8408,8 @@ var $author$project$Main$update = F2(
 							}),
 						$elm$core$Platform$Cmd$none);
 				default:
-					var aObject = action.b;
-					var aMsg = action.c;
+					var aObject = action.a;
+					var aMsg = action.b;
 					if (aObject.$ === 'HealthObject') {
 						var hp = model.hp;
 						var _v4 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, hp.state);
@@ -10095,13 +10103,13 @@ var $author$project$Main$healthContainer = function (model) {
 					A3(
 					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
 					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
-					$mdgriffith$elm_style_animation$Animation$render(model.hp.state),
+					_List_Nil,
 					_List_fromArray(
 						[$author$project$Main$heart])),
 					A3(
 					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
 					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
-					_List_Nil,
+					$mdgriffith$elm_style_animation$Animation$render(model.hp.state),
 					_List_fromArray(
 						[$author$project$Main$heart])),
 					A3($surprisetalk$elm_bulma$Bulma$Layout$tileChild, $surprisetalk$elm_bulma$Bulma$Modifiers$Auto, _List_Nil, _List_Nil)
@@ -10112,19 +10120,19 @@ var $author$project$Main$healthContainer = function (model) {
 					A3(
 					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
 					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
+					_List_Nil,
+					_List_fromArray(
+						[$author$project$Main$heart])),
+					A3(
+					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
+					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
+					_List_Nil,
+					_List_fromArray(
+						[$author$project$Main$heart])),
+					A3(
+					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
+					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
 					$mdgriffith$elm_style_animation$Animation$render(model.hp.state),
-					_List_fromArray(
-						[$author$project$Main$heart])),
-					A3(
-					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
-					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
-					_List_Nil,
-					_List_fromArray(
-						[$author$project$Main$heart])),
-					A3(
-					$surprisetalk$elm_bulma$Bulma$Layout$tileChild,
-					$surprisetalk$elm_bulma$Bulma$Modifiers$Auto,
-					_List_Nil,
 					_List_fromArray(
 						[$author$project$Main$heart]))
 				]);

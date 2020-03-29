@@ -166,7 +166,7 @@ init _ =
     ( Model
         Nothing
         0
-        initHealth
+        (initHealth 3)
         arnold
         allFood
         (Animation.style
@@ -177,11 +177,12 @@ init _ =
     )
 
 
-initHealth : Health
-initHealth =
-    Health 3
+initHealth : Int -> Health
+initHealth hp =
+    Health hp
         (Animation.style
             [ Animation.opacity 1
+            , Animation.translate (px 0) (px 0)
             ]
         )
 
@@ -197,7 +198,7 @@ type Msg
     | Shuffle (List Food)
     | FadeOutFadeIn (List Tags)
     | Disappear Int
-    | Animate Int AnimatedObject Animation.Msg
+    | Animate AnimatedObject Animation.Msg
     | DoNothing
 
 
@@ -228,23 +229,20 @@ update action model =
 
                     else
                         KeepPlaying
+
+                result =
+                    selectBestResult model.bestResult (BestResult model.hero.name model.score)
+
             in
             case gameState of
                 GameOver ->
-                    update ChangeHero model
+                    update ChangeHero { model | bestResult = result }
 
                 KeepPlaying ->
-                    ( { model | hp = Health healthLeft model.hp.state }, Cmd.none )
+                    ( { model | hp = initHealth healthLeft }, Cmd.none )
 
         Eat points ->
-            let
-                hero =
-                    model.hero
-
-                result =
-                    selectBestResult model.bestResult (BestResult hero.name model.score)
-            in
-            ( { model | score = model.score + points, bestResult = result }, generate Shuffle (shuffle defaultFood model.food) )
+            ( { model | score = model.score + points }, generate Shuffle (shuffle defaultFood model.food) )
 
         Shuffle randomFoods ->
             ( { model | food = randomFoods }, Cmd.none )
@@ -257,7 +255,7 @@ update action model =
                 result =
                     selectBestResult model.bestResult (BestResult hero.name model.score)
             in
-            ( { model | hero = nextHero model.hero, score = 0, hp = initHealth, bestResult = result }, generate Shuffle (shuffle defaultFood model.food) )
+            ( { model | hero = nextHero model.hero, score = 0, hp = initHealth 3, bestResult = result }, generate Shuffle (shuffle defaultFood model.food) )
 
         FadeOutFadeIn tags ->
             let
@@ -300,7 +298,8 @@ update action model =
                             applyAnimationToSingle model.hp.state <|
                                 Animation.interrupt
                                     [ Animation.to
-                                        [ Animation.translate (px 100) (px 100)
+                                        [ Animation.translate (px 0) (px 100)
+                                        , Animation.opacity 0
                                         ]
                                     , Animation.Messenger.send <| Damage damagePoints
                                     ]
@@ -309,7 +308,7 @@ update action model =
             , Cmd.none
             )
 
-        Animate _ aObject aMsg ->
+        Animate aObject aMsg ->
             case aObject of
                 HealthObject ->
                     let
@@ -393,15 +392,15 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     let
         foodState =
-            { state = model.foodState, i = -1, ao = FoodObject }
+            { state = model.foodState, ao = FoodObject }
 
         healthState =
-            { state = model.hp.state, i = -1, ao = HealthObject }
+            { state = model.hp.state, ao = HealthObject }
 
         all =
             [ healthState, foodState ]
     in
-    Sub.batch (List.map (\z -> Animation.subscription (Animate z.i z.ao) [ z.state ]) all)
+    Sub.batch (List.map (\z -> Animation.subscription (Animate z.ao) [ z.state ]) all)
 
 
 
@@ -538,10 +537,10 @@ healthContainer model =
             [ tileChild Auto (Animation.render model.hp.state) [ heart ], tileChild Auto [] [], tileChild Auto [] [] ]
 
         2 ->
-            [ tileChild Auto (Animation.render model.hp.state) [ heart ], tileChild Auto [] [ heart ], tileChild Auto [] [] ]
+            [ tileChild Auto [] [ heart ], tileChild Auto (Animation.render model.hp.state) [ heart ], tileChild Auto [] [] ]
 
         3 ->
-            [ tileChild Auto (Animation.render model.hp.state) [ heart ], tileChild Auto [] [ heart ], tileChild Auto [] [ heart ] ]
+            [ tileChild Auto [] [ heart ], tileChild Auto [] [ heart ],tileChild Auto (Animation.render model.hp.state) [ heart ] ]
 
         _ ->
             []
@@ -561,17 +560,17 @@ heart =
 -- STYLE
 
 
-styleTitle : List (Attribute msg)
+styleTitle : List (Attribute Msg)
 styleTitle =
     [ style "font-family" "font", style "font-weight" "bold", style "font-size" "500%" ]
 
 
-styleBold : List (Attribute msg)
+styleBold : List (Attribute Msg)
 styleBold =
     [ style "font-family" "font", style "font-weight" "bold" ]
 
 
-styleNormal : List (Attribute msg)
+styleNormal : List (Attribute Msg)
 styleNormal =
     [ style "font-family" "font" ]
 
