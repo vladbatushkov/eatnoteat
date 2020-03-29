@@ -123,19 +123,6 @@ type alias Hero =
     }
 
 
-type Tags
-    = Healthy
-    | NotHealthy
-    | Meat
-    | Dairy
-    | Eggs
-    | Junk
-    | Dessert
-    | Sweets
-    | FastFood
-    | Fruits
-
-
 type GameState
     = KeepPlaying
     | GameOver
@@ -153,12 +140,12 @@ arnold =
 
 terry : Hero
 terry =
-    Hero 2 "Terry" "Fast-food and unheathly food lover. Vomit for desserts." "../images/hero/terry.png" [ Meat, FastFood, NotHealthy ] [ Dessert, Sweets ]
+    Hero 2 "Terry" "Fast-food and unheathly food lover. Vomit for desserts." "../images/hero/terry.png" [ Meat, FastFood, NotHealthy ] [ Dessert ]
 
 
 chuck : Hero
 chuck =
-    Hero 3 "Chuck" "Eat plant-based foods and dairy products, but not eggs." "../images/hero/chuck.png" [ Healthy, Dairy, Fruits ] [ Meat, FastFood, Eggs ]
+    Hero 3 "Chuck" "Eat plant-based foods and dairy products." "../images/hero/chuck.png" [ Healthy, Dairy, Fruits ] [ Meat, FastFood ]
 
 
 init : () -> ( Model, Cmd Msg )
@@ -578,6 +565,17 @@ styleNormal =
 
 -- DATA
 
+type Tags
+    = Healthy
+    | NotHealthy
+    | Meat
+    | Dairy
+    | Junk
+    | Dessert
+    | FastFood
+    | Fruits
+    | Vegetables
+    | Drinks
 
 defaultFood : Food
 defaultFood =
@@ -600,10 +598,122 @@ allFood =
         "../images/food/pizza.png"
     , Food 3
         "Tiramisu"
-        [ Dessert, Sweets ]
+        [ Dessert ]
         "../images/food/chocolatecake.png"
     , Food 4
         "Salad"
         [ Healthy ]
         "../images/food/salad.png"
+    , Food 5
+        "Apple Stump"
+        [ Junk ]
+        "../images/food/applestump.png"
+    , Food 6
+        "Empty Bottle"
+        [ Junk, Drinks ]
+        "../images/food/bottle.png"
+    , Food 7
+        "Bread"
+        [ Healthy ]
+        "../images/food/bread.png"
+    , Food 8
+        "Burgers"
+        [ NotHealthy, Meat ]
+        "../images/food/burgers.png"
+    , Food 9
+        "Carrot"
+        [ Healthy, Vegetables ]
+        "../images/food/carrot.png"
+    , Food 10
+        "Sode Water"
+        [ Drinks ]
+        "../images/food/cola.png"
+    , Food 11
+        "Cheese"
+        [ Dairy ]
+        "../images/food/cheese.png"
+    , Food 12
+        "Creamy"
+        [ Dessert ]
+        "../images/food/creamy.png"
+    , Food 13
+        "Cucumber"
+        [ Vegetables, Healthy ]
+        "../images/food/cucumber.png"
+    , Food 14
+        "Eggs"
+        []
+        "../images/food/eggs.png"
+    , Food 15
+        "Fallen Ice Cream"
+        [ Junk, Dessert ]
+        "../images/food/icecream.png"
+    , Food 16
+        "Jar"
+        [ Junk, Drinks ]
+        "../images/food/jar.png"
+    , Food 17
+        "KFC"
+        [ FastFood ]
+        "../images/food/kfc.png"
+    , Food 18
+        "Leftovers"
+        [ Junk, NotHealthy ]
+        "../images/food/leftovers.png"
+    , Food 19
+        "Lemon"
+        [ Fruits, Healthy ]
+        "../images/food/lemon.png"
+    , Food 20
+        "Milk"
+        [ Dairy, Drinks ]
+        "../images/food/milk.png"
+    , Food 21
+        "Fruity Cake"
+        [ Dessert ]
+        "../images/food/orangecake.png"
+    , Food 22
+        "Pepperoni"
+        [ Meat ]
+        "../images/food/pepperoni.png"
+    , Food 23
+        "Plastic Box"
+        [ Junk, NotHealthy ]
+        "../images/food/plasticbox.png"
+    , Food 24
+        "Meat Ribs"
+        [ Meat ]
+        "../images/food/ribs.png"
+    , Food 25
+        "Salmon"
+        [ Meat, Healthy ]
+        "../images/food/salmon.png"
+    , Food 26
+        "Sausage Plate"
+        [ Meat ]
+        "../images/food/sausageplate.png"
+    , Food 27
+        "Shawarma"
+        [ Meat, NotHealthy, FastFood ]
+        "../images/food/shawarma.png"
+    , Food 28
+        "Steak"
+        [ Meat ]
+        "../images/food/steak.png"
+    , Food 29
+        "Steak Plate"
+        [ Meat ]
+        "../images/food/steakplate.png"
+    , Food 30
+        "Tacos"
+        [ Meat ]
+        "../images/food/tacos.png"
+    , Food 31
+        "Tomatos"
+        [ Vegetables, Healthy ]
+        "../images/food/tomatos.png"
+    , Food 32
+        "Wok"
+        [ FastFood ]
+        "../images/food/wok.png"
     ]

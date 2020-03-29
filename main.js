@@ -5231,15 +5231,20 @@ var $author$project$Main$Model = F6(
 	function (bestResult, score, hp, hero, food, foodState) {
 		return {bestResult: bestResult, food: food, foodState: foodState, hero: hero, hp: hp, score: score};
 	});
+var $author$project$Main$Dairy = {$: 'Dairy'};
 var $author$project$Main$Dessert = {$: 'Dessert'};
+var $author$project$Main$Drinks = {$: 'Drinks'};
 var $author$project$Main$FastFood = {$: 'FastFood'};
 var $author$project$Main$Food = F4(
 	function (id, name, tags, picture) {
 		return {id: id, name: name, picture: picture, tags: tags};
 	});
+var $author$project$Main$Fruits = {$: 'Fruits'};
 var $author$project$Main$Healthy = {$: 'Healthy'};
+var $author$project$Main$Junk = {$: 'Junk'};
+var $author$project$Main$Meat = {$: 'Meat'};
 var $author$project$Main$NotHealthy = {$: 'NotHealthy'};
-var $author$project$Main$Sweets = {$: 'Sweets'};
+var $author$project$Main$Vegetables = {$: 'Vegetables'};
 var $author$project$Main$defaultFood = A4(
 	$author$project$Main$Food,
 	0,
@@ -5269,7 +5274,7 @@ var $author$project$Main$allFood = _List_fromArray(
 		3,
 		'Tiramisu',
 		_List_fromArray(
-			[$author$project$Main$Dessert, $author$project$Main$Sweets]),
+			[$author$project$Main$Dessert]),
 		'../images/food/chocolatecake.png'),
 		A4(
 		$author$project$Main$Food,
@@ -5277,13 +5282,202 @@ var $author$project$Main$allFood = _List_fromArray(
 		'Salad',
 		_List_fromArray(
 			[$author$project$Main$Healthy]),
-		'../images/food/salad.png')
+		'../images/food/salad.png'),
+		A4(
+		$author$project$Main$Food,
+		5,
+		'Apple Stump',
+		_List_fromArray(
+			[$author$project$Main$Junk]),
+		'../images/food/applestump.png'),
+		A4(
+		$author$project$Main$Food,
+		6,
+		'Empty Bottle',
+		_List_fromArray(
+			[$author$project$Main$Junk, $author$project$Main$Drinks]),
+		'../images/food/bottle.png'),
+		A4(
+		$author$project$Main$Food,
+		7,
+		'Bread',
+		_List_fromArray(
+			[$author$project$Main$Healthy]),
+		'../images/food/bread.png'),
+		A4(
+		$author$project$Main$Food,
+		8,
+		'Burgers',
+		_List_fromArray(
+			[$author$project$Main$NotHealthy, $author$project$Main$Meat]),
+		'../images/food/burgers.png'),
+		A4(
+		$author$project$Main$Food,
+		9,
+		'Carrot',
+		_List_fromArray(
+			[$author$project$Main$Healthy, $author$project$Main$Vegetables]),
+		'../images/food/carrot.png'),
+		A4(
+		$author$project$Main$Food,
+		10,
+		'Sode Water',
+		_List_fromArray(
+			[$author$project$Main$Drinks]),
+		'../images/food/cola.png'),
+		A4(
+		$author$project$Main$Food,
+		11,
+		'Cheese',
+		_List_fromArray(
+			[$author$project$Main$Dairy]),
+		'../images/food/cheese.png'),
+		A4(
+		$author$project$Main$Food,
+		12,
+		'Creamy',
+		_List_fromArray(
+			[$author$project$Main$Dessert]),
+		'../images/food/creamy.png'),
+		A4(
+		$author$project$Main$Food,
+		13,
+		'Cucumber',
+		_List_fromArray(
+			[$author$project$Main$Vegetables, $author$project$Main$Healthy]),
+		'../images/food/cucumber.png'),
+		A4($author$project$Main$Food, 14, 'Eggs', _List_Nil, '../images/food/eggs.png'),
+		A4(
+		$author$project$Main$Food,
+		15,
+		'Fallen Ice Cream',
+		_List_fromArray(
+			[$author$project$Main$Junk, $author$project$Main$Dessert]),
+		'../images/food/icecream.png'),
+		A4(
+		$author$project$Main$Food,
+		16,
+		'Jar',
+		_List_fromArray(
+			[$author$project$Main$Junk, $author$project$Main$Drinks]),
+		'../images/food/jar.png'),
+		A4(
+		$author$project$Main$Food,
+		17,
+		'KFC',
+		_List_fromArray(
+			[$author$project$Main$FastFood]),
+		'../images/food/kfc.png'),
+		A4(
+		$author$project$Main$Food,
+		18,
+		'Leftovers',
+		_List_fromArray(
+			[$author$project$Main$Junk, $author$project$Main$NotHealthy]),
+		'../images/food/leftovers.png'),
+		A4(
+		$author$project$Main$Food,
+		19,
+		'Lemon',
+		_List_fromArray(
+			[$author$project$Main$Fruits, $author$project$Main$Healthy]),
+		'../images/food/lemon.png'),
+		A4(
+		$author$project$Main$Food,
+		20,
+		'Milk',
+		_List_fromArray(
+			[$author$project$Main$Dairy, $author$project$Main$Drinks]),
+		'../images/food/milk.png'),
+		A4(
+		$author$project$Main$Food,
+		21,
+		'Fruity Cake',
+		_List_fromArray(
+			[$author$project$Main$Dessert]),
+		'../images/food/orangecake.png'),
+		A4(
+		$author$project$Main$Food,
+		22,
+		'Pepperoni',
+		_List_fromArray(
+			[$author$project$Main$Meat]),
+		'../images/food/pepperoni.png'),
+		A4(
+		$author$project$Main$Food,
+		23,
+		'Plastic Box',
+		_List_fromArray(
+			[$author$project$Main$Junk, $author$project$Main$NotHealthy]),
+		'../images/food/plasticbox.png'),
+		A4(
+		$author$project$Main$Food,
+		24,
+		'Meat Ribs',
+		_List_fromArray(
+			[$author$project$Main$Meat]),
+		'../images/food/ribs.png'),
+		A4(
+		$author$project$Main$Food,
+		25,
+		'Salmon',
+		_List_fromArray(
+			[$author$project$Main$Meat, $author$project$Main$Healthy]),
+		'../images/food/salmon.png'),
+		A4(
+		$author$project$Main$Food,
+		26,
+		'Sausage Plate',
+		_List_fromArray(
+			[$author$project$Main$Meat]),
+		'../images/food/sausageplate.png'),
+		A4(
+		$author$project$Main$Food,
+		27,
+		'Shawarma',
+		_List_fromArray(
+			[$author$project$Main$Meat, $author$project$Main$NotHealthy, $author$project$Main$FastFood]),
+		'../images/food/shawarma.png'),
+		A4(
+		$author$project$Main$Food,
+		28,
+		'Steak',
+		_List_fromArray(
+			[$author$project$Main$Meat]),
+		'../images/food/steak.png'),
+		A4(
+		$author$project$Main$Food,
+		29,
+		'Steak Plate',
+		_List_fromArray(
+			[$author$project$Main$Meat]),
+		'../images/food/steakplate.png'),
+		A4(
+		$author$project$Main$Food,
+		30,
+		'Tacos',
+		_List_fromArray(
+			[$author$project$Main$Meat]),
+		'../images/food/tacos.png'),
+		A4(
+		$author$project$Main$Food,
+		31,
+		'Tomatos',
+		_List_fromArray(
+			[$author$project$Main$Vegetables, $author$project$Main$Healthy]),
+		'../images/food/tomatos.png'),
+		A4(
+		$author$project$Main$Food,
+		32,
+		'Wok',
+		_List_fromArray(
+			[$author$project$Main$FastFood]),
+		'../images/food/wok.png')
 	]);
 var $author$project$Main$Hero = F6(
 	function (id, name, desc, picture, goodTags, badTags) {
 		return {badTags: badTags, desc: desc, goodTags: goodTags, id: id, name: name, picture: picture};
 	});
-var $author$project$Main$Junk = {$: 'Junk'};
 var $author$project$Main$arnold = A6(
 	$author$project$Main$Hero,
 	1,
@@ -6481,20 +6675,16 @@ var $mdgriffith$elm_style_animation$Animation$interrupt = F2(
 					running: true
 				}));
 	});
-var $author$project$Main$Dairy = {$: 'Dairy'};
-var $author$project$Main$Eggs = {$: 'Eggs'};
-var $author$project$Main$Fruits = {$: 'Fruits'};
-var $author$project$Main$Meat = {$: 'Meat'};
 var $author$project$Main$chuck = A6(
 	$author$project$Main$Hero,
 	3,
 	'Chuck',
-	'Eat plant-based foods and dairy products, but not eggs.',
+	'Eat plant-based foods and dairy products.',
 	'../images/hero/chuck.png',
 	_List_fromArray(
 		[$author$project$Main$Healthy, $author$project$Main$Dairy, $author$project$Main$Fruits]),
 	_List_fromArray(
-		[$author$project$Main$Meat, $author$project$Main$FastFood, $author$project$Main$Eggs]));
+		[$author$project$Main$Meat, $author$project$Main$FastFood]));
 var $author$project$Main$terry = A6(
 	$author$project$Main$Hero,
 	2,
@@ -6504,7 +6694,7 @@ var $author$project$Main$terry = A6(
 	_List_fromArray(
 		[$author$project$Main$Meat, $author$project$Main$FastFood, $author$project$Main$NotHealthy]),
 	_List_fromArray(
-		[$author$project$Main$Dessert, $author$project$Main$Sweets]));
+		[$author$project$Main$Dessert]));
 var $author$project$Main$nextHero = function (hero) {
 	var _v0 = hero.id;
 	switch (_v0) {
