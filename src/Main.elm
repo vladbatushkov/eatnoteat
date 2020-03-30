@@ -10,59 +10,11 @@ import Bulma.Elements exposing (..)
 import Bulma.Layout exposing (..)
 import Bulma.Modifiers exposing (..)
 import Bulma.Modifiers.Typography exposing (textCentered)
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html exposing (Attribute, Html, a, div, img, main_, text)
+import Html.Attributes exposing (class, href, src, style, width, target)
 import Html.Events exposing (..)
-import Random exposing (..)
-
-
-extractValueHelper : List a -> Int -> List a -> Maybe ( a, List a )
-extractValueHelper values index accumulator =
-    case ( index, values ) of
-        ( _, [] ) ->
-            Nothing
-
-        ( 0, head :: tail ) ->
-            Just <| ( head, List.append (List.reverse accumulator) tail )
-
-        ( _, head :: tail ) ->
-            extractValueHelper tail (index - 1) <| head :: accumulator
-
-
-extractValue : List a -> Int -> Maybe ( a, List a )
-extractValue values index =
-    extractValueHelper values index []
-
-
-shuffle : a -> List a -> Generator (List a)
-shuffle defaultA values =
-    case values of
-        [] ->
-            Random.map (\_ -> []) (Random.weighted ( 80, True ) [ ( 20, False ) ])
-
-        vals ->
-            let
-                randomIndexGenerator =
-                    Random.int 0 <| List.length vals - 1
-
-                extractAndRecurse =
-                    \index ->
-                        let
-                            ( randomHead, remainder ) =
-                                case extractValue vals index of
-                                    Nothing ->
-                                        ( defaultA, [] )
-
-                                    Just a ->
-                                        a
-
-                            remainderGen =
-                                shuffle defaultA remainder
-                        in
-                        Random.map (\randomTail -> randomHead :: randomTail) remainderGen
-            in
-            randomIndexGenerator
-                |> Random.andThen extractAndRecurse
+import Random exposing (generate)
+import Random.List exposing (shuffle)
 
 
 
@@ -135,17 +87,47 @@ type AnimatedObject
 
 arnold : Hero
 arnold =
-    Hero 1 "Arnold" "Eat all the trash and junk. Never touch normal food." "../images/hero/arnold.png" [ Junk ] [ Healthy ]
+    Hero 1
+        "Arnold"
+        "Eats any leftovers and junk. Drinks all the fluids. Never touches normal food."
+        "../images/hero/arnold.png"
+        [ Junk, Drinks ]
+        [ Healthy
+        , NotHealthy
+        , Meat
+        , Dairy
+        , Dessert
+        , FastFood
+        , Fruits
+        , Vegetables
+        , Drinks
+        , Spicy
+        ]
 
 
 terry : Hero
 terry =
-    Hero 2 "Terry" "Fast-food and unheathly food lover. Vomit for desserts." "../images/hero/terry.png" [ Meat, FastFood, NotHealthy ] [ Dessert ]
+    Hero 2
+        "Terry"
+        "Loves fast-food and heavy meals. Vomit on desserts and healthy food."
+        "../images/hero/terry.png"
+        [ Meat, FastFood, NotHealthy, Spicy ]
+        [ Dessert
+        , Healthy
+        ]
 
 
 chuck : Hero
 chuck =
-    Hero 3 "Chuck" "Eat plant-based foods and dairy products." "../images/hero/chuck.png" [ Healthy, Dairy, Fruits ] [ Meat, FastFood ]
+    Hero 3
+        "Chuck"
+        "Eats plant-based foods and dairy products. Avoiding any unhealthy food."
+        "../images/hero/chuck.png"
+        [ Healthy, Dairy, Fruits, Vegetables, Drinks ]
+        [ Meat
+        , FastFood
+        , NotHealthy
+        ]
 
 
 init : () -> ( Model, Cmd Msg )
@@ -160,7 +142,7 @@ init _ =
             [ Animation.opacity 1
             ]
         )
-    , Cmd.none
+    , generate Shuffle <| shuffle allFood
     )
 
 
@@ -219,7 +201,6 @@ update action model =
 
                 result =
                     selectBestResult model.bestResult (BestResult model.hero.name model.score)
-
             in
             case gameState of
                 GameOver ->
@@ -229,7 +210,7 @@ update action model =
                     ( { model | hp = initHealth healthLeft }, Cmd.none )
 
         Eat points ->
-            ( { model | score = model.score + points }, generate Shuffle (shuffle defaultFood model.food) )
+            ( { model | score = model.score + points }, generate Shuffle <| shuffle model.food )
 
         Shuffle randomFoods ->
             ( { model | food = randomFoods }, Cmd.none )
@@ -242,7 +223,7 @@ update action model =
                 result =
                     selectBestResult model.bestResult (BestResult hero.name model.score)
             in
-            ( { model | hero = nextHero model.hero, score = 0, hp = initHealth 3, bestResult = result }, generate Shuffle (shuffle defaultFood model.food) )
+            ( { model | hero = nextHero model.hero, score = 0, hp = initHealth 3, bestResult = result }, generate Shuffle <| shuffle model.food )
 
         FadeOutFadeIn tags ->
             let
@@ -419,12 +400,12 @@ body model =
 score : Model -> Html Msg
 score model =
     container [ textCentered ]
-        [ Bulma.Elements.title H1
-            (List.append styleTitle [ style "margin-bottom" "10px" ])
+        [ title H1
+            (styleTitle ++ [ style "margin-bottom" "10px" ])
             [ text "Chew Paper Box"
             ]
-        , Bulma.Elements.title H2
-            (List.append styleNormal [ style "margin-bottom" "20px" ])
+        , title H2
+            (styleNormal ++ [ style "margin-bottom" "20px" ])
             [ text ("Score: " ++ String.fromInt model.score)
             ]
         , bestResult model.bestResult
@@ -435,15 +416,15 @@ bestResult : Maybe BestResult -> Html Msg
 bestResult result =
     case result of
         Nothing ->
-            Bulma.Elements.title H3
-                (List.append styleNormal [ style "margin-bottom" "10px" ])
+            title H3
+                (styleNormal ++ [ style "margin-bottom" "10px" ])
                 [ text "No results yet"
                 ]
 
         Just br ->
-            Bulma.Elements.title H3
-                (List.append styleNormal [ style "margin-bottom" "10px" ])
-                [ text ("Best result made with " ++ br.name ++ ": " ++ String.fromInt br.score)
+            title H3
+                (styleNormal ++ [ style "margin-bottom" "10px" ])
+                [ text ("Best result was made with " ++ br.name ++ ": " ++ String.fromInt br.score)
                 ]
 
 
@@ -463,12 +444,12 @@ card food =
             [ img [ src food.picture, style "border-radius" "10px" ] []
             ]
         , div
-            (List.append styleBold
-                [ style "width" "100%"
-                , style "position" "relative"
-                , style "text-align" "center"
-                , style "font-size" "220%"
-                ]
+            (styleBold
+                ++ [ style "width" "100%"
+                   , style "position" "relative"
+                   , style "text-align" "center"
+                   , style "font-size" "220%"
+                   ]
             )
             [ text food.name
             ]
@@ -479,12 +460,12 @@ panel : Model -> Html Msg
 panel model =
     tileAncestor Auto
         []
-        [ tileParent Width2
+        [ tileParent Width3
             []
             [ tileChild Auto
                 [ style "text-align" "center" ]
                 [ profile model.hero
-                , Bulma.Elements.button { buttonModifiers | outlined = True, size = Small, color = Primary }
+                , button { buttonModifiers | outlined = True, size = Small, color = Primary }
                     [ onClick ChangeHero ]
                     [ text "Change Hero" ]
                 ]
@@ -492,6 +473,23 @@ panel model =
         , tileParent Width3
             []
             (healthContainer model)
+        , tileParent Width6
+            []
+            [ div [ style "position" "absolute", style "right" "0", style "bottom" "100px" ]
+                [ div
+                    (styleNormal ++ [ style "font-size" "150%", style "right" "0" ])
+                    [ a [ href "https://medium.com/@vladbatushkov", target "_blank" ] [ text "Created by Vlad Batushkov on Elm @ 2020" ]
+                    ]
+                , div
+                    (styleNormal ++ [ style "font-size" "150%" ])
+                    [ a [ href "https://www.freepik.com", target "_blank" ] [ text "All illustrations are free from freepik.com" ]
+                    ]
+                , div
+                    (styleNormal ++ [ style "font-size" "150%", style "position" "absolute", style "right" "0" ])
+                    [ a [ href "https://www.brittneymurphydesign.com", target "_blank" ] [ text "`always * forever` is a font created and copyrighted by Brittney Murphy" ]
+                    ]
+                ]
+            ]
         ]
 
 
@@ -503,15 +501,16 @@ profile model =
             [ img [ src model.picture, class "is-rounded" ] []
             ]
         , div
-            (List.append styleBold
-                [ style "font-size" "250%"
-                ]
+            (styleBold
+                ++ [ style "font-size" "250%"
+                   ]
             )
             [ text model.name ]
-        , span
-            (List.append styleNormal
-                [ style "font-size" "180%"
-                ]
+        , title H4
+            (styleNormal
+                ++ [ style "font-size" "200%"
+                   , width 200
+                   ]
             )
             [ text model.desc ]
         ]
@@ -527,7 +526,7 @@ healthContainer model =
             [ tileChild Auto [] [ heart ], tileChild Auto (Animation.render model.hp.state) [ heart ], tileChild Auto [] [] ]
 
         3 ->
-            [ tileChild Auto [] [ heart ], tileChild Auto [] [ heart ],tileChild Auto (Animation.render model.hp.state) [ heart ] ]
+            [ tileChild Auto [] [ heart ], tileChild Auto [] [ heart ], tileChild Auto (Animation.render model.hp.state) [ heart ] ]
 
         _ ->
             []
@@ -565,6 +564,7 @@ styleNormal =
 
 -- DATA
 
+
 type Tags
     = Healthy
     | NotHealthy
@@ -576,18 +576,15 @@ type Tags
     | Fruits
     | Vegetables
     | Drinks
-
-defaultFood : Food
-defaultFood =
-    Food 0
-        "Popcorn"
-        [ NotHealthy ]
-        "../images/food/popcorn.png"
+    | Spicy
 
 
 allFood : List Food
 allFood =
-    [ defaultFood
+    [ Food 0
+        "Popcorn"
+        [ NotHealthy, Dessert ]
+        "../images/food/popcorn.png"
     , Food 1
         "Happy Meal"
         [ FastFood, NotHealthy ]
@@ -646,19 +643,19 @@ allFood =
         "../images/food/eggs.png"
     , Food 15
         "Fallen Ice Cream"
-        [ Junk, Dessert ]
+        [ Junk ]
         "../images/food/icecream.png"
     , Food 16
         "Jar"
         [ Junk, Drinks ]
         "../images/food/jar.png"
     , Food 17
-        "KFC"
+        "Chicken Drumsticks"
         [ FastFood ]
         "../images/food/kfc.png"
     , Food 18
         "Leftovers"
-        [ Junk, NotHealthy ]
+        [ Junk ]
         "../images/food/leftovers.png"
     , Food 19
         "Lemon"
@@ -678,7 +675,7 @@ allFood =
         "../images/food/pepperoni.png"
     , Food 23
         "Plastic Box"
-        [ Junk, NotHealthy ]
+        [ Junk ]
         "../images/food/plasticbox.png"
     , Food 24
         "Meat Ribs"
@@ -714,6 +711,22 @@ allFood =
         "../images/food/tomatos.png"
     , Food 32
         "Wok"
-        [ FastFood ]
+        [ FastFood, Spicy ]
         "../images/food/wok.png"
+    , Food 33
+        "Strawberry Cake"
+        [ Dessert ]
+        "../images/food/strawberrycake.png"
+    , Food 34
+        "Shake"
+        [ Drinks, Healthy ]
+        "../images/food/shake.png"
+    , Food 35
+        "Pepper"
+        [ Spicy, Vegetables ]
+        "../images/food/redhotchilipepper.png"
+    , Food 36
+        "Sausages"
+        [ Meat ]
+        "../images/food/sausages.png"
     ]

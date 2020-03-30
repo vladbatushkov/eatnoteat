@@ -5231,6 +5231,9 @@ var $author$project$Main$Model = F6(
 	function (bestResult, score, hp, hero, food, foodState) {
 		return {bestResult: bestResult, food: food, foodState: foodState, hero: hero, hp: hp, score: score};
 	});
+var $author$project$Main$Shuffle = function (a) {
+	return {$: 'Shuffle', a: a};
+};
 var $author$project$Main$Dairy = {$: 'Dairy'};
 var $author$project$Main$Dessert = {$: 'Dessert'};
 var $author$project$Main$Drinks = {$: 'Drinks'};
@@ -5244,17 +5247,17 @@ var $author$project$Main$Healthy = {$: 'Healthy'};
 var $author$project$Main$Junk = {$: 'Junk'};
 var $author$project$Main$Meat = {$: 'Meat'};
 var $author$project$Main$NotHealthy = {$: 'NotHealthy'};
+var $author$project$Main$Spicy = {$: 'Spicy'};
 var $author$project$Main$Vegetables = {$: 'Vegetables'};
-var $author$project$Main$defaultFood = A4(
-	$author$project$Main$Food,
-	0,
-	'Popcorn',
-	_List_fromArray(
-		[$author$project$Main$NotHealthy]),
-	'../images/food/popcorn.png');
 var $author$project$Main$allFood = _List_fromArray(
 	[
-		$author$project$Main$defaultFood,
+		A4(
+		$author$project$Main$Food,
+		0,
+		'Popcorn',
+		_List_fromArray(
+			[$author$project$Main$NotHealthy, $author$project$Main$Dessert]),
+		'../images/food/popcorn.png'),
 		A4(
 		$author$project$Main$Food,
 		1,
@@ -5352,7 +5355,7 @@ var $author$project$Main$allFood = _List_fromArray(
 		15,
 		'Fallen Ice Cream',
 		_List_fromArray(
-			[$author$project$Main$Junk, $author$project$Main$Dessert]),
+			[$author$project$Main$Junk]),
 		'../images/food/icecream.png'),
 		A4(
 		$author$project$Main$Food,
@@ -5364,7 +5367,7 @@ var $author$project$Main$allFood = _List_fromArray(
 		A4(
 		$author$project$Main$Food,
 		17,
-		'KFC',
+		'Chicken Drumsticks',
 		_List_fromArray(
 			[$author$project$Main$FastFood]),
 		'../images/food/kfc.png'),
@@ -5373,7 +5376,7 @@ var $author$project$Main$allFood = _List_fromArray(
 		18,
 		'Leftovers',
 		_List_fromArray(
-			[$author$project$Main$Junk, $author$project$Main$NotHealthy]),
+			[$author$project$Main$Junk]),
 		'../images/food/leftovers.png'),
 		A4(
 		$author$project$Main$Food,
@@ -5408,7 +5411,7 @@ var $author$project$Main$allFood = _List_fromArray(
 		23,
 		'Plastic Box',
 		_List_fromArray(
-			[$author$project$Main$Junk, $author$project$Main$NotHealthy]),
+			[$author$project$Main$Junk]),
 		'../images/food/plasticbox.png'),
 		A4(
 		$author$project$Main$Food,
@@ -5471,8 +5474,36 @@ var $author$project$Main$allFood = _List_fromArray(
 		32,
 		'Wok',
 		_List_fromArray(
-			[$author$project$Main$FastFood]),
-		'../images/food/wok.png')
+			[$author$project$Main$FastFood, $author$project$Main$Spicy]),
+		'../images/food/wok.png'),
+		A4(
+		$author$project$Main$Food,
+		33,
+		'Strawberry Cake',
+		_List_fromArray(
+			[$author$project$Main$Dessert]),
+		'../images/food/strawberrycake.png'),
+		A4(
+		$author$project$Main$Food,
+		34,
+		'Shake',
+		_List_fromArray(
+			[$author$project$Main$Drinks, $author$project$Main$Healthy]),
+		'../images/food/shake.png'),
+		A4(
+		$author$project$Main$Food,
+		35,
+		'Pepper',
+		_List_fromArray(
+			[$author$project$Main$Spicy, $author$project$Main$Vegetables]),
+		'../images/food/redhotchilipepper.png'),
+		A4(
+		$author$project$Main$Food,
+		36,
+		'Sausages',
+		_List_fromArray(
+			[$author$project$Main$Meat]),
+		'../images/food/sausages.png')
 	]);
 var $author$project$Main$Hero = F6(
 	function (id, name, desc, picture, goodTags, badTags) {
@@ -5482,12 +5513,119 @@ var $author$project$Main$arnold = A6(
 	$author$project$Main$Hero,
 	1,
 	'Arnold',
-	'Eat all the trash and junk. Never touch normal food.',
+	'Eats any leftovers and junk. Drinks all the fluids. Never touches normal food.',
 	'../images/hero/arnold.png',
 	_List_fromArray(
-		[$author$project$Main$Junk]),
+		[$author$project$Main$Junk, $author$project$Main$Drinks]),
 	_List_fromArray(
-		[$author$project$Main$Healthy]));
+		[$author$project$Main$Healthy, $author$project$Main$NotHealthy, $author$project$Main$Meat, $author$project$Main$Dairy, $author$project$Main$Dessert, $author$project$Main$FastFood, $author$project$Main$Fruits, $author$project$Main$Vegetables, $author$project$Main$Drinks, $author$project$Main$Spicy]));
+var $elm$random$Random$Generate = function (a) {
+	return {$: 'Generate', a: a};
+};
+var $elm$random$Random$Seed = F2(
+	function (a, b) {
+		return {$: 'Seed', a: a, b: b};
+	});
+var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var $elm$random$Random$next = function (_v0) {
+	var state0 = _v0.a;
+	var incr = _v0.b;
+	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
+};
+var $elm$random$Random$initialSeed = function (x) {
+	var _v0 = $elm$random$Random$next(
+		A2($elm$random$Random$Seed, 0, 1013904223));
+	var state1 = _v0.a;
+	var incr = _v0.b;
+	var state2 = (state1 + x) >>> 0;
+	return $elm$random$Random$next(
+		A2($elm$random$Random$Seed, state2, incr));
+};
+var $elm$time$Time$Name = function (a) {
+	return {$: 'Name', a: a};
+};
+var $elm$time$Time$Offset = function (a) {
+	return {$: 'Offset', a: a};
+};
+var $elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
+var $elm$time$Time$customZone = $elm$time$Time$Zone;
+var $elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
+var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
+var $elm$time$Time$posixToMillis = function (_v0) {
+	var millis = _v0.a;
+	return millis;
+};
+var $elm$random$Random$init = A2(
+	$elm$core$Task$andThen,
+	function (time) {
+		return $elm$core$Task$succeed(
+			$elm$random$Random$initialSeed(
+				$elm$time$Time$posixToMillis(time)));
+	},
+	$elm$time$Time$now);
+var $elm$random$Random$step = F2(
+	function (_v0, seed) {
+		var generator = _v0.a;
+		return generator(seed);
+	});
+var $elm$random$Random$onEffects = F3(
+	function (router, commands, seed) {
+		if (!commands.b) {
+			return $elm$core$Task$succeed(seed);
+		} else {
+			var generator = commands.a.a;
+			var rest = commands.b;
+			var _v1 = A2($elm$random$Random$step, generator, seed);
+			var value = _v1.a;
+			var newSeed = _v1.b;
+			return A2(
+				$elm$core$Task$andThen,
+				function (_v2) {
+					return A3($elm$random$Random$onEffects, router, rest, newSeed);
+				},
+				A2($elm$core$Platform$sendToApp, router, value));
+		}
+	});
+var $elm$random$Random$onSelfMsg = F3(
+	function (_v0, _v1, seed) {
+		return $elm$core$Task$succeed(seed);
+	});
+var $elm$random$Random$Generator = function (a) {
+	return {$: 'Generator', a: a};
+};
+var $elm$random$Random$map = F2(
+	function (func, _v0) {
+		var genA = _v0.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v1 = genA(seed0);
+				var a = _v1.a;
+				var seed1 = _v1.b;
+				return _Utils_Tuple2(
+					func(a),
+					seed1);
+			});
+	});
+var $elm$random$Random$cmdMap = F2(
+	function (func, _v0) {
+		var generator = _v0.a;
+		return $elm$random$Random$Generate(
+			A2($elm$random$Random$map, func, generator));
+	});
+_Platform_effectManagers['Random'] = _Platform_createManager($elm$random$Random$init, $elm$random$Random$onEffects, $elm$random$Random$onSelfMsg, $elm$random$Random$cmdMap);
+var $elm$random$Random$command = _Platform_leaf('Random');
+var $elm$random$Random$generate = F2(
+	function (tagger, generator) {
+		return $elm$random$Random$command(
+			$elm$random$Random$Generate(
+				A2($elm$random$Random$map, tagger, generator)));
+	});
 var $author$project$Main$Health = F2(
 	function (value, state) {
 		return {state: state, value: value};
@@ -5532,10 +5670,6 @@ var $mdgriffith$elm_style_animation$Animation$px = function (myPx) {
 var $mdgriffith$elm_style_animation$Animation$Model$Animation = function (a) {
 	return {$: 'Animation', a: a};
 };
-var $elm$time$Time$Posix = function (a) {
-	return {$: 'Posix', a: a};
-};
-var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
 var $mdgriffith$elm_style_animation$Animation$initialState = function (current) {
 	return $mdgriffith$elm_style_animation$Animation$Model$Animation(
 		{
@@ -6265,8 +6399,411 @@ var $author$project$Main$initHealth = function (hp) {
 					$mdgriffith$elm_style_animation$Animation$px(0))
 				])));
 };
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $elm$core$Array$fromListHelp = F3(
+	function (list, nodeList, nodeListSize) {
+		fromListHelp:
+		while (true) {
+			var _v0 = A2($elm$core$Elm$JsArray$initializeFromList, $elm$core$Array$branchFactor, list);
+			var jsArray = _v0.a;
+			var remainingItems = _v0.b;
+			if (_Utils_cmp(
+				$elm$core$Elm$JsArray$length(jsArray),
+				$elm$core$Array$branchFactor) < 0) {
+				return A2(
+					$elm$core$Array$builderToArray,
+					true,
+					{nodeList: nodeList, nodeListSize: nodeListSize, tail: jsArray});
+			} else {
+				var $temp$list = remainingItems,
+					$temp$nodeList = A2(
+					$elm$core$List$cons,
+					$elm$core$Array$Leaf(jsArray),
+					nodeList),
+					$temp$nodeListSize = nodeListSize + 1;
+				list = $temp$list;
+				nodeList = $temp$nodeList;
+				nodeListSize = $temp$nodeListSize;
+				continue fromListHelp;
+			}
+		}
+	});
+var $elm$core$Array$fromList = function (list) {
+	if (!list.b) {
+		return $elm$core$Array$empty;
+	} else {
+		return A3($elm$core$Array$fromListHelp, list, _List_Nil, 0);
+	}
+};
+var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var $elm$core$Bitwise$xor = _Bitwise_xor;
+var $elm$random$Random$peel = function (_v0) {
+	var state = _v0.a;
+	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
+	return ((word >>> 22) ^ word) >>> 0;
+};
+var $elm$random$Random$int = F2(
+	function (a, b) {
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
+				var lo = _v0.a;
+				var hi = _v0.b;
+				var range = (hi - lo) + 1;
+				if (!((range - 1) & range)) {
+					return _Utils_Tuple2(
+						(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
+						$elm$random$Random$next(seed0));
+				} else {
+					var threshhold = (((-range) >>> 0) % range) >>> 0;
+					var accountForBias = function (seed) {
+						accountForBias:
+						while (true) {
+							var x = $elm$random$Random$peel(seed);
+							var seedN = $elm$random$Random$next(seed);
+							if (_Utils_cmp(x, threshhold) < 0) {
+								var $temp$seed = seedN;
+								seed = $temp$seed;
+								continue accountForBias;
+							} else {
+								return _Utils_Tuple2((x % range) + lo, seedN);
+							}
+						}
+					};
+					return accountForBias(seed0);
+				}
+			});
+	});
+var $elm$core$Array$length = function (_v0) {
+	var len = _v0.a;
+	return len;
+};
+var $elm$random$Random$listHelp = F4(
+	function (revList, n, gen, seed) {
+		listHelp:
+		while (true) {
+			if (n < 1) {
+				return _Utils_Tuple2(revList, seed);
+			} else {
+				var _v0 = gen(seed);
+				var value = _v0.a;
+				var newSeed = _v0.b;
+				var $temp$revList = A2($elm$core$List$cons, value, revList),
+					$temp$n = n - 1,
+					$temp$gen = gen,
+					$temp$seed = newSeed;
+				revList = $temp$revList;
+				n = $temp$n;
+				gen = $temp$gen;
+				seed = $temp$seed;
+				continue listHelp;
+			}
+		}
+	});
+var $elm$random$Random$list = F2(
+	function (n, _v0) {
+		var gen = _v0.a;
+		return $elm$random$Random$Generator(
+			function (seed) {
+				return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
+			});
+	});
+var $elm$core$Basics$compare = _Utils_compare;
+var $elm$core$Dict$get = F2(
+	function (targetKey, dict) {
+		get:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
+				switch (_v1.$) {
+					case 'LT':
+						var $temp$targetKey = targetKey,
+							$temp$dict = left;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+					case 'EQ':
+						return $elm$core$Maybe$Just(value);
+					default:
+						var $temp$targetKey = targetKey,
+							$temp$dict = right;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+				}
+			}
+		}
+	});
+var $owanturist$elm_union_find$UnionFind$findFast = F2(
+	function (id, dict) {
+		findFast:
+		while (true) {
+			var _v0 = A2($elm$core$Dict$get, id, dict);
+			if (_v0.$ === 'Nothing') {
+				return id;
+			} else {
+				var cursor = _v0.a;
+				if (_Utils_eq(id, cursor)) {
+					return id;
+				} else {
+					var $temp$id = cursor,
+						$temp$dict = dict;
+					id = $temp$id;
+					dict = $temp$dict;
+					continue findFast;
+				}
+			}
+		}
+	});
+var $owanturist$elm_union_find$UnionFind$find = F2(
+	function (id, _v0) {
+		var dict = _v0.b;
+		return A2($owanturist$elm_union_find$UnionFind$findFast, id, dict);
+	});
+var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
+var $elm$core$Basics$ge = _Utils_ge;
+var $elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
+var $elm$core$Array$getHelp = F3(
+	function (shift, index, tree) {
+		getHelp:
+		while (true) {
+			var pos = $elm$core$Array$bitMask & (index >>> shift);
+			var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
+			if (_v0.$ === 'SubTree') {
+				var subTree = _v0.a;
+				var $temp$shift = shift - $elm$core$Array$shiftStep,
+					$temp$index = index,
+					$temp$tree = subTree;
+				shift = $temp$shift;
+				index = $temp$index;
+				tree = $temp$tree;
+				continue getHelp;
+			} else {
+				var values = _v0.a;
+				return A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, values);
+			}
+		}
+	});
+var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
+var $elm$core$Array$tailIndex = function (len) {
+	return (len >>> 5) << 5;
+};
+var $elm$core$Array$get = F2(
+	function (index, _v0) {
+		var len = _v0.a;
+		var startShift = _v0.b;
+		var tree = _v0.c;
+		var tail = _v0.d;
+		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? $elm$core$Maybe$Nothing : ((_Utils_cmp(
+			index,
+			$elm$core$Array$tailIndex(len)) > -1) ? $elm$core$Maybe$Just(
+			A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, tail)) : $elm$core$Maybe$Just(
+			A3($elm$core$Array$getHelp, startShift, index, tree)));
+	});
+var $elm$core$Array$isEmpty = function (_v0) {
+	var len = _v0.a;
+	return !len;
+};
+var $elm$core$Basics$modBy = _Basics_modBy;
+var $owanturist$elm_union_find$UnionFind$QuickUnionPathCompression = F2(
+	function (a, b) {
+		return {$: 'QuickUnionPathCompression', a: a, b: b};
+	});
+var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
+var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
+var $owanturist$elm_union_find$UnionFind$quickUnionPathCompression = A2($owanturist$elm_union_find$UnionFind$QuickUnionPathCompression, 0, $elm$core$Dict$empty);
+var $elm$core$Dict$Black = {$: 'Black'};
+var $elm$core$Dict$RBNode_elm_builtin = F5(
+	function (a, b, c, d, e) {
+		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
+	});
+var $elm$core$Dict$Red = {$: 'Red'};
+var $elm$core$Dict$balance = F5(
+	function (color, key, value, left, right) {
+		if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Red')) {
+			var _v1 = right.a;
+			var rK = right.b;
+			var rV = right.c;
+			var rLeft = right.d;
+			var rRight = right.e;
+			if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
+				var _v3 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var lLeft = left.d;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Red,
+					key,
+					value,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					color,
+					rK,
+					rV,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, left, rLeft),
+					rRight);
+			}
+		} else {
+			if ((((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) && (left.d.$ === 'RBNode_elm_builtin')) && (left.d.a.$ === 'Red')) {
+				var _v5 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var _v6 = left.d;
+				var _v7 = _v6.a;
+				var llK = _v6.b;
+				var llV = _v6.c;
+				var llLeft = _v6.d;
+				var llRight = _v6.e;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Red,
+					lK,
+					lV,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, llK, llV, llLeft, llRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, lRight, right));
+			} else {
+				return A5($elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
+			}
+		}
+	});
+var $elm$core$Dict$insertHelp = F3(
+	function (key, value, dict) {
+		if (dict.$ === 'RBEmpty_elm_builtin') {
+			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
+		} else {
+			var nColor = dict.a;
+			var nKey = dict.b;
+			var nValue = dict.c;
+			var nLeft = dict.d;
+			var nRight = dict.e;
+			var _v1 = A2($elm$core$Basics$compare, key, nKey);
+			switch (_v1.$) {
+				case 'LT':
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						A3($elm$core$Dict$insertHelp, key, value, nLeft),
+						nRight);
+				case 'EQ':
+					return A5($elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
+				default:
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						nLeft,
+						A3($elm$core$Dict$insertHelp, key, value, nRight));
+			}
+		}
+	});
+var $elm$core$Dict$insert = F3(
+	function (key, value, dict) {
+		var _v0 = A3($elm$core$Dict$insertHelp, key, value, dict);
+		if ((_v0.$ === 'RBNode_elm_builtin') && (_v0.a.$ === 'Red')) {
+			var _v1 = _v0.a;
+			var k = _v0.b;
+			var v = _v0.c;
+			var l = _v0.d;
+			var r = _v0.e;
+			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, k, v, l, r);
+		} else {
+			var x = _v0;
+			return x;
+		}
+	});
+var $owanturist$elm_union_find$UnionFind$findCompressed = F2(
+	function (id, dict) {
+		var _v0 = A2($elm$core$Dict$get, id, dict);
+		if (_v0.$ === 'Nothing') {
+			return _Utils_Tuple2(
+				id,
+				A3($elm$core$Dict$insert, id, id, dict));
+		} else {
+			var cursor = _v0.a;
+			if (_Utils_eq(id, cursor)) {
+				return _Utils_Tuple2(id, dict);
+			} else {
+				var _v1 = A2($owanturist$elm_union_find$UnionFind$findCompressed, cursor, dict);
+				var parent = _v1.a;
+				var nextDict = _v1.b;
+				return _Utils_Tuple2(
+					parent,
+					A3($elm$core$Dict$insert, id, parent, nextDict));
+			}
+		}
+	});
+var $owanturist$elm_union_find$UnionFind$union = F3(
+	function (left, right, _v0) {
+		var count_ = _v0.a;
+		var dict = _v0.b;
+		var _v1 = A2($owanturist$elm_union_find$UnionFind$findCompressed, left, dict);
+		var leftRoot = _v1.a;
+		var leftDict = _v1.b;
+		var _v2 = A2($owanturist$elm_union_find$UnionFind$findCompressed, right, leftDict);
+		var rightRoot = _v2.a;
+		var rightDict = _v2.b;
+		return _Utils_eq(leftRoot, rightRoot) ? A2($owanturist$elm_union_find$UnionFind$QuickUnionPathCompression, count_, rightDict) : A2(
+			$owanturist$elm_union_find$UnionFind$QuickUnionPathCompression,
+			count_ + 1,
+			A3($elm$core$Dict$insert, leftRoot, rightRoot, rightDict));
+	});
+var $elm_community$random_extra$Utils$selectUniqByIndexes = F2(
+	function (values, randomIndexes) {
+		var modByLength = $elm$core$Basics$modBy(
+			$elm$core$Array$length(values));
+		var step = F2(
+			function (randomIndex, _v1) {
+				var uf = _v1.a;
+				var acc = _v1.b;
+				var leaderOfElement = A2($owanturist$elm_union_find$UnionFind$find, randomIndex, uf);
+				var leaderOfNextElement = A2(
+					$owanturist$elm_union_find$UnionFind$find,
+					modByLength(leaderOfElement + 1),
+					uf);
+				var _v0 = A2($elm$core$Array$get, leaderOfElement, values);
+				if (_v0.$ === 'Nothing') {
+					return _Utils_Tuple2(uf, acc);
+				} else {
+					var value = _v0.a;
+					return _Utils_Tuple2(
+						A3($owanturist$elm_union_find$UnionFind$union, leaderOfElement, leaderOfNextElement, uf),
+						A2($elm$core$List$cons, value, acc));
+				}
+			});
+		return $elm$core$Array$isEmpty(values) ? _List_Nil : A3(
+			$elm$core$List$foldr,
+			step,
+			_Utils_Tuple2($owanturist$elm_union_find$UnionFind$quickUnionPathCompression, _List_Nil),
+			randomIndexes).b;
+	});
+var $elm_community$random_extra$Random$List$shuffle = function (list) {
+	var values = $elm$core$Array$fromList(list);
+	var length = $elm$core$Array$length(values);
+	return A2(
+		$elm$random$Random$map,
+		$elm_community$random_extra$Utils$selectUniqByIndexes(values),
+		A2(
+			$elm$random$Random$list,
+			length,
+			A2($elm$random$Random$int, 0, length - 1)));
+};
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
 		A6(
@@ -6281,7 +6818,10 @@ var $author$project$Main$init = function (_v0) {
 					[
 						$mdgriffith$elm_style_animation$Animation$opacity(1)
 					]))),
-		$elm$core$Platform$Cmd$none);
+		A2(
+			$elm$random$Random$generate,
+			$author$project$Main$Shuffle,
+			$elm_community$random_extra$Random$List$shuffle($author$project$Main$allFood)));
 };
 var $author$project$Main$Animate = F2(
 	function (a, b) {
@@ -6470,9 +7010,6 @@ var $author$project$Main$Eat = function (a) {
 };
 var $author$project$Main$GameOver = {$: 'GameOver'};
 var $author$project$Main$KeepPlaying = {$: 'KeepPlaying'};
-var $author$project$Main$Shuffle = function (a) {
-	return {$: 'Shuffle', a: a};
-};
 var $author$project$Main$applyAnimationToSingle = F2(
 	function (state, fn) {
 		return fn(state);
@@ -6511,109 +7048,6 @@ var $author$project$Main$calcEat = F2(
 				},
 				model.hero.badTags)) ? 0 : 1;
 		return _Utils_Tuple2(points, damage);
-	});
-var $elm$random$Random$Generate = function (a) {
-	return {$: 'Generate', a: a};
-};
-var $elm$random$Random$Seed = F2(
-	function (a, b) {
-		return {$: 'Seed', a: a, b: b};
-	});
-var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
-var $elm$random$Random$next = function (_v0) {
-	var state0 = _v0.a;
-	var incr = _v0.b;
-	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
-};
-var $elm$random$Random$initialSeed = function (x) {
-	var _v0 = $elm$random$Random$next(
-		A2($elm$random$Random$Seed, 0, 1013904223));
-	var state1 = _v0.a;
-	var incr = _v0.b;
-	var state2 = (state1 + x) >>> 0;
-	return $elm$random$Random$next(
-		A2($elm$random$Random$Seed, state2, incr));
-};
-var $elm$time$Time$Name = function (a) {
-	return {$: 'Name', a: a};
-};
-var $elm$time$Time$Offset = function (a) {
-	return {$: 'Offset', a: a};
-};
-var $elm$time$Time$Zone = F2(
-	function (a, b) {
-		return {$: 'Zone', a: a, b: b};
-	});
-var $elm$time$Time$customZone = $elm$time$Time$Zone;
-var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
-var $elm$time$Time$posixToMillis = function (_v0) {
-	var millis = _v0.a;
-	return millis;
-};
-var $elm$random$Random$init = A2(
-	$elm$core$Task$andThen,
-	function (time) {
-		return $elm$core$Task$succeed(
-			$elm$random$Random$initialSeed(
-				$elm$time$Time$posixToMillis(time)));
-	},
-	$elm$time$Time$now);
-var $elm$random$Random$step = F2(
-	function (_v0, seed) {
-		var generator = _v0.a;
-		return generator(seed);
-	});
-var $elm$random$Random$onEffects = F3(
-	function (router, commands, seed) {
-		if (!commands.b) {
-			return $elm$core$Task$succeed(seed);
-		} else {
-			var generator = commands.a.a;
-			var rest = commands.b;
-			var _v1 = A2($elm$random$Random$step, generator, seed);
-			var value = _v1.a;
-			var newSeed = _v1.b;
-			return A2(
-				$elm$core$Task$andThen,
-				function (_v2) {
-					return A3($elm$random$Random$onEffects, router, rest, newSeed);
-				},
-				A2($elm$core$Platform$sendToApp, router, value));
-		}
-	});
-var $elm$random$Random$onSelfMsg = F3(
-	function (_v0, _v1, seed) {
-		return $elm$core$Task$succeed(seed);
-	});
-var $elm$random$Random$Generator = function (a) {
-	return {$: 'Generator', a: a};
-};
-var $elm$random$Random$map = F2(
-	function (func, _v0) {
-		var genA = _v0.a;
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var _v1 = genA(seed0);
-				var a = _v1.a;
-				var seed1 = _v1.b;
-				return _Utils_Tuple2(
-					func(a),
-					seed1);
-			});
-	});
-var $elm$random$Random$cmdMap = F2(
-	function (func, _v0) {
-		var generator = _v0.a;
-		return $elm$random$Random$Generate(
-			A2($elm$random$Random$map, func, generator));
-	});
-_Platform_effectManagers['Random'] = _Platform_createManager($elm$random$Random$init, $elm$random$Random$onEffects, $elm$random$Random$onSelfMsg, $elm$random$Random$cmdMap);
-var $elm$random$Random$command = _Platform_leaf('Random');
-var $elm$random$Random$generate = F2(
-	function (tagger, generator) {
-		return $elm$random$Random$command(
-			$elm$random$Random$Generate(
-				A2($elm$random$Random$map, tagger, generator)));
 	});
 var $elm$core$List$drop = F2(
 	function (n, list) {
@@ -6679,22 +7113,22 @@ var $author$project$Main$chuck = A6(
 	$author$project$Main$Hero,
 	3,
 	'Chuck',
-	'Eat plant-based foods and dairy products.',
+	'Eats plant-based foods and dairy products. Avoiding any unhealthy food.',
 	'../images/hero/chuck.png',
 	_List_fromArray(
-		[$author$project$Main$Healthy, $author$project$Main$Dairy, $author$project$Main$Fruits]),
+		[$author$project$Main$Healthy, $author$project$Main$Dairy, $author$project$Main$Fruits, $author$project$Main$Vegetables, $author$project$Main$Drinks]),
 	_List_fromArray(
-		[$author$project$Main$Meat, $author$project$Main$FastFood]));
+		[$author$project$Main$Meat, $author$project$Main$FastFood, $author$project$Main$NotHealthy]));
 var $author$project$Main$terry = A6(
 	$author$project$Main$Hero,
 	2,
 	'Terry',
-	'Fast-food and unheathly food lover. Vomit for desserts.',
+	'Loves fast-food and heavy meals. Vomit on desserts and healthy food.',
 	'../images/hero/terry.png',
 	_List_fromArray(
-		[$author$project$Main$Meat, $author$project$Main$FastFood, $author$project$Main$NotHealthy]),
+		[$author$project$Main$Meat, $author$project$Main$FastFood, $author$project$Main$NotHealthy, $author$project$Main$Spicy]),
 	_List_fromArray(
-		[$author$project$Main$Dessert]));
+		[$author$project$Main$Dessert, $author$project$Main$Healthy]));
 var $author$project$Main$nextHero = function (hero) {
 	var _v0 = hero.id;
 	switch (_v0) {
@@ -6706,6 +7140,8 @@ var $author$project$Main$nextHero = function (hero) {
 			return $author$project$Main$arnold;
 	}
 };
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $mdgriffith$elm_style_animation$Animation$queue = F2(
 	function (steps, _v0) {
 		var model = _v0.a;
@@ -6732,209 +7168,6 @@ var $mdgriffith$elm_style_animation$Animation$Model$Send = function (a) {
 var $mdgriffith$elm_style_animation$Animation$Messenger$send = function (msg) {
 	return $mdgriffith$elm_style_animation$Animation$Model$Send(msg);
 };
-var $elm$random$Random$andThen = F2(
-	function (callback, _v0) {
-		var genA = _v0.a;
-		return $elm$random$Random$Generator(
-			function (seed) {
-				var _v1 = genA(seed);
-				var result = _v1.a;
-				var newSeed = _v1.b;
-				var _v2 = callback(result);
-				var genB = _v2.a;
-				return genB(newSeed);
-			});
-	});
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
-var $author$project$Main$extractValueHelper = F3(
-	function (values, index, accumulator) {
-		var _v0 = _Utils_Tuple2(index, values);
-		if (!_v0.b.b) {
-			return $elm$core$Maybe$Nothing;
-		} else {
-			if (!_v0.a) {
-				var _v1 = _v0.b;
-				var head = _v1.a;
-				var tail = _v1.b;
-				return $elm$core$Maybe$Just(
-					_Utils_Tuple2(
-						head,
-						A2(
-							$elm$core$List$append,
-							$elm$core$List$reverse(accumulator),
-							tail)));
-			} else {
-				var _v2 = _v0.b;
-				var head = _v2.a;
-				var tail = _v2.b;
-				return A3(
-					$author$project$Main$extractValueHelper,
-					tail,
-					index - 1,
-					A2($elm$core$List$cons, head, accumulator));
-			}
-		}
-	});
-var $author$project$Main$extractValue = F2(
-	function (values, index) {
-		return A3($author$project$Main$extractValueHelper, values, index, _List_Nil);
-	});
-var $elm$core$Bitwise$and = _Bitwise_and;
-var $elm$core$Basics$negate = function (n) {
-	return -n;
-};
-var $elm$core$Bitwise$xor = _Bitwise_xor;
-var $elm$random$Random$peel = function (_v0) {
-	var state = _v0.a;
-	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
-	return ((word >>> 22) ^ word) >>> 0;
-};
-var $elm$random$Random$int = F2(
-	function (a, b) {
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
-				var lo = _v0.a;
-				var hi = _v0.b;
-				var range = (hi - lo) + 1;
-				if (!((range - 1) & range)) {
-					return _Utils_Tuple2(
-						(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
-						$elm$random$Random$next(seed0));
-				} else {
-					var threshhold = (((-range) >>> 0) % range) >>> 0;
-					var accountForBias = function (seed) {
-						accountForBias:
-						while (true) {
-							var x = $elm$random$Random$peel(seed);
-							var seedN = $elm$random$Random$next(seed);
-							if (_Utils_cmp(x, threshhold) < 0) {
-								var $temp$seed = seedN;
-								seed = $temp$seed;
-								continue accountForBias;
-							} else {
-								return _Utils_Tuple2((x % range) + lo, seedN);
-							}
-						}
-					};
-					return accountForBias(seed0);
-				}
-			});
-	});
-var $elm$core$Basics$abs = function (n) {
-	return (n < 0) ? (-n) : n;
-};
-var $elm$random$Random$float = F2(
-	function (a, b) {
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var seed1 = $elm$random$Random$next(seed0);
-				var range = $elm$core$Basics$abs(b - a);
-				var n1 = $elm$random$Random$peel(seed1);
-				var n0 = $elm$random$Random$peel(seed0);
-				var lo = (134217727 & n1) * 1.0;
-				var hi = (67108863 & n0) * 1.0;
-				var val = ((hi * 134217728.0) + lo) / 9007199254740992.0;
-				var scaled = (val * range) + a;
-				return _Utils_Tuple2(
-					scaled,
-					$elm$random$Random$next(seed1));
-			});
-	});
-var $elm$random$Random$getByWeight = F3(
-	function (_v0, others, countdown) {
-		getByWeight:
-		while (true) {
-			var weight = _v0.a;
-			var value = _v0.b;
-			if (!others.b) {
-				return value;
-			} else {
-				var second = others.a;
-				var otherOthers = others.b;
-				if (_Utils_cmp(
-					countdown,
-					$elm$core$Basics$abs(weight)) < 1) {
-					return value;
-				} else {
-					var $temp$_v0 = second,
-						$temp$others = otherOthers,
-						$temp$countdown = countdown - $elm$core$Basics$abs(weight);
-					_v0 = $temp$_v0;
-					others = $temp$others;
-					countdown = $temp$countdown;
-					continue getByWeight;
-				}
-			}
-		}
-	});
-var $elm$core$List$sum = function (numbers) {
-	return A3($elm$core$List$foldl, $elm$core$Basics$add, 0, numbers);
-};
-var $elm$random$Random$weighted = F2(
-	function (first, others) {
-		var normalize = function (_v0) {
-			var weight = _v0.a;
-			return $elm$core$Basics$abs(weight);
-		};
-		var total = normalize(first) + $elm$core$List$sum(
-			A2($elm$core$List$map, normalize, others));
-		return A2(
-			$elm$random$Random$map,
-			A2($elm$random$Random$getByWeight, first, others),
-			A2($elm$random$Random$float, 0, total));
-	});
-var $author$project$Main$shuffle = F2(
-	function (defaultA, values) {
-		if (!values.b) {
-			return A2(
-				$elm$random$Random$map,
-				function (_v1) {
-					return _List_Nil;
-				},
-				A2(
-					$elm$random$Random$weighted,
-					_Utils_Tuple2(80, true),
-					_List_fromArray(
-						[
-							_Utils_Tuple2(20, false)
-						])));
-		} else {
-			var vals = values;
-			var randomIndexGenerator = A2(
-				$elm$random$Random$int,
-				0,
-				$elm$core$List$length(vals) - 1);
-			var extractAndRecurse = function (index) {
-				var _v2 = function () {
-					var _v3 = A2($author$project$Main$extractValue, vals, index);
-					if (_v3.$ === 'Nothing') {
-						return _Utils_Tuple2(defaultA, _List_Nil);
-					} else {
-						var a = _v3.a;
-						return a;
-					}
-				}();
-				var randomHead = _v2.a;
-				var remainder = _v2.b;
-				var remainderGen = A2($author$project$Main$shuffle, defaultA, remainder);
-				return A2(
-					$elm$random$Random$map,
-					function (randomTail) {
-						return A2($elm$core$List$cons, randomHead, randomTail);
-					},
-					remainderGen);
-			};
-			return A2($elm$random$Random$andThen, extractAndRecurse, randomIndexGenerator);
-		}
-	});
 var $mdgriffith$elm_style_animation$Animation$Model$To = function (a) {
 	return {$: 'To', a: a};
 };
@@ -7194,6 +7427,9 @@ var $elm$core$List$filterMap = F2(
 			_List_Nil,
 			xs);
 	});
+var $elm$core$Basics$abs = function (n) {
+	return (n < 0) ? (-n) : n;
+};
 var $elm$core$List$repeatHelp = F3(
 	function (result, n, value) {
 		repeatHelp:
@@ -7862,7 +8098,6 @@ var $mdgriffith$elm_style_animation$Animation$Model$startTowards = F3(
 			},
 			A2($mdgriffith$elm_style_animation$Animation$Model$zipPropertiesGreedy, current, target));
 	});
-var $elm$core$Basics$ge = _Utils_ge;
 var $mdgriffith$elm_style_animation$Animation$Model$tolerance = 0.01;
 var $elm$core$Basics$truncate = _Basics_truncate;
 var $mdgriffith$elm_style_animation$Animation$Model$vTolerance = 0.1;
@@ -8508,7 +8743,7 @@ var $author$project$Main$update = F2(
 						A2(
 							$elm$random$Random$generate,
 							$author$project$Main$Shuffle,
-							A2($author$project$Main$shuffle, $author$project$Main$defaultFood, model.food)));
+							$elm_community$random_extra$Random$List$shuffle(model.food)));
 				case 'Shuffle':
 					var randomFoods = action.a;
 					return _Utils_Tuple2(
@@ -8534,7 +8769,7 @@ var $author$project$Main$update = F2(
 						A2(
 							$elm$random$Random$generate,
 							$author$project$Main$Shuffle,
-							A2($author$project$Main$shuffle, $author$project$Main$defaultFood, model.food)));
+							$elm_community$random_extra$Random$List$shuffle(model.food)));
 				case 'FadeOutFadeIn':
 					var tags = action.a;
 					var _v2 = A2($author$project$Main$calcEat, model, tags);
@@ -9141,8 +9376,7 @@ var $author$project$Main$card = function (food) {
 					])),
 				A2(
 				$elm$html$Html$div,
-				A2(
-					$elm$core$List$append,
+				_Utils_ap(
 					$author$project$Main$styleBold,
 					_List_fromArray(
 						[
@@ -9239,6 +9473,14 @@ var $surprisetalk$elm_bulma$Bulma$Columns$columns = function (_v0) {
 };
 var $surprisetalk$elm_bulma$Bulma$Columns$TabletAndBeyond = {$: 'TabletAndBeyond'};
 var $surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers = {centered: false, display: $surprisetalk$elm_bulma$Bulma$Columns$TabletAndBeyond, gap: $surprisetalk$elm_bulma$Bulma$Columns$Gap3, multiline: false};
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
 var $elm$core$List$concat = function (lists) {
 	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
 };
@@ -9996,8 +10238,9 @@ var $surprisetalk$elm_bulma$Bulma$Modifiers$Default = {$: 'Default'};
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Small = {$: 'Small'};
 var $surprisetalk$elm_bulma$Bulma$Layout$heroModifiers = {bold: false, color: $surprisetalk$elm_bulma$Bulma$Modifiers$Default, size: $surprisetalk$elm_bulma$Bulma$Modifiers$Small};
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Primary = {$: 'Primary'};
-var $surprisetalk$elm_bulma$Bulma$Modifiers$Width2 = {$: 'Width2'};
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Width3 = {$: 'Width3'};
+var $surprisetalk$elm_bulma$Bulma$Modifiers$Width6 = {$: 'Width6'};
+var $elm$html$Html$a = _VirtualDom_node('a');
 var $surprisetalk$elm_bulma$Bulma$Classes$button = $elm$html$Html$Attributes$class('button');
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
@@ -10330,11 +10573,65 @@ var $author$project$Main$healthContainer = function (model) {
 			return _List_Nil;
 	}
 };
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var $surprisetalk$elm_bulma$Bulma$Elements$H4 = {$: 'H4'};
 var $surprisetalk$elm_bulma$Bulma$Elements$X128 = {$: 'X128'};
 var $author$project$Main$styleNormal = _List_fromArray(
 	[
 		A2($elm$html$Html$Attributes$style, 'font-family', 'font')
 	]);
+var $surprisetalk$elm_bulma$Bulma$Classes$title = $elm$html$Html$Attributes$class('title');
+var $surprisetalk$elm_bulma$Bulma$Elements$title = function (size) {
+	return A2(
+		$surprisetalk$elm_bulma$Helpers$node,
+		function () {
+			switch (size.$) {
+				case 'H1':
+					return 'h1';
+				case 'H2':
+					return 'h2';
+				case 'H3':
+					return 'h3';
+				case 'H4':
+					return 'h4';
+				case 'H5':
+					return 'h5';
+				default:
+					return 'h6';
+			}
+		}(),
+		_List_fromArray(
+			[
+				$surprisetalk$elm_bulma$Bulma$Classes$title,
+				function () {
+				switch (size.$) {
+					case 'H1':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is1;
+					case 'H2':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is2;
+					case 'H3':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is3;
+					case 'H4':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is4;
+					case 'H5':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is5;
+					default:
+						return $surprisetalk$elm_bulma$Bulma$Classes$is6;
+				}
+			}()
+			]));
+};
+var $elm$html$Html$Attributes$width = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'width',
+		$elm$core$String$fromInt(n));
+};
 var $author$project$Main$profile = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -10361,8 +10658,7 @@ var $author$project$Main$profile = function (model) {
 					])),
 				A2(
 				$elm$html$Html$div,
-				A2(
-					$elm$core$List$append,
+				_Utils_ap(
 					$author$project$Main$styleBold,
 					_List_fromArray(
 						[
@@ -10372,14 +10668,15 @@ var $author$project$Main$profile = function (model) {
 					[
 						$elm$html$Html$text(model.name)
 					])),
-				A2(
-				$elm$html$Html$span,
-				A2(
-					$elm$core$List$append,
+				A3(
+				$surprisetalk$elm_bulma$Bulma$Elements$title,
+				$surprisetalk$elm_bulma$Bulma$Elements$H4,
+				_Utils_ap(
 					$author$project$Main$styleNormal,
 					_List_fromArray(
 						[
-							A2($elm$html$Html$Attributes$style, 'font-size', '180%')
+							A2($elm$html$Html$Attributes$style, 'font-size', '200%'),
+							$elm$html$Html$Attributes$width(200)
 						])),
 				_List_fromArray(
 					[
@@ -10387,6 +10684,7 @@ var $author$project$Main$profile = function (model) {
 					]))
 			]));
 };
+var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
 var $surprisetalk$elm_bulma$Bulma$Classes$isAncestor = $elm$html$Html$Attributes$class('is-ancestor');
 var $surprisetalk$elm_bulma$Bulma$Layout$tileAncestor = function (width) {
 	return A2(
@@ -10474,7 +10772,7 @@ var $author$project$Main$panel = function (model) {
 			[
 				A3(
 				$surprisetalk$elm_bulma$Bulma$Layout$tileParent,
-				$surprisetalk$elm_bulma$Bulma$Modifiers$Width2,
+				$surprisetalk$elm_bulma$Bulma$Modifiers$Width3,
 				_List_Nil,
 				_List_fromArray(
 					[
@@ -10507,60 +10805,105 @@ var $author$project$Main$panel = function (model) {
 				$surprisetalk$elm_bulma$Bulma$Layout$tileParent,
 				$surprisetalk$elm_bulma$Bulma$Modifiers$Width3,
 				_List_Nil,
-				$author$project$Main$healthContainer(model))
+				$author$project$Main$healthContainer(model)),
+				A3(
+				$surprisetalk$elm_bulma$Bulma$Layout$tileParent,
+				$surprisetalk$elm_bulma$Bulma$Modifiers$Width6,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+								A2($elm$html$Html$Attributes$style, 'right', '0'),
+								A2($elm$html$Html$Attributes$style, 'bottom', '100px')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_Utils_ap(
+									$author$project$Main$styleNormal,
+									_List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$style, 'font-size', '150%'),
+											A2($elm$html$Html$Attributes$style, 'right', '0')
+										])),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$a,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$href('https://medium.com/@vladbatushkov'),
+												$elm$html$Html$Attributes$target('_blank')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Created by Vlad Batushkov on Elm @ 2020')
+											]))
+									])),
+								A2(
+								$elm$html$Html$div,
+								_Utils_ap(
+									$author$project$Main$styleNormal,
+									_List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$style, 'font-size', '150%')
+										])),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$a,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$href('https://www.freepik.com'),
+												$elm$html$Html$Attributes$target('_blank')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('All illustrations are free from freepik.com')
+											]))
+									])),
+								A2(
+								$elm$html$Html$div,
+								_Utils_ap(
+									$author$project$Main$styleNormal,
+									_List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$style, 'font-size', '150%'),
+											A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+											A2($elm$html$Html$Attributes$style, 'right', '0')
+										])),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$a,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$href('https://www.brittneymurphydesign.com'),
+												$elm$html$Html$Attributes$target('_blank')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('`always * forever` is a font created and copyrighted by Brittney Murphy')
+											]))
+									]))
+							]))
+					]))
 			]));
 };
 var $surprisetalk$elm_bulma$Bulma$Elements$H1 = {$: 'H1'};
 var $surprisetalk$elm_bulma$Bulma$Elements$H2 = {$: 'H2'};
 var $surprisetalk$elm_bulma$Bulma$Elements$H3 = {$: 'H3'};
-var $surprisetalk$elm_bulma$Bulma$Classes$title = $elm$html$Html$Attributes$class('title');
-var $surprisetalk$elm_bulma$Bulma$Elements$title = function (size) {
-	return A2(
-		$surprisetalk$elm_bulma$Helpers$node,
-		function () {
-			switch (size.$) {
-				case 'H1':
-					return 'h1';
-				case 'H2':
-					return 'h2';
-				case 'H3':
-					return 'h3';
-				case 'H4':
-					return 'h4';
-				case 'H5':
-					return 'h5';
-				default:
-					return 'h6';
-			}
-		}(),
-		_List_fromArray(
-			[
-				$surprisetalk$elm_bulma$Bulma$Classes$title,
-				function () {
-				switch (size.$) {
-					case 'H1':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is1;
-					case 'H2':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is2;
-					case 'H3':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is3;
-					case 'H4':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is4;
-					case 'H5':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is5;
-					default:
-						return $surprisetalk$elm_bulma$Bulma$Classes$is6;
-				}
-			}()
-			]));
-};
 var $author$project$Main$bestResult = function (result) {
 	if (result.$ === 'Nothing') {
 		return A3(
 			$surprisetalk$elm_bulma$Bulma$Elements$title,
 			$surprisetalk$elm_bulma$Bulma$Elements$H3,
-			A2(
-				$elm$core$List$append,
+			_Utils_ap(
 				$author$project$Main$styleNormal,
 				_List_fromArray(
 					[
@@ -10575,8 +10918,7 @@ var $author$project$Main$bestResult = function (result) {
 		return A3(
 			$surprisetalk$elm_bulma$Bulma$Elements$title,
 			$surprisetalk$elm_bulma$Bulma$Elements$H3,
-			A2(
-				$elm$core$List$append,
+			_Utils_ap(
 				$author$project$Main$styleNormal,
 				_List_fromArray(
 					[
@@ -10585,7 +10927,7 @@ var $author$project$Main$bestResult = function (result) {
 			_List_fromArray(
 				[
 					$elm$html$Html$text(
-					'Best result made with ' + (br.name + (': ' + $elm$core$String$fromInt(br.score))))
+					'Best result was made with ' + (br.name + (': ' + $elm$core$String$fromInt(br.score))))
 				]));
 	}
 };
@@ -10607,8 +10949,7 @@ var $author$project$Main$score = function (model) {
 				A3(
 				$surprisetalk$elm_bulma$Bulma$Elements$title,
 				$surprisetalk$elm_bulma$Bulma$Elements$H1,
-				A2(
-					$elm$core$List$append,
+				_Utils_ap(
 					$author$project$Main$styleTitle,
 					_List_fromArray(
 						[
@@ -10621,8 +10962,7 @@ var $author$project$Main$score = function (model) {
 				A3(
 				$surprisetalk$elm_bulma$Bulma$Elements$title,
 				$surprisetalk$elm_bulma$Bulma$Elements$H2,
-				A2(
-					$elm$core$List$append,
+				_Utils_ap(
 					$author$project$Main$styleNormal,
 					_List_fromArray(
 						[
@@ -10663,12 +11003,6 @@ var $author$project$Main$body = function (model) {
 			]));
 };
 var $elm$html$Html$main_ = _VirtualDom_node('main');
-var $elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
 var $elm$html$Html$Attributes$rel = _VirtualDom_attribute('rel');
 var $surprisetalk$elm_bulma$Bulma$CDN$stylesheet = A3(
 	$elm$html$Html$node,
