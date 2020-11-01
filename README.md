@@ -1,6 +1,6 @@
-# Chew Paper Box
+# EatOrShit
 
-Elm casual game to kill your time in homeless way.
+Casual game tasty killing your free time.
 
 ## Credits
 Illustrations:
