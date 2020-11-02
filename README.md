@@ -1,6 +1,6 @@
 # EatOrShit
 
-Casual game tasty killing your free time.
+EatOrShit - tasty Elm game to kill your free time, created by Vlad Batushkov.
 
 ## Credits
 Illustrations:
