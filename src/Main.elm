@@ -6,12 +6,13 @@ import Array exposing (..)
 import Browser exposing (..)
 import Bulma.CDN exposing (..)
 import Bulma.Columns exposing (..)
+import Bulma.Components exposing (..)
 import Bulma.Elements exposing (..)
 import Bulma.Layout exposing (..)
 import Bulma.Modifiers exposing (..)
 import Bulma.Modifiers.Typography exposing (textCentered)
-import Html exposing (Attribute, Html, a, div, img, main_, text)
-import Html.Attributes exposing (class, href, src, style, width, target)
+import Html exposing (Attribute, Html, a, div, img, main_, span, text)
+import Html.Attributes exposing (class, href, src, style, target, width)
 import Html.Events exposing (..)
 import Random exposing (generate)
 import Random.List exposing (shuffle)
@@ -41,8 +42,16 @@ type alias Model =
     , hp : Health
     , hero : Hero
     , food : List Food
-    , foodState : Animation.Messenger.State Msg
+    , foodState : FoodState
     }
+
+
+type alias FoodState =
+    Animation.Messenger.State Msg
+
+
+type alias HealthState =
+    Animation.Messenger.State Msg
 
 
 type alias BestResult =
@@ -88,7 +97,7 @@ type AnimatedObject
 arnold : Hero
 arnold =
     Hero 1
-        "Arnold"
+        "Arnold Trash"
         "Eats any leftovers and junk. Drinks all the fluids. Never touches normal food."
         "../images/hero/arnold.png"
         [ Junk, Drinks ]
@@ -108,7 +117,7 @@ arnold =
 terry : Hero
 terry =
     Hero 2
-        "Terry"
+        "Terry Fatness"
         "Loves fast-food and heavy meals. Vomit on desserts and healthy food."
         "../images/hero/terry.png"
         [ Meat, FastFood, NotHealthy, Spicy ]
@@ -120,7 +129,7 @@ terry =
 chuck : Hero
 chuck =
     Hero 3
-        "Chuck"
+        "Chuck Muffin"
         "Eats plant-based foods and dairy products. Avoiding any unhealthy food."
         "../images/hero/chuck.png"
         [ Healthy, Dairy, Fruits, Vegetables, Drinks ]
@@ -379,8 +388,92 @@ view : Model -> Html Msg
 view model =
     main_ []
         [ stylesheet
-        , body model
+        , body2 model
         ]
+
+
+body2 : Model -> Html Msg
+body2 model =
+    section NotSpaced
+        [ style "padding" "1rem" ]
+        [ container [ class "has-text-centered" ]
+            [ title H2 [] [ text "EatOrShit" ]
+            , foodGrid model
+            , gamePlay model.hero model.hp model.score
+            ]
+        ]
+
+
+foodGrid : Model -> Html Msg
+foodGrid model =
+    let
+        foods =
+            Array.fromList <| List.take 4 model.food
+
+        food1 =
+            Array.get 0 foods
+
+        food2 =
+            Array.get 1 foods
+
+        food3 =
+            Array.get 2 foods
+
+        food4 =
+            Array.get 3 foods
+    in
+    div []
+        [ foodPair food1 food2 model.foodState
+        , foodPair food3 food4 model.foodState
+        ]
+
+
+foodPair : Maybe Food -> Maybe Food -> FoodState -> Html Msg
+foodPair food1 food2 foodState =
+    columns { columnsModifiers | centered = True, display = MobileAndBeyond, gap = Gap3 }
+        []
+        [ column columnModifiers
+            ([ class "is-6", textCentered ] ++ Animation.render foodState)
+            [ foodCard food1
+            ]
+        , column columnModifiers
+            ([ class "is-6", textCentered ] ++ Animation.render foodState)
+            [ foodCard food2
+            ]
+        ]
+
+
+gamePlay : Hero -> Health -> Int -> Html Msg
+gamePlay hero hp s =
+    card [ class "mt-3", style "margin-top" "1.5rem" ]
+        [ cardContent []
+            [ media []
+                [ mediaLeft []
+                    [ image (OneByOne X128)
+                        []
+                        [ img [ src hero.picture, class "is-rounded" ] []
+                        , div
+                            [ style "position" "absolute"
+                            , style "left" "0rem"
+                            , style "bottom" "0rem"
+                            , style "background-color" "white"
+                            ]
+                            [ title H1 [] [ text <| String.fromInt s ] ]
+                        ]
+                    ]
+                , mediaContent []
+                    [ title H4 [] [ text hero.name ]
+                    , healthPanel hp
+                    ]
+                ]
+            , div [ class "content" ]
+                [ subtitle H5 [] [ text hero.desc ] ]
+            ]
+        ]
+
+
+
+-- OLD HTML
 
 
 body : Model -> Html Msg
@@ -432,28 +525,26 @@ deck : Model -> Html Msg
 deck model =
     columns { columnsModifiers | gap = Gap3 }
         (Animation.render model.foodState)
-        (List.take 5 (List.map card model.food))
+        (List.take 5 (List.map (\x -> foodCard <| Just x) model.food))
 
 
-card : Food -> Html Msg
-card food =
-    column columnModifiers
-        [ style "cursor" "pointer", onClick (FadeOutFadeIn food.tags) ]
-        [ image (OneByOne Unbounded)
-            [ style "cursor" "pointer" ]
-            [ img [ src food.picture, style "border-radius" "10px" ] []
-            ]
-        , div
-            (styleBold
-                ++ [ style "width" "100%"
-                   , style "position" "relative"
-                   , style "text-align" "center"
-                   , style "font-size" "220%"
-                   ]
-            )
-            [ text food.name
-            ]
-        ]
+foodCard : Maybe Food -> Html Msg
+foodCard maybeFood =
+    case maybeFood of
+        Nothing ->
+            text ""
+
+        Just food ->
+            box [ style "cursor" "pointer", onClick (FadeOutFadeIn food.tags) ]
+                [ image (OneByOne Unbounded)
+                    [ style "cursor" "pointer" ]
+                    [ img [ src food.picture, style "border-radius" "10px" ] []
+                    ]
+                , Html.p
+                    [ class "has-text-centered" ]
+                    [ text food.name
+                    ]
+                ]
 
 
 panel : Model -> Html Msg
@@ -472,7 +563,8 @@ panel model =
             ]
         , tileParent Width3
             []
-            (healthContainer model)
+          <|
+            healthContainer model.hp
         , tileParent Width6
             []
             [ div [ style "position" "absolute", style "right" "0", style "bottom" "100px" ]
@@ -516,17 +608,31 @@ profile model =
         ]
 
 
-healthContainer : Model -> List (Html Msg)
-healthContainer model =
-    case model.hp.value of
+healthPanel : Health -> Html Msg
+healthPanel model =
+    columns { columnsModifiers | centered = False, display = MobileAndBeyond }
+        []
+    <|
+        healthContainer model
+
+
+healthContainer : Health -> List (Html Msg)
+healthContainer hp =
+    case hp.value of
         1 ->
-            [ tileChild Auto (Animation.render model.hp.state) [ heart ], tileChild Auto [] [], tileChild Auto [] [] ]
+            [ column columnModifiers ([ class "is-4" ] ++ Animation.render hp.state) [ heart ]
+            ]
 
         2 ->
-            [ tileChild Auto [] [ heart ], tileChild Auto (Animation.render model.hp.state) [ heart ], tileChild Auto [] [] ]
+            [ column columnModifiers [ class "is-4" ] [ heart ]
+            , column columnModifiers ([ class "is-4" ] ++ Animation.render hp.state) [ heart ]
+            ]
 
         3 ->
-            [ tileChild Auto [] [ heart ], tileChild Auto [] [ heart ], tileChild Auto (Animation.render model.hp.state) [ heart ] ]
+            [ column columnModifiers [ class "is-4" ] [ heart ]
+            , column columnModifiers [ class "is-4" ] [ heart ]
+            , column columnModifiers (Animation.render hp.state) [ heart ]
+            ]
 
         _ ->
             []
