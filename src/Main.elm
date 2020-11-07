@@ -496,14 +496,12 @@ playPanel model =
                         []
                         [ img [ src model.hero.picture, class "is-rounded" ] []
                         ]
+                    , bestScore model
+                    , currentScore model
                     ]
                 , mediaContent []
                     [ title H1 [] [ text model.hero.name ]
                     , subtitle H2 [] [ text model.hero.desc ]
-                    ]
-                , mediaRight []
-                    [ title H1 [] [ text <| String.fromInt model.score ]
-                    , bestResult model.bestResult
                     ]
                 ]
             , healthPanel model.hp
@@ -515,19 +513,40 @@ playPanel model =
         ]
 
 
+currentScore : Model -> Html Msg
+currentScore model =
+    circle "white" "75px" <| span [ style "font-size" "4.5rem" ] [ text <| String.fromInt model.score ]
+
+
+bestScore : Model -> Html Msg
+bestScore model =
+    circle "gold" "0px" <| span [ style "font-size" "4.5rem" ] [ bestResult model.bestResult ]
+
+
+circle : String -> String -> Html Msg -> Html Msg
+circle color side child =
+    div
+        [ style "border-radius" "50%"
+        , style "background-color" color
+        , style "position" "absolute"
+        , style "width" "100px"
+        , style "height" "100px"
+        , style "text-align" "center"
+        , style "vertical-align" "middle"
+        , style "bottom" "150px"
+        , style "left" side
+        ]
+        [ child ]
+
+
 bestResult : Maybe BestResult -> Html Msg
 bestResult result =
     case result of
         Nothing ->
-            title H3
-                []
-                [ text "" ]
+            text ""
 
         Just br ->
-            title H3
-                []
-                [ text (String.fromInt br.score ++ " by " ++ br.name)
-                ]
+            text <| String.fromInt br.score
 
 
 healthPanel : Health -> Html Msg
@@ -624,7 +643,7 @@ allFood =
     , Food 3
         "Tiramisu"
         [ Dessert ]
-        "images/food/chocolatecake.png"
+        "images/food/tiramisu.png"
     , Food 4
         "Salad"
         [ Healthy ]

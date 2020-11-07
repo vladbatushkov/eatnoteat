@@ -5292,7 +5292,7 @@ var $author$project$Main$allFood = _List_fromArray(
 		'Tiramisu',
 		_List_fromArray(
 			[$author$project$Main$Dessert]),
-		'images/food/chocolatecake.png'),
+		'images/food/tiramisu.png'),
 		A4(
 		$author$project$Main$Food,
 		4,
@@ -10263,29 +10263,50 @@ var $author$project$Main$foodGrid = function (model) {
 			]));
 };
 var $surprisetalk$elm_bulma$Bulma$Elements$H1 = {$: 'H1'};
-var $surprisetalk$elm_bulma$Bulma$Elements$H3 = {$: 'H3'};
 var $author$project$Main$bestResult = function (result) {
 	if (result.$ === 'Nothing') {
-		return A3(
-			$surprisetalk$elm_bulma$Bulma$Elements$title,
-			$surprisetalk$elm_bulma$Bulma$Elements$H3,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('')
-				]));
+		return $elm$html$Html$text('');
 	} else {
 		var br = result.a;
-		return A3(
-			$surprisetalk$elm_bulma$Bulma$Elements$title,
-			$surprisetalk$elm_bulma$Bulma$Elements$H3,
-			_List_Nil,
+		return $elm$html$Html$text(
+			$elm$core$String$fromInt(br.score));
+	}
+};
+var $author$project$Main$circle = F3(
+	function (color, side, child) {
+		return A2(
+			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$text(
-					$elm$core$String$fromInt(br.score) + (' by ' + br.name))
-				]));
-	}
+					A2($elm$html$Html$Attributes$style, 'border-radius', '50%'),
+					A2($elm$html$Html$Attributes$style, 'background-color', color),
+					A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+					A2($elm$html$Html$Attributes$style, 'width', '100px'),
+					A2($elm$html$Html$Attributes$style, 'height', '100px'),
+					A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
+					A2($elm$html$Html$Attributes$style, 'vertical-align', 'middle'),
+					A2($elm$html$Html$Attributes$style, 'bottom', '150px'),
+					A2($elm$html$Html$Attributes$style, 'left', side)
+				]),
+			_List_fromArray(
+				[child]));
+	});
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $author$project$Main$bestScore = function (model) {
+	return A3(
+		$author$project$Main$circle,
+		'gold',
+		'0px',
+		A2(
+			$elm$html$Html$span,
+			_List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$style, 'font-size', '4.5rem')
+				]),
+			_List_fromArray(
+				[
+					$author$project$Main$bestResult(model.bestResult)
+				])));
 };
 var $surprisetalk$elm_bulma$Bulma$Classes$card = $elm$html$Html$Attributes$class('card');
 var $surprisetalk$elm_bulma$Bulma$Components$card = A2(
@@ -10299,6 +10320,23 @@ var $surprisetalk$elm_bulma$Bulma$Components$cardContent = A2(
 	'div',
 	_List_fromArray(
 		[$surprisetalk$elm_bulma$Bulma$Classes$cardContent]));
+var $author$project$Main$currentScore = function (model) {
+	return A3(
+		$author$project$Main$circle,
+		'white',
+		'75px',
+		A2(
+			$elm$html$Html$span,
+			_List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$style, 'font-size', '4.5rem')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(
+					$elm$core$String$fromInt(model.score))
+				])));
+};
 var $surprisetalk$elm_bulma$Bulma$Elements$X128 = {$: 'X128'};
 var $author$project$Main$heart = A2(
 	$elm$html$Html$div,
@@ -10424,12 +10462,6 @@ var $surprisetalk$elm_bulma$Bulma$Layout$mediaLeft = A2(
 	'div',
 	_List_fromArray(
 		[$surprisetalk$elm_bulma$Bulma$Classes$mediaLeft]));
-var $surprisetalk$elm_bulma$Bulma$Classes$mediaRight = $elm$html$Html$Attributes$class('media-right');
-var $surprisetalk$elm_bulma$Bulma$Layout$mediaRight = A2(
-	$surprisetalk$elm_bulma$Helpers$node,
-	'div',
-	_List_fromArray(
-		[$surprisetalk$elm_bulma$Bulma$Classes$mediaRight]));
 var $surprisetalk$elm_bulma$Bulma$Classes$subtitle = $elm$html$Html$Attributes$class('subtitle');
 var $surprisetalk$elm_bulma$Bulma$Elements$subtitle = function (size) {
 	return A2(
@@ -10513,7 +10545,9 @@ var $author$project$Main$playPanel = function (model) {
 														$elm$html$Html$Attributes$class('is-rounded')
 													]),
 												_List_Nil)
-											]))
+											])),
+										$author$project$Main$bestScore(model),
+										$author$project$Main$currentScore(model)
 									])),
 								A2(
 								$surprisetalk$elm_bulma$Bulma$Layout$mediaContent,
@@ -10536,22 +10570,6 @@ var $author$project$Main$playPanel = function (model) {
 											[
 												$elm$html$Html$text(model.hero.desc)
 											]))
-									])),
-								A2(
-								$surprisetalk$elm_bulma$Bulma$Layout$mediaRight,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A3(
-										$surprisetalk$elm_bulma$Bulma$Elements$title,
-										$surprisetalk$elm_bulma$Bulma$Elements$H1,
-										_List_Nil,
-										_List_fromArray(
-											[
-												$elm$html$Html$text(
-												$elm$core$String$fromInt(model.score))
-											])),
-										$author$project$Main$bestResult(model.bestResult)
 									]))
 							])),
 						$author$project$Main$healthPanel(model.hp)
@@ -10580,7 +10598,6 @@ var $surprisetalk$elm_bulma$Bulma$Layout$section = function (spacing) {
 			}()
 			]));
 };
-var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Main$body = function (model) {
 	return A3(
 		$surprisetalk$elm_bulma$Bulma$Layout$section,
