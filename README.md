@@ -12,7 +12,7 @@ Game is based on folk russian kids game `съедобное - несъедобн
 
 ## Credits
 
-Illustrations from [Freepick](htpps://www.freepik.com):
+Illustrations from [Freepick](https://www.freepik.com):
 
 [Box vector created by brgfx](https://www.freepik.com/free-photos-vectors/box)
 
