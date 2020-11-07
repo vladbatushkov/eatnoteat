@@ -308,8 +308,9 @@ update action model =
                 newFoodPanel =
                     FoodPanel model.foodPanel.food newFoodState
             in
-            update (Eat eatPoints damagePoints) { model | foodPanel = newFoodPanel }
+            update (Eat eatPoints damagePoints) model
 
+        --{ model | foodPanel = newFoodPanel }
         Disappear damagePoints ->
             -- animate heart, trigger Damage
             let
@@ -330,8 +331,9 @@ update action model =
                 newGameplay =
                     Gameplay model.gameplay.score newHp model.gameplay.bestResults
             in
-            update (Damage damagePoints) { model | gameplay = newGameplay }
+            update (Damage damagePoints) model
 
+        -- { model | gameplay = newGameplay }
         Animate aObject aMsg ->
             case aObject of
                 HealthObject ->

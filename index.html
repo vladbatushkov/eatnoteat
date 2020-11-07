@@ -12237,12 +12237,6 @@ var $author$project$Main$selectBestResult = F2(
 			},
 			bestResults);
 	});
-var $mdgriffith$elm_style_animation$Animation$Model$Send = function (a) {
-	return {$: 'Send', a: a};
-};
-var $mdgriffith$elm_style_animation$Animation$Messenger$send = function (msg) {
-	return $mdgriffith$elm_style_animation$Animation$Model$Send(msg);
-};
 var $mdgriffith$elm_style_animation$Animation$Model$To = function (a) {
 	return {$: 'To', a: a};
 };
@@ -13842,9 +13836,7 @@ var $author$project$Main$update = F2(
 					var eatPoints = _v2.a;
 					var damagePoints = _v2.b;
 					var $temp$action = A2($author$project$Main$Eat, eatPoints, damagePoints),
-						$temp$model = _Utils_update(
-						model,
-						{foodPanel: newFoodPanel});
+						$temp$model = model;
 					action = $temp$action;
 					model = $temp$model;
 					continue update;
@@ -13862,18 +13854,16 @@ var $author$project$Main$update = F2(
 										$mdgriffith$elm_style_animation$Animation$px(0),
 										$mdgriffith$elm_style_animation$Animation$px(100)),
 										$mdgriffith$elm_style_animation$Animation$opacity(0)
-									])),
-								$mdgriffith$elm_style_animation$Animation$Messenger$send(
-								$author$project$Main$Damage(damagePoints))
+									]))
 							]),
 						model.gameplay.hp.animationState);
 					var newHp = A2($author$project$Main$Health, model.gameplay.hp.value, newHpState);
 					var newGameplay = A3($author$project$Main$Gameplay, model.gameplay.score, newHp, model.gameplay.bestResults);
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{gameplay: newGameplay}),
-						$elm$core$Platform$Cmd$none);
+					var $temp$action = $author$project$Main$Damage(damagePoints),
+						$temp$model = model;
+					action = $temp$action;
+					model = $temp$model;
+					continue update;
 				default:
 					var aObject = action.a;
 					var aMsg = action.b;
