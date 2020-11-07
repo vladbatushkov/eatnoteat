@@ -37,40 +37,9 @@ main =
 
 
 type alias Model =
-    { bestResult : Maybe BestResult
-    , score : Int
-    , hp : Health
-    , hero : Hero
-    , food : List Food
-    , foodState : FoodState
-    }
-
-
-type alias FoodState =
-    Animation.Messenger.State Msg
-
-
-type alias HealthState =
-    Animation.Messenger.State Msg
-
-
-type alias BestResult =
-    { name : String
-    , score : Int
-    }
-
-
-type alias Health =
-    { value : Int
-    , state : Animation.Messenger.State Msg
-    }
-
-
-type alias Food =
-    { id : Int
-    , name : String
-    , tags : List Tags
-    , picture : String
+    { hero : Hero
+    , foodPanel : FoodPanel
+    , gameplay : Gameplay
     }
 
 
@@ -81,6 +50,43 @@ type alias Hero =
     , picture : String
     , goodTags : List Tags
     , badTags : List Tags
+    }
+
+
+type alias FoodPanel =
+    { food : List Food
+    , animationState : AnimationState
+    }
+
+
+type alias AnimationState =
+    Animation.Messenger.State Msg
+
+
+type alias Gameplay =
+    { score : Int
+    , hp : Health
+    , bestResults : List BestResult
+    }
+
+
+type alias BestResult =
+    { heroId : Int
+    , score : Int
+    }
+
+
+type alias Health =
+    { value : Int
+    , animationState : AnimationState
+    }
+
+
+type alias Food =
+    { id : Int
+    , name : String
+    , tags : List Tags
+    , picture : String
     }
 
 
@@ -151,22 +157,30 @@ chuck =
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( Model
-        Nothing
-        0
-        (initHealth 3)
         arnold
-        allFood
-        (Animation.style
-            [ Animation.opacity 1
-            ]
-        )
+        initFoodPanel
+        initGameplay
     , generate Shuffle <| shuffle allFood
     )
 
 
-initHealth : Int -> Health
-initHealth hp =
-    Health hp
+initFoodPanel : FoodPanel
+initFoodPanel =
+    FoodPanel allFood
+        (Animation.style
+            [ Animation.opacity 1
+            ]
+        )
+
+
+initGameplay : Gameplay
+initGameplay =
+    Gameplay 0 initHealth [ BestResult 1 0, BestResult 2 0, BestResult 3 0 ]
+
+
+initHealth : Health
+initHealth =
+    Health 3
         (Animation.style
             [ Animation.opacity 1
             , Animation.translate (px 0) (px 0)
@@ -179,14 +193,14 @@ initHealth hp =
 
 
 type Msg
-    = Eat Int
+    = Eat Int Int
     | Damage Int
-    | ChangeHero
+      --| ChangeHero
     | Shuffle (List Food)
     | FadeOutFadeIn (List Tags)
     | Disappear Int
     | Animate AnimatedObject Animation.Msg
-    | DoNothing
+    | ShuffleFood
 
 
 applyAnimationToSingle : Animation.Messenger.State Msg -> (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> Animation.Messenger.State Msg
@@ -202,13 +216,14 @@ applyAnimationToAll states fn =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
     case action of
-        DoNothing ->
-            ( model, Cmd.none )
+        ShuffleFood ->
+            ( model, generate Shuffle <| shuffle model.foodPanel.food )
 
         Damage points ->
+            -- GAMEOVER: save bestReult, nextHero, trigger Shuffle OR KEEPPLAYING: dec. hp
             let
                 healthLeft =
-                    model.hp.value - points
+                    model.gameplay.hp.value - points
 
                 gameState =
                     if healthLeft == 0 then
@@ -216,129 +231,153 @@ update action model =
 
                     else
                         KeepPlaying
-
-                result =
-                    selectBestResult model.bestResult (BestResult model.hero.name model.score)
             in
             case gameState of
                 GameOver ->
-                    update ChangeHero { model | bestResult = result }
+                    let
+                        newBestResult =
+                            selectBestResult model.gameplay.bestResults (BestResult model.hero.id model.gameplay.score)
+
+                        newGameplay =
+                            Gameplay 0 initHealth newBestResult
+                    in
+                    ( { model | hero = nextHero model.hero, gameplay = newGameplay }, generate Shuffle <| shuffle model.foodPanel.food )
 
                 KeepPlaying ->
-                    ( { model | hp = initHealth healthLeft }, Cmd.none )
+                    let
+                        newHealth =
+                            Health healthLeft model.gameplay.hp.animationState
 
-        Eat points ->
-            ( { model | score = model.score + points }, generate Shuffle <| shuffle model.food )
+                        newGameplay =
+                            Gameplay model.gameplay.score newHealth model.gameplay.bestResults
+                    in
+                    ( { model | gameplay = newGameplay }, Cmd.none )
 
-        Shuffle randomFoods ->
-            ( { model | food = randomFoods }, Cmd.none )
-
-        ChangeHero ->
+        Eat points damagePoints ->
+            -- gives new score, trigger Disappear OR ShuffleFood
             let
-                hero =
-                    model.hero
-
-                result =
-                    selectBestResult model.bestResult (BestResult hero.name model.score)
-            in
-            ( { model | hero = nextHero model.hero, score = 0, hp = initHealth 3, bestResult = result }, generate Shuffle <| shuffle model.food )
-
-        FadeOutFadeIn tags ->
-            let
-                ( eatPoints, damagePoints ) =
-                    calcEat model tags
-
-                damageAnimation =
+                damageMsg =
                     if damagePoints > 0 then
                         Disappear damagePoints
 
                     else
-                        DoNothing
+                        ShuffleFood
+
+                newScore =
+                    model.gameplay.score + points
+
+                newGameplay =
+                    Gameplay newScore model.gameplay.hp model.gameplay.bestResults
             in
-            ( { model
-                | foodState =
+            update damageMsg { model | gameplay = newGameplay }
+
+        Shuffle randomFoods ->
+            let
+                newFoodPanel =
+                    FoodPanel randomFoods model.foodPanel.animationState
+            in
+            ( { model | foodPanel = newFoodPanel }, Cmd.none )
+
+        --ChangeHero ->
+        --  let
+        --    newGameplay =
+        --      Gameplay 0 initHealth model.gameplay.bestResults
+        --in
+        -- ( { model | hero = nextHero model.hero, gameplay = newGameplay }, generate Shuffle <| shuffle model.foodPanel.food )
+        FadeOutFadeIn tags ->
+            -- animate food, trigger Eat
+            let
+                ( eatPoints, damagePoints ) =
+                    calcEat model tags
+
+                -- damageAnimation =
+                --   if damagePoints > 0 then
+                --     Disappear damagePoints
+                --else
+                --  DoNothing
+                newFoodState =
                     Animation.queue
                         [ Animation.to
                             [ Animation.opacity 0
                             ]
-                        , Animation.Messenger.send <| Eat eatPoints
-                        , Animation.Messenger.send damageAnimation
+
+                        --, Animation.Messenger.send <| Eat eatPoints
+                        --, Animation.Messenger.send damageAnimation
                         , Animation.to
                             [ Animation.opacity 1
                             ]
                         ]
-                        model.foodState
-              }
-            , Cmd.none
-            )
+                        model.foodPanel.animationState
+
+                newFoodPanel =
+                    FoodPanel model.foodPanel.food newFoodState
+            in
+            update (Eat eatPoints damagePoints) { model | foodPanel = newFoodPanel }
 
         Disappear damagePoints ->
+            -- animate heart, trigger Damage
             let
-                hp =
-                    model.hp
+                newHpState =
+                    applyAnimationToSingle model.gameplay.hp.animationState <|
+                        Animation.interrupt
+                            [ Animation.to
+                                [ Animation.translate (px 0) (px 100)
+                                , Animation.opacity 0
+                                ]
+
+                            --, Animation.Messenger.send <| Damage damagePoints
+                            ]
+
+                newHp =
+                    Health model.gameplay.hp.value newHpState
+
+                newGameplay =
+                    Gameplay model.gameplay.score newHp model.gameplay.bestResults
             in
-            ( { model
-                | hp =
-                    { hp
-                        | state =
-                            applyAnimationToSingle model.hp.state <|
-                                Animation.interrupt
-                                    [ Animation.to
-                                        [ Animation.translate (px 0) (px 100)
-                                        , Animation.opacity 0
-                                        ]
-                                    , Animation.Messenger.send <| Damage damagePoints
-                                    ]
-                    }
-              }
-            , Cmd.none
-            )
+            update (Damage damagePoints) { model | gameplay = newGameplay }
 
         Animate aObject aMsg ->
             case aObject of
                 HealthObject ->
                     let
-                        hp =
-                            model.hp
-
                         ( stateHp, cmdHp ) =
-                            Animation.Messenger.update aMsg hp.state
+                            Animation.Messenger.update aMsg model.gameplay.hp.animationState
+
+                        newHp =
+                            Health model.gameplay.hp.value stateHp
+
+                        newGameplay =
+                            Gameplay model.gameplay.score newHp model.gameplay.bestResults
                     in
-                    ( { model
-                        | hp =
-                            { hp | state = stateHp }
-                      }
-                    , cmdHp
-                    )
+                    ( { model | gameplay = newGameplay }, cmdHp )
 
                 FoodObject ->
                     let
                         ( stateFood, cmdFood ) =
-                            Animation.Messenger.update aMsg model.foodState
+                            Animation.Messenger.update aMsg model.foodPanel.animationState
+
+                        newFoodPanel =
+                            FoodPanel model.foodPanel.food stateFood
                     in
-                    ( { model
-                        | foodState = stateFood
-                      }
-                    , cmdFood
-                    )
+                    ( { model | foodPanel = newFoodPanel }, cmdFood )
 
 
-selectBestResult : Maybe BestResult -> BestResult -> Maybe BestResult
-selectBestResult current next =
-    case current of
-        Just br ->
-            if br.score > next.score then
-                Just br
+selectBestResult : List BestResult -> BestResult -> List BestResult
+selectBestResult bestResults newResult =
+    List.map (\x -> mapBestResult x newResult) bestResults
 
-            else
-                Just next
 
-        Nothing ->
-            if next.score == 0 then
-                Nothing
+mapBestResult : BestResult -> BestResult -> BestResult
+mapBestResult a b =
+    if a.heroId == b.heroId then
+        if a.score > b.score then
+            a
 
-            else
-                Just next
+        else
+            b
+
+    else
+        a
 
 
 calcEat : Model -> List Tags -> ( Int, Int )
@@ -378,10 +417,10 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     let
         foodState =
-            { state = model.foodState, ao = FoodObject }
+            { state = model.foodPanel.animationState, ao = FoodObject }
 
         healthState =
-            { state = model.hp.state, ao = HealthObject }
+            { state = model.gameplay.hp.animationState, ao = HealthObject }
 
         all =
             [ healthState, foodState ]
@@ -432,7 +471,7 @@ foodGrid : Model -> Html Msg
 foodGrid model =
     let
         foods =
-            Array.fromList <| List.take 4 model.food
+            Array.fromList <| List.take 4 model.foodPanel.food
 
         food1 =
             Array.get 0 foods
@@ -446,7 +485,7 @@ foodGrid model =
         food4 =
             Array.get 3 foods
     in
-    div (Animation.render model.foodState)
+    div (Animation.render model.foodPanel.animationState)
         [ foodPair food1 food2
         , foodPair food3 food4
         ]
@@ -504,7 +543,7 @@ playPanel model =
                     , subtitle H2 [] [ text model.hero.desc ]
                     ]
                 ]
-            , healthPanel model.hp
+            , healthPanel model.gameplay.hp
 
             --, button { buttonModifiers | outlined = True, size = Large, color = Primary }
             --  [ onClick ChangeHero ]
@@ -515,12 +554,12 @@ playPanel model =
 
 currentScore : Model -> Html Msg
 currentScore model =
-    circle "white" "75px" <| span [ style "font-size" "4.5rem" ] [ text <| String.fromInt model.score ]
+    circle "white" "75px" <| span [ style "font-size" "4.5rem" ] [ text <| String.fromInt model.gameplay.score ]
 
 
 bestScore : Model -> Html Msg
 bestScore model =
-    circle "gold" "0px" <| span [ style "font-size" "4.5rem" ] [ bestResult model.bestResult ]
+    circle "gold" "0px" <| span [ style "font-size" "4.5rem" ] [ bestResultText model.hero.id model.gameplay.bestResults ]
 
 
 circle : String -> String -> Html Msg -> Html Msg
@@ -539,14 +578,21 @@ circle color side child =
         [ child ]
 
 
-bestResult : Maybe BestResult -> Html Msg
-bestResult result =
-    case result of
+bestResultText : Int -> List BestResult -> Html Msg
+bestResultText heroId brs =
+    let
+        bestResults =
+            List.filter (\x -> x.heroId == heroId) brs
+
+        br =
+            Array.get 0 <| Array.fromList bestResults
+    in
+    case br of
         Nothing ->
             text ""
 
-        Just br ->
-            text <| String.fromInt br.score
+        Just val ->
+            text <| String.fromInt val.score
 
 
 healthPanel : Health -> Html Msg
@@ -561,18 +607,18 @@ healthContainer : Health -> List (Html Msg)
 healthContainer hp =
     case hp.value of
         1 ->
-            [ column columnModifiers ([ class "is-4" ] ++ Animation.render hp.state) [ heart ]
+            [ column columnModifiers ([ class "is-4" ] ++ Animation.render hp.animationState) [ heart ]
             ]
 
         2 ->
             [ column columnModifiers [ class "is-4" ] [ heart ]
-            , column columnModifiers ([ class "is-4" ] ++ Animation.render hp.state) [ heart ]
+            , column columnModifiers ([ class "is-4" ] ++ Animation.render hp.animationState) [ heart ]
             ]
 
         3 ->
             [ column columnModifiers [ class "is-4" ] [ heart ]
             , column columnModifiers [ class "is-4" ] [ heart ]
-            , column columnModifiers (Animation.render hp.state) [ heart ]
+            , column columnModifiers (Animation.render hp.animationState) [ heart ]
             ]
 
         _ ->
