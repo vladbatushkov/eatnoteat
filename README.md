@@ -1,7 +1,9 @@
 # EatNotEat
 
 Tasty game to kill your free time © created by Vlad Batushkov.
+
 Written in pure [Elm](https://elm-lang.org) for pure fun.
+
 ![Elm](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Elm_logo.svg/200px-Elm_logo.svg.png)
 
 # Background
@@ -11,10 +13,15 @@ Game is based on folk russian kids game `съедобное - несъедобн
 ## Credits
 
 Illustrations from [Freepick](htpps://www.freepik.com):
+
 [Box vector created by brgfx](https://www.freepik.com/free-photos-vectors/box)
+
 [Food vector created by macrovector](https://www.freepik.com/free-photos-vectors/food)
+
 [People vector created by vectorpocket](https://www.freepik.com/free-photos-vectors/people)
+
 [Heart vector created by rawpixel.com](https://www.freepik.com/free-photos-vectors/heart)
 
 Font from [Google Fonts](https://fonts.google.com/specimen/Grandstander):
+
 `Grandstander` Designed by Tyler Finck, ETC
