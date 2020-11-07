@@ -24,7 +24,7 @@ import Random.List exposing (shuffle)
 
 main : Program () Model Msg
 main =
-    Browser.element
+    Browser.document
         { init = init
         , view = view
         , update = update
@@ -92,6 +92,15 @@ type GameState
 type AnimatedObject
     = FoodObject
     | HealthObject
+
+
+
+-- CONSTR
+
+
+cmsName : String
+cmsName =
+    "EatNotEat"
 
 
 arnold : Hero
@@ -384,20 +393,35 @@ subscriptions model =
 -- VIEW
 
 
-view : Model -> Html Msg
+view : Model -> Document Msg
 view model =
-    main_ []
-        [ stylesheet
-        , body2 model
+    Document
+        (cmsName
+            ++ " - tasty Elm game to kill your free time © created by Vlad Batushkov"
+        )
+        [ main_ []
+            [ stylesheet
+            , font
+            , body2 model
+            ]
         ]
+
+
+font : Html msg
+font =
+    Html.node "link"
+        [ Html.Attributes.rel "stylesheet"
+        , href "https://fonts.googleapis.com/css2?family=Grandstander:wght@300;500&display=swap"
+        ]
+        []
 
 
 body2 : Model -> Html Msg
 body2 model =
     section NotSpaced
-        [ style "padding" "1rem" ]
+        [ style "padding" "1rem", style "font-family" "Grandstander" ]
         [ container [ class "has-text-centered" ]
-            [ title H2 [] [ text "EatOrShit" ]
+            [ title H2 [] [ text cmsName ]
             , foodGrid model
             , gamePlay model.hero model.hp model.score
             ]
@@ -495,7 +519,7 @@ score model =
     container [ textCentered ]
         [ title H1
             (styleTitle ++ [ style "margin-bottom" "10px" ])
-            [ text "Chew Paper Box"
+            [ text cmsName
             ]
         , title H2
             (styleNormal ++ [ style "margin-bottom" "20px" ])
