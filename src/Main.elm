@@ -108,7 +108,7 @@ arnold =
     Hero 1
         "Arnold Trash"
         "Eats any leftovers and junk. Drinks all the fluids. Never touches normal food."
-        "../images/hero/arnold.png"
+        "images/hero/arnold.png"
         [ Junk, Drinks ]
         [ Healthy
         , NotHealthy
@@ -128,7 +128,7 @@ terry =
     Hero 2
         "Terry Fatness"
         "Loves fast-food and heavy meals. Vomit on desserts and healthy food."
-        "../images/hero/terry.png"
+        "images/hero/terry.png"
         [ Meat, FastFood, NotHealthy, Spicy ]
         [ Dessert
         , Healthy
@@ -140,7 +140,7 @@ chuck =
     Hero 3
         "Chuck Muffin"
         "Eats plant-based foods and dairy products. Avoiding any unhealthy food."
-        "../images/hero/chuck.png"
+        "images/hero/chuck.png"
         [ Healthy, Dairy, Fruits, Vegetables, Drinks ]
         [ Meat
         , FastFood
@@ -667,7 +667,7 @@ heart =
     div []
         [ image (OneByOne X64)
             []
-            [ img [ src "../images/hero/heart.png" ] []
+            [ img [ src "images/hero/heart.png" ] []
             ]
         ]
 
@@ -714,149 +714,149 @@ allFood =
     [ Food 0
         "Popcorn"
         [ NotHealthy, Dessert ]
-        "../images/food/popcorn.png"
+        "images/food/popcorn.png"
     , Food 1
         "Happy Meal"
         [ FastFood, NotHealthy ]
-        "../images/food/happymeal.png"
+        "images/food/happymeal.png"
     , Food 2
         "Pizza"
         [ NotHealthy ]
-        "../images/food/pizza.png"
+        "images/food/pizza.png"
     , Food 3
         "Tiramisu"
         [ Dessert ]
-        "../images/food/chocolatecake.png"
+        "images/food/chocolatecake.png"
     , Food 4
         "Salad"
         [ Healthy ]
-        "../images/food/salad.png"
+        "images/food/salad.png"
     , Food 5
         "Apple Stump"
         [ Junk ]
-        "../images/food/applestump.png"
+        "images/food/applestump.png"
     , Food 6
         "Empty Bottle"
         [ Junk, Drinks ]
-        "../images/food/bottle.png"
+        "images/food/bottle.png"
     , Food 7
         "Bread"
         [ Healthy ]
-        "../images/food/bread.png"
+        "images/food/bread.png"
     , Food 8
         "Burgers"
         [ NotHealthy, Meat ]
-        "../images/food/burgers.png"
+        "images/food/burgers.png"
     , Food 9
         "Carrot"
         [ Healthy, Vegetables ]
-        "../images/food/carrot.png"
+        "images/food/carrot.png"
     , Food 10
         "Sode Water"
         [ Drinks ]
-        "../images/food/cola.png"
+        "images/food/cola.png"
     , Food 11
         "Cheese"
         [ Dairy ]
-        "../images/food/cheese.png"
+        "images/food/cheese.png"
     , Food 12
         "Creamy"
         [ Dessert ]
-        "../images/food/creamy.png"
+        "images/food/creamy.png"
     , Food 13
         "Cucumber"
         [ Vegetables, Healthy ]
-        "../images/food/cucumber.png"
+        "images/food/cucumber.png"
     , Food 14
         "Eggs"
         []
-        "../images/food/eggs.png"
+        "images/food/eggs.png"
     , Food 15
         "Fallen Ice Cream"
         [ Junk ]
-        "../images/food/icecream.png"
+        "images/food/icecream.png"
     , Food 16
         "Jar"
         [ Junk, Drinks ]
-        "../images/food/jar.png"
+        "images/food/jar.png"
     , Food 17
         "Chicken Drumsticks"
         [ FastFood ]
-        "../images/food/kfc.png"
+        "images/food/kfc.png"
     , Food 18
         "Leftovers"
         [ Junk ]
-        "../images/food/leftovers.png"
+        "images/food/leftovers.png"
     , Food 19
         "Lemon"
         [ Fruits, Healthy ]
-        "../images/food/lemon.png"
+        "images/food/lemon.png"
     , Food 20
         "Milk"
         [ Dairy, Drinks ]
-        "../images/food/milk.png"
+        "images/food/milk.png"
     , Food 21
         "Fruity Cake"
         [ Dessert ]
-        "../images/food/orangecake.png"
+        "images/food/orangecake.png"
     , Food 22
         "Pepperoni"
         [ Meat ]
-        "../images/food/pepperoni.png"
+        "images/food/pepperoni.png"
     , Food 23
         "Plastic Box"
         [ Junk ]
-        "../images/food/plasticbox.png"
+        "images/food/plasticbox.png"
     , Food 24
         "Meat Ribs"
         [ Meat ]
-        "../images/food/ribs.png"
+        "images/food/ribs.png"
     , Food 25
         "Salmon"
         [ Meat, Healthy ]
-        "../images/food/salmon.png"
+        "images/food/salmon.png"
     , Food 26
         "Sausage Plate"
         [ Meat ]
-        "../images/food/sausageplate.png"
+        "images/food/sausageplate.png"
     , Food 27
         "Shawarma"
         [ Meat, NotHealthy, FastFood ]
-        "../images/food/shawarma.png"
+        "images/food/shawarma.png"
     , Food 28
         "Steak"
         [ Meat ]
-        "../images/food/steak.png"
+        "images/food/steak.png"
     , Food 29
         "Steak Plate"
         [ Meat ]
-        "../images/food/steakplate.png"
+        "images/food/steakplate.png"
     , Food 30
         "Tacos"
         [ Meat ]
-        "../images/food/tacos.png"
+        "images/food/tacos.png"
     , Food 31
         "Tomatos"
         [ Vegetables, Healthy ]
-        "../images/food/tomatos.png"
+        "images/food/tomatos.png"
     , Food 32
         "Wok"
         [ FastFood, Spicy ]
-        "../images/food/wok.png"
+        "images/food/wok.png"
     , Food 33
         "Strawberry Cake"
         [ Dessert ]
-        "../images/food/strawberrycake.png"
+        "images/food/strawberrycake.png"
     , Food 34
         "Shake"
         [ Drinks, Healthy ]
-        "../images/food/shake.png"
+        "images/food/shake.png"
     , Food 35
         "Pepper"
         [ Spicy, Vegetables ]
-        "../images/food/redhotchilipepper.png"
+        "images/food/redhotchilipepper.png"
     , Food 36
         "Sausages"
         [ Meat ]
-        "../images/food/sausages.png"
+        "images/food/sausages.png"
     ]
