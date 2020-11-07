@@ -10603,21 +10603,14 @@ var $author$project$Main$Model = F3(
 var $author$project$Main$Shuffle = function (a) {
 	return {$: 'Shuffle', a: a};
 };
-var $author$project$Main$Dairy = {$: 'Dairy'};
-var $author$project$Main$Dessert = {$: 'Dessert'};
 var $author$project$Main$Drinks = {$: 'Drinks'};
-var $author$project$Main$FastFood = {$: 'FastFood'};
 var $author$project$Main$Food = F4(
 	function (id, name, tags, picture) {
 		return {id: id, name: name, picture: picture, tags: tags};
 	});
-var $author$project$Main$Fruits = {$: 'Fruits'};
 var $author$project$Main$Healthy = {$: 'Healthy'};
 var $author$project$Main$Junk = {$: 'Junk'};
-var $author$project$Main$Meat = {$: 'Meat'};
 var $author$project$Main$NotHealthy = {$: 'NotHealthy'};
-var $author$project$Main$Spicy = {$: 'Spicy'};
-var $author$project$Main$Vegetables = {$: 'Vegetables'};
 var $author$project$Main$allFood = _List_fromArray(
 	[
 		A4(
@@ -10625,14 +10618,14 @@ var $author$project$Main$allFood = _List_fromArray(
 		0,
 		'Popcorn',
 		_List_fromArray(
-			[$author$project$Main$NotHealthy, $author$project$Main$Dessert]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/popcorn.png'),
 		A4(
 		$author$project$Main$Food,
 		1,
 		'Happy Meal',
 		_List_fromArray(
-			[$author$project$Main$FastFood, $author$project$Main$NotHealthy]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/happymeal.png'),
 		A4(
 		$author$project$Main$Food,
@@ -10646,7 +10639,7 @@ var $author$project$Main$allFood = _List_fromArray(
 		3,
 		'Tiramisu',
 		_List_fromArray(
-			[$author$project$Main$Dessert]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/tiramisu.png'),
 		A4(
 		$author$project$Main$Food,
@@ -10667,7 +10660,7 @@ var $author$project$Main$allFood = _List_fromArray(
 		6,
 		'Empty Bottle',
 		_List_fromArray(
-			[$author$project$Main$Junk, $author$project$Main$Drinks]),
+			[$author$project$Main$Junk]),
 		'images/food/bottle.png'),
 		A4(
 		$author$project$Main$Food,
@@ -10681,14 +10674,14 @@ var $author$project$Main$allFood = _List_fromArray(
 		8,
 		'Burgers',
 		_List_fromArray(
-			[$author$project$Main$NotHealthy, $author$project$Main$Meat]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/burgers.png'),
 		A4(
 		$author$project$Main$Food,
 		9,
 		'Carrot',
 		_List_fromArray(
-			[$author$project$Main$Healthy, $author$project$Main$Vegetables]),
+			[$author$project$Main$Healthy]),
 		'images/food/carrot.png'),
 		A4(
 		$author$project$Main$Food,
@@ -10702,23 +10695,29 @@ var $author$project$Main$allFood = _List_fromArray(
 		11,
 		'Cheese',
 		_List_fromArray(
-			[$author$project$Main$Dairy]),
+			[$author$project$Main$Healthy]),
 		'images/food/cheese.png'),
 		A4(
 		$author$project$Main$Food,
 		12,
 		'Creamy',
 		_List_fromArray(
-			[$author$project$Main$Dessert]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/creamy.png'),
 		A4(
 		$author$project$Main$Food,
 		13,
 		'Cucumber',
 		_List_fromArray(
-			[$author$project$Main$Vegetables, $author$project$Main$Healthy]),
+			[$author$project$Main$Healthy]),
 		'images/food/cucumber.png'),
-		A4($author$project$Main$Food, 14, 'Eggs', _List_Nil, 'images/food/eggs.png'),
+		A4(
+		$author$project$Main$Food,
+		14,
+		'Eggs',
+		_List_fromArray(
+			[$author$project$Main$Healthy]),
+		'images/food/eggs.png'),
 		A4(
 		$author$project$Main$Food,
 		15,
@@ -10731,14 +10730,14 @@ var $author$project$Main$allFood = _List_fromArray(
 		16,
 		'Jar',
 		_List_fromArray(
-			[$author$project$Main$Junk, $author$project$Main$Drinks]),
+			[$author$project$Main$Junk]),
 		'images/food/jar.png'),
 		A4(
 		$author$project$Main$Food,
 		17,
 		'Chicken Drumsticks',
 		_List_fromArray(
-			[$author$project$Main$FastFood]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/kfc.png'),
 		A4(
 		$author$project$Main$Food,
@@ -10752,28 +10751,28 @@ var $author$project$Main$allFood = _List_fromArray(
 		19,
 		'Lemon',
 		_List_fromArray(
-			[$author$project$Main$Fruits, $author$project$Main$Healthy]),
+			[$author$project$Main$Healthy]),
 		'images/food/lemon.png'),
 		A4(
 		$author$project$Main$Food,
 		20,
 		'Milk',
 		_List_fromArray(
-			[$author$project$Main$Dairy, $author$project$Main$Drinks]),
+			[$author$project$Main$Drinks]),
 		'images/food/milk.png'),
 		A4(
 		$author$project$Main$Food,
 		21,
 		'Fruity Cake',
 		_List_fromArray(
-			[$author$project$Main$Dessert]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/orangecake.png'),
 		A4(
 		$author$project$Main$Food,
 		22,
 		'Pepperoni',
 		_List_fromArray(
-			[$author$project$Main$Meat]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/pepperoni.png'),
 		A4(
 		$author$project$Main$Food,
@@ -10787,91 +10786,91 @@ var $author$project$Main$allFood = _List_fromArray(
 		24,
 		'Meat Ribs',
 		_List_fromArray(
-			[$author$project$Main$Meat]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/ribs.png'),
 		A4(
 		$author$project$Main$Food,
 		25,
 		'Salmon',
 		_List_fromArray(
-			[$author$project$Main$Meat, $author$project$Main$Healthy]),
+			[$author$project$Main$Healthy]),
 		'images/food/salmon.png'),
 		A4(
 		$author$project$Main$Food,
 		26,
 		'Sausage Plate',
 		_List_fromArray(
-			[$author$project$Main$Meat]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/sausageplate.png'),
 		A4(
 		$author$project$Main$Food,
 		27,
 		'Shawarma',
 		_List_fromArray(
-			[$author$project$Main$Meat, $author$project$Main$NotHealthy, $author$project$Main$FastFood]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/shawarma.png'),
 		A4(
 		$author$project$Main$Food,
 		28,
 		'Steak',
 		_List_fromArray(
-			[$author$project$Main$Meat]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/steak.png'),
 		A4(
 		$author$project$Main$Food,
 		29,
 		'Steak Plate',
 		_List_fromArray(
-			[$author$project$Main$Meat]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/steakplate.png'),
 		A4(
 		$author$project$Main$Food,
 		30,
 		'Tacos',
 		_List_fromArray(
-			[$author$project$Main$Meat]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/tacos.png'),
 		A4(
 		$author$project$Main$Food,
 		31,
 		'Tomatos',
 		_List_fromArray(
-			[$author$project$Main$Vegetables, $author$project$Main$Healthy]),
+			[$author$project$Main$Healthy]),
 		'images/food/tomatos.png'),
 		A4(
 		$author$project$Main$Food,
 		32,
 		'Wok',
 		_List_fromArray(
-			[$author$project$Main$FastFood, $author$project$Main$Spicy]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/wok.png'),
 		A4(
 		$author$project$Main$Food,
 		33,
 		'Strawberry Cake',
 		_List_fromArray(
-			[$author$project$Main$Dessert]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/strawberrycake.png'),
 		A4(
 		$author$project$Main$Food,
 		34,
 		'Shake',
 		_List_fromArray(
-			[$author$project$Main$Drinks, $author$project$Main$Healthy]),
+			[$author$project$Main$Drinks]),
 		'images/food/shake.png'),
 		A4(
 		$author$project$Main$Food,
 		35,
 		'Pepper',
 		_List_fromArray(
-			[$author$project$Main$Spicy, $author$project$Main$Vegetables]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/redhotchilipepper.png'),
 		A4(
 		$author$project$Main$Food,
 		36,
 		'Sausages',
 		_List_fromArray(
-			[$author$project$Main$Meat]),
+			[$author$project$Main$NotHealthy]),
 		'images/food/sausages.png')
 	]);
 var $author$project$Main$Hero = F6(
@@ -10887,7 +10886,7 @@ var $author$project$Main$arnold = A6(
 	_List_fromArray(
 		[$author$project$Main$Junk, $author$project$Main$Drinks]),
 	_List_fromArray(
-		[$author$project$Main$Healthy, $author$project$Main$NotHealthy, $author$project$Main$Meat, $author$project$Main$Dairy, $author$project$Main$Dessert, $author$project$Main$FastFood, $author$project$Main$Fruits, $author$project$Main$Vegetables, $author$project$Main$Drinks, $author$project$Main$Spicy]));
+		[$author$project$Main$Healthy, $author$project$Main$NotHealthy]));
 var $elm$random$Random$Generate = function (a) {
 	return {$: 'Generate', a: a};
 };
@@ -12133,12 +12132,12 @@ var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$batch(
 		A2(
 			$elm$core$List$map,
-			function (z) {
+			function (x) {
 				return A2(
 					$mdgriffith$elm_style_animation$Animation$subscription,
-					$author$project$Main$Animate(z.ao),
+					$author$project$Main$Animate(x.ao),
 					_List_fromArray(
-						[z.state]));
+						[x.state]));
 			},
 			all));
 };
@@ -12155,10 +12154,6 @@ var $author$project$Main$Eat = F2(
 var $author$project$Main$GameOver = {$: 'GameOver'};
 var $author$project$Main$KeepPlaying = {$: 'KeepPlaying'};
 var $author$project$Main$ShuffleFood = {$: 'ShuffleFood'};
-var $author$project$Main$applyAnimationToSingle = F2(
-	function (state, fn) {
-		return fn(state);
-	});
 var $author$project$Main$calcEat = F2(
 	function (model, tags) {
 		var points = $elm$core$List$length(
@@ -12187,72 +12182,33 @@ var $author$project$Main$calcEat = F2(
 				model.hero.badTags)) ? 0 : 1;
 		return _Utils_Tuple2(points, damage);
 	});
-var $mdgriffith$elm_style_animation$Animation$extractInitialWait = function (steps) {
-	var _v0 = $elm$core$List$head(steps);
-	if (_v0.$ === 'Nothing') {
-		return _Utils_Tuple2(
-			$elm$time$Time$millisToPosix(0),
-			_List_Nil);
-	} else {
-		var step = _v0.a;
-		if (step.$ === 'Wait') {
-			var till = step.a;
-			var _v2 = $mdgriffith$elm_style_animation$Animation$extractInitialWait(
-				A2($elm$core$List$drop, 1, steps));
-			var additionalTime = _v2.a;
-			var remainingSteps = _v2.b;
-			return _Utils_Tuple2(
-				$elm$time$Time$millisToPosix(
-					$elm$time$Time$posixToMillis(till) + $elm$time$Time$posixToMillis(additionalTime)),
-				remainingSteps);
-		} else {
-			return _Utils_Tuple2(
-				$elm$time$Time$millisToPosix(0),
-				steps);
-		}
-	}
-};
-var $mdgriffith$elm_style_animation$Animation$interrupt = F2(
-	function (steps, _v0) {
-		var model = _v0.a;
-		return $mdgriffith$elm_style_animation$Animation$Model$Animation(
-			_Utils_update(
-				model,
-				{
-					interruption: A2(
-						$elm$core$List$cons,
-						$mdgriffith$elm_style_animation$Animation$extractInitialWait(steps),
-						model.interruption),
-					running: true
-				}));
-	});
 var $author$project$Main$chuck = A6(
 	$author$project$Main$Hero,
-	3,
+	2,
 	'Chuck Muffin',
-	'Eats plant-based foods and dairy products. Avoiding any unhealthy food.',
+	'Eats plant-based foods and liquid products. Avoiding any unhealthy food.',
 	'images/hero/chuck.png',
 	_List_fromArray(
-		[$author$project$Main$Healthy, $author$project$Main$Dairy, $author$project$Main$Fruits, $author$project$Main$Vegetables, $author$project$Main$Drinks]),
+		[$author$project$Main$Healthy, $author$project$Main$Drinks]),
 	_List_fromArray(
-		[$author$project$Main$Meat, $author$project$Main$FastFood, $author$project$Main$NotHealthy]));
+		[$author$project$Main$Junk, $author$project$Main$NotHealthy]));
 var $author$project$Main$terry = A6(
 	$author$project$Main$Hero,
-	2,
+	3,
 	'Terry Fatness',
 	'Loves fast-food and heavy meals. Vomit on desserts and healthy food.',
 	'images/hero/terry.png',
 	_List_fromArray(
-		[$author$project$Main$Meat, $author$project$Main$FastFood, $author$project$Main$NotHealthy, $author$project$Main$Spicy]),
+		[$author$project$Main$NotHealthy]),
 	_List_fromArray(
-		[$author$project$Main$Dessert, $author$project$Main$Healthy]));
+		[$author$project$Main$Junk, $author$project$Main$Healthy, $author$project$Main$Drinks]));
 var $author$project$Main$nextHero = function (hero) {
 	var _v0 = hero.id;
 	switch (_v0) {
 		case 1:
-			return $author$project$Main$terry;
-		case 2:
 			return $author$project$Main$chuck;
+		case 2:
+			return $author$project$Main$terry;
 		default:
 			return $author$project$Main$arnold;
 	}
@@ -12281,6 +12237,12 @@ var $author$project$Main$selectBestResult = F2(
 			},
 			bestResults);
 	});
+var $mdgriffith$elm_style_animation$Animation$Model$Send = function (a) {
+	return {$: 'Send', a: a};
+};
+var $mdgriffith$elm_style_animation$Animation$Messenger$send = function (msg) {
+	return $mdgriffith$elm_style_animation$Animation$Model$Send(msg);
+};
 var $mdgriffith$elm_style_animation$Animation$Model$To = function (a) {
 	return {$: 'To', a: a};
 };
@@ -13809,25 +13771,26 @@ var $author$project$Main$update = F2(
 							model.gameplay.bestResults,
 							A2($author$project$Main$BestResult, model.hero.id, model.gameplay.score));
 						var newGameplay = A3($author$project$Main$Gameplay, 0, $author$project$Main$initHealth, newBestResult);
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									gameplay: newGameplay,
-									hero: $author$project$Main$nextHero(model.hero)
-								}),
-							A2(
-								$elm$random$Random$generate,
-								$author$project$Main$Shuffle,
-								$elm_community$random_extra$Random$List$shuffle(model.foodPanel.food)));
+						var $temp$action = $author$project$Main$ShuffleFood,
+							$temp$model = _Utils_update(
+							model,
+							{
+								gameplay: newGameplay,
+								hero: $author$project$Main$nextHero(model.hero)
+							});
+						action = $temp$action;
+						model = $temp$model;
+						continue update;
 					} else {
 						var newHealth = A2($author$project$Main$Health, healthLeft, model.gameplay.hp.animationState);
 						var newGameplay = A3($author$project$Main$Gameplay, model.gameplay.score, newHealth, model.gameplay.bestResults);
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{gameplay: newGameplay}),
-							$elm$core$Platform$Cmd$none);
+						var $temp$action = $author$project$Main$ShuffleFood,
+							$temp$model = _Utils_update(
+							model,
+							{gameplay: newGameplay});
+						action = $temp$action;
+						model = $temp$model;
+						continue update;
 					}
 				case 'Eat':
 					var points = action.a;
@@ -13844,7 +13807,18 @@ var $author$project$Main$update = F2(
 					continue update;
 				case 'Shuffle':
 					var randomFoods = action.a;
-					var newFoodPanel = A2($author$project$Main$FoodPanel, randomFoods, model.foodPanel.animationState);
+					var newFoodState = A2(
+						$mdgriffith$elm_style_animation$Animation$queue,
+						_List_fromArray(
+							[
+								$mdgriffith$elm_style_animation$Animation$to(
+								_List_fromArray(
+									[
+										$mdgriffith$elm_style_animation$Animation$opacity(1)
+									]))
+							]),
+						model.foodPanel.animationState);
+					var newFoodPanel = A2($author$project$Main$FoodPanel, randomFoods, newFoodState);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -13860,11 +13834,6 @@ var $author$project$Main$update = F2(
 								_List_fromArray(
 									[
 										$mdgriffith$elm_style_animation$Animation$opacity(0)
-									])),
-								$mdgriffith$elm_style_animation$Animation$to(
-								_List_fromArray(
-									[
-										$mdgriffith$elm_style_animation$Animation$opacity(1)
 									]))
 							]),
 						model.foodPanel.animationState);
@@ -13882,30 +13851,29 @@ var $author$project$Main$update = F2(
 				case 'Disappear':
 					var damagePoints = action.a;
 					var newHpState = A2(
-						$author$project$Main$applyAnimationToSingle,
-						model.gameplay.hp.animationState,
-						$mdgriffith$elm_style_animation$Animation$interrupt(
-							_List_fromArray(
-								[
-									$mdgriffith$elm_style_animation$Animation$to(
-									_List_fromArray(
-										[
-											A2(
-											$mdgriffith$elm_style_animation$Animation$translate,
-											$mdgriffith$elm_style_animation$Animation$px(0),
-											$mdgriffith$elm_style_animation$Animation$px(100)),
-											$mdgriffith$elm_style_animation$Animation$opacity(0)
-										]))
-								])));
+						$mdgriffith$elm_style_animation$Animation$queue,
+						_List_fromArray(
+							[
+								$mdgriffith$elm_style_animation$Animation$to(
+								_List_fromArray(
+									[
+										A2(
+										$mdgriffith$elm_style_animation$Animation$translate,
+										$mdgriffith$elm_style_animation$Animation$px(0),
+										$mdgriffith$elm_style_animation$Animation$px(100)),
+										$mdgriffith$elm_style_animation$Animation$opacity(0)
+									])),
+								$mdgriffith$elm_style_animation$Animation$Messenger$send(
+								$author$project$Main$Damage(damagePoints))
+							]),
+						model.gameplay.hp.animationState);
 					var newHp = A2($author$project$Main$Health, model.gameplay.hp.value, newHpState);
 					var newGameplay = A3($author$project$Main$Gameplay, model.gameplay.score, newHp, model.gameplay.bestResults);
-					var $temp$action = $author$project$Main$Damage(damagePoints),
-						$temp$model = _Utils_update(
-						model,
-						{gameplay: newGameplay});
-					action = $temp$action;
-					model = $temp$model;
-					continue update;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{gameplay: newGameplay}),
+						$elm$core$Platform$Cmd$none);
 				default:
 					var aObject = action.a;
 					var aMsg = action.b;
@@ -15680,7 +15648,7 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$document(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.Food":{"args":[],"type":"{ id : Basics.Int, name : String.String, tags : List.List Main.Tags, picture : String.String }"},"Animation.Msg":{"args":[],"type":"Animation.Model.Tick"}},"unions":{"Main.Msg":{"args":[],"tags":{"Eat":["Basics.Int","Basics.Int"],"Damage":["Basics.Int"],"Shuffle":["List.List Main.Food"],"FadeOutFadeIn":["List.List Main.Tags"],"Disappear":["Basics.Int"],"Animate":["Main.AnimatedObject","Animation.Msg"],"ShuffleFood":[]}},"Main.AnimatedObject":{"args":[],"tags":{"FoodObject":[],"HealthObject":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"String.String":{"args":[],"tags":{"String":[]}},"Main.Tags":{"args":[],"tags":{"Healthy":[],"NotHealthy":[],"Meat":[],"Dairy":[],"Junk":[],"Dessert":[],"FastFood":[],"Fruits":[],"Vegetables":[],"Drinks":[],"Spicy":[]}},"Animation.Model.Tick":{"args":[],"tags":{"Tick":["Time.Posix"]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.Food":{"args":[],"type":"{ id : Basics.Int, name : String.String, tags : List.List Main.Tags, picture : String.String }"},"Animation.Msg":{"args":[],"type":"Animation.Model.Tick"}},"unions":{"Main.Msg":{"args":[],"tags":{"Eat":["Basics.Int","Basics.Int"],"Damage":["Basics.Int"],"Shuffle":["List.List Main.Food"],"FadeOutFadeIn":["List.List Main.Tags"],"Disappear":["Basics.Int"],"Animate":["Main.AnimatedObject","Animation.Msg"],"ShuffleFood":[]}},"Main.AnimatedObject":{"args":[],"tags":{"FoodObject":[],"HealthObject":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"String.String":{"args":[],"tags":{"String":[]}},"Main.Tags":{"args":[],"tags":{"Healthy":[],"NotHealthy":[],"Junk":[],"Drinks":[]}},"Animation.Model.Tick":{"args":[],"tags":{"Tick":["Time.Posix"]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}}}}})}});}(this));
 
   var app = Elm.Main.init({ node: document.getElementById("elm") });
 }

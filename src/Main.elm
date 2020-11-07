@@ -118,39 +118,31 @@ arnold =
         [ Junk, Drinks ]
         [ Healthy
         , NotHealthy
-        , Meat
-        , Dairy
-        , Dessert
-        , FastFood
-        , Fruits
-        , Vegetables
-        , Drinks
-        , Spicy
-        ]
-
-
-terry : Hero
-terry =
-    Hero 2
-        "Terry Fatness"
-        "Loves fast-food and heavy meals. Vomit on desserts and healthy food."
-        "images/hero/terry.png"
-        [ Meat, FastFood, NotHealthy, Spicy ]
-        [ Dessert
-        , Healthy
         ]
 
 
 chuck : Hero
 chuck =
-    Hero 3
+    Hero 2
         "Chuck Muffin"
-        "Eats plant-based foods and dairy products. Avoiding any unhealthy food."
+        "Eats plant-based foods and liquid products. Avoiding any unhealthy food."
         "images/hero/chuck.png"
-        [ Healthy, Dairy, Fruits, Vegetables, Drinks ]
-        [ Meat
-        , FastFood
+        [ Healthy, Drinks ]
+        [ Junk
         , NotHealthy
+        ]
+
+
+terry : Hero
+terry =
+    Hero 3
+        "Terry Fatness"
+        "Loves fast-food and heavy meals. Vomit on desserts and healthy food."
+        "images/hero/terry.png"
+        [ NotHealthy ]
+        [ Junk
+        , Healthy
+        , Drinks
         ]
 
 
@@ -203,16 +195,6 @@ type Msg
     | ShuffleFood
 
 
-applyAnimationToSingle : Animation.Messenger.State Msg -> (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> Animation.Messenger.State Msg
-applyAnimationToSingle state fn =
-    fn state
-
-
-applyAnimationToAll : List (Animation.Messenger.State Msg) -> (Animation.Messenger.State Msg -> Animation.Messenger.State Msg) -> List (Animation.Messenger.State Msg)
-applyAnimationToAll states fn =
-    List.map fn states
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
     case action of
@@ -220,7 +202,7 @@ update action model =
             ( model, generate Shuffle <| shuffle model.foodPanel.food )
 
         Damage points ->
-            -- GAMEOVER: save bestReult, nextHero, trigger Shuffle OR KEEPPLAYING: dec. hp
+            -- GAMEOVER: save bestReult, nextHero, trigger Shuffle OR KEEPPLAYING: dec. hp, trigger Shuffle
             let
                 healthLeft =
                     model.gameplay.hp.value - points
@@ -241,8 +223,9 @@ update action model =
                         newGameplay =
                             Gameplay 0 initHealth newBestResult
                     in
-                    ( { model | hero = nextHero model.hero, gameplay = newGameplay }, generate Shuffle <| shuffle model.foodPanel.food )
+                    update ShuffleFood { model | hero = nextHero model.hero, gameplay = newGameplay }
 
+                -- show modal
                 KeepPlaying ->
                     let
                         newHealth =
@@ -251,7 +234,7 @@ update action model =
                         newGameplay =
                             Gameplay model.gameplay.score newHealth model.gameplay.bestResults
                     in
-                    ( { model | gameplay = newGameplay }, Cmd.none )
+                    update ShuffleFood { model | gameplay = newGameplay }
 
         Eat points damagePoints ->
             -- gives new score, trigger Disappear OR ShuffleFood
@@ -273,8 +256,21 @@ update action model =
 
         Shuffle randomFoods ->
             let
+                newFoodState =
+                    Animation.queue
+                        [ --Animation.to
+                          --[ Animation.opacity 0
+                          --]
+                          --, Animation.Messenger.send <| Eat eatPoints
+                          --, Animation.Messenger.send damageAnimation
+                          Animation.to
+                            [ Animation.opacity 1
+                            ]
+                        ]
+                        model.foodPanel.animationState
+
                 newFoodPanel =
-                    FoodPanel randomFoods model.foodPanel.animationState
+                    FoodPanel randomFoods newFoodState
             in
             ( { model | foodPanel = newFoodPanel }, Cmd.none )
 
@@ -303,9 +299,9 @@ update action model =
 
                         --, Animation.Messenger.send <| Eat eatPoints
                         --, Animation.Messenger.send damageAnimation
-                        , Animation.to
-                            [ Animation.opacity 1
-                            ]
+                        --, Animation.to
+                        --  [ Animation.opacity 1
+                        -- ]
                         ]
                         model.foodPanel.animationState
 
@@ -318,15 +314,15 @@ update action model =
             -- animate heart, trigger Damage
             let
                 newHpState =
-                    applyAnimationToSingle model.gameplay.hp.animationState <|
-                        Animation.interrupt
-                            [ Animation.to
-                                [ Animation.translate (px 0) (px 100)
-                                , Animation.opacity 0
-                                ]
-
-                            --, Animation.Messenger.send <| Damage damagePoints
+                    Animation.queue
+                        [ Animation.to
+                            [ Animation.translate (px 0) (px 100)
+                            , Animation.opacity 0
                             ]
+
+                        --, Animation.Messenger.send <| Damage damagePoints
+                        ]
+                        model.gameplay.hp.animationState
 
                 newHp =
                     Health model.gameplay.hp.value newHpState
@@ -400,10 +396,10 @@ nextHero : Hero -> Hero
 nextHero hero =
     case hero.id of
         1 ->
-            terry
+            chuck
 
         2 ->
-            chuck
+            terry
 
         _ ->
             arnold
@@ -425,7 +421,7 @@ subscriptions model =
         all =
             [ healthState, foodState ]
     in
-    Sub.batch (List.map (\z -> Animation.subscription (Animate z.ao) [ z.state ]) all)
+    Sub.batch (List.map (\x -> Animation.subscription (Animate x.ao) [ x.state ]) all)
 
 
 
@@ -661,26 +657,19 @@ styleNormal =
 type Tags
     = Healthy
     | NotHealthy
-    | Meat
-    | Dairy
     | Junk
-    | Dessert
-    | FastFood
-    | Fruits
-    | Vegetables
     | Drinks
-    | Spicy
 
 
 allFood : List Food
 allFood =
     [ Food 0
         "Popcorn"
-        [ NotHealthy, Dessert ]
+        [ NotHealthy ]
         "images/food/popcorn.png"
     , Food 1
         "Happy Meal"
-        [ FastFood, NotHealthy ]
+        [ NotHealthy ]
         "images/food/happymeal.png"
     , Food 2
         "Pizza"
@@ -688,7 +677,7 @@ allFood =
         "images/food/pizza.png"
     , Food 3
         "Tiramisu"
-        [ Dessert ]
+        [ NotHealthy ]
         "images/food/tiramisu.png"
     , Food 4
         "Salad"
@@ -700,7 +689,7 @@ allFood =
         "images/food/applestump.png"
     , Food 6
         "Empty Bottle"
-        [ Junk, Drinks ]
+        [ Junk ]
         "images/food/bottle.png"
     , Food 7
         "Bread"
@@ -708,11 +697,11 @@ allFood =
         "images/food/bread.png"
     , Food 8
         "Burgers"
-        [ NotHealthy, Meat ]
+        [ NotHealthy ]
         "images/food/burgers.png"
     , Food 9
         "Carrot"
-        [ Healthy, Vegetables ]
+        [ Healthy ]
         "images/food/carrot.png"
     , Food 10
         "Sode Water"
@@ -720,19 +709,19 @@ allFood =
         "images/food/cola.png"
     , Food 11
         "Cheese"
-        [ Dairy ]
+        [ Healthy ]
         "images/food/cheese.png"
     , Food 12
         "Creamy"
-        [ Dessert ]
+        [ NotHealthy ]
         "images/food/creamy.png"
     , Food 13
         "Cucumber"
-        [ Vegetables, Healthy ]
+        [ Healthy ]
         "images/food/cucumber.png"
     , Food 14
         "Eggs"
-        []
+        [ Healthy ]
         "images/food/eggs.png"
     , Food 15
         "Fallen Ice Cream"
@@ -740,11 +729,11 @@ allFood =
         "images/food/icecream.png"
     , Food 16
         "Jar"
-        [ Junk, Drinks ]
+        [ Junk ]
         "images/food/jar.png"
     , Food 17
         "Chicken Drumsticks"
-        [ FastFood ]
+        [ NotHealthy ]
         "images/food/kfc.png"
     , Food 18
         "Leftovers"
@@ -752,19 +741,19 @@ allFood =
         "images/food/leftovers.png"
     , Food 19
         "Lemon"
-        [ Fruits, Healthy ]
+        [ Healthy ]
         "images/food/lemon.png"
     , Food 20
         "Milk"
-        [ Dairy, Drinks ]
+        [ Drinks ]
         "images/food/milk.png"
     , Food 21
         "Fruity Cake"
-        [ Dessert ]
+        [ NotHealthy ]
         "images/food/orangecake.png"
     , Food 22
         "Pepperoni"
-        [ Meat ]
+        [ NotHealthy ]
         "images/food/pepperoni.png"
     , Food 23
         "Plastic Box"
@@ -772,54 +761,54 @@ allFood =
         "images/food/plasticbox.png"
     , Food 24
         "Meat Ribs"
-        [ Meat ]
+        [ NotHealthy ]
         "images/food/ribs.png"
     , Food 25
         "Salmon"
-        [ Meat, Healthy ]
+        [ Healthy ]
         "images/food/salmon.png"
     , Food 26
         "Sausage Plate"
-        [ Meat ]
+        [ NotHealthy ]
         "images/food/sausageplate.png"
     , Food 27
         "Shawarma"
-        [ Meat, NotHealthy, FastFood ]
+        [ NotHealthy ]
         "images/food/shawarma.png"
     , Food 28
         "Steak"
-        [ Meat ]
+        [ NotHealthy ]
         "images/food/steak.png"
     , Food 29
         "Steak Plate"
-        [ Meat ]
+        [ NotHealthy ]
         "images/food/steakplate.png"
     , Food 30
         "Tacos"
-        [ Meat ]
+        [ NotHealthy ]
         "images/food/tacos.png"
     , Food 31
         "Tomatos"
-        [ Vegetables, Healthy ]
+        [ Healthy ]
         "images/food/tomatos.png"
     , Food 32
         "Wok"
-        [ FastFood, Spicy ]
+        [ NotHealthy ]
         "images/food/wok.png"
     , Food 33
         "Strawberry Cake"
-        [ Dessert ]
+        [ NotHealthy ]
         "images/food/strawberrycake.png"
     , Food 34
         "Shake"
-        [ Drinks, Healthy ]
+        [ Drinks ]
         "images/food/shake.png"
     , Food 35
         "Pepper"
-        [ Spicy, Vegetables ]
+        [ NotHealthy ]
         "images/food/redhotchilipepper.png"
     , Food 36
         "Sausages"
-        [ Meat ]
+        [ NotHealthy ]
         "images/food/sausages.png"
     ]
