@@ -402,7 +402,7 @@ view model =
         [ main_ []
             [ stylesheet
             , font
-            , body2 model
+            , body model
             ]
         ]
 
@@ -416,14 +416,14 @@ font =
         []
 
 
-body2 : Model -> Html Msg
-body2 model =
+body : Model -> Html Msg
+body model =
     section NotSpaced
         [ style "padding" "1rem", style "font-family" "Grandstander" ]
         [ container [ class "has-text-centered" ]
-            [ title H2 [] [ text cmsName ]
+            [ span [ style "font-size" "5rem" ] [ text cmsName ]
             , foodGrid model
-            , gamePlay model.hero model.hp model.score
+            , playPanel model
             ]
         ]
 
@@ -446,110 +446,25 @@ foodGrid model =
         food4 =
             Array.get 3 foods
     in
-    div []
-        [ foodPair food1 food2 model.foodState
-        , foodPair food3 food4 model.foodState
+    div (Animation.render model.foodState)
+        [ foodPair food1 food2
+        , foodPair food3 food4
         ]
 
 
-foodPair : Maybe Food -> Maybe Food -> FoodState -> Html Msg
-foodPair food1 food2 foodState =
-    columns { columnsModifiers | centered = True, display = MobileAndBeyond, gap = Gap3 }
+foodPair : Maybe Food -> Maybe Food -> Html Msg
+foodPair food1 food2 =
+    columns { columnsModifiers | centered = True, display = MobileAndBeyond, gap = Gap2 }
         []
         [ column columnModifiers
-            ([ class "is-6", textCentered ] ++ Animation.render foodState)
+            [ class "is-6", textCentered ]
             [ foodCard food1
             ]
         , column columnModifiers
-            ([ class "is-6", textCentered ] ++ Animation.render foodState)
+            [ class "is-6", textCentered ]
             [ foodCard food2
             ]
         ]
-
-
-gamePlay : Hero -> Health -> Int -> Html Msg
-gamePlay hero hp s =
-    card [ class "mt-3", style "margin-top" "1.5rem" ]
-        [ cardContent []
-            [ media []
-                [ mediaLeft []
-                    [ image (OneByOne X128)
-                        []
-                        [ img [ src hero.picture, class "is-rounded" ] []
-                        , div
-                            [ style "position" "absolute"
-                            , style "left" "0rem"
-                            , style "bottom" "0rem"
-                            , style "background-color" "white"
-                            ]
-                            [ title H1 [] [ text <| String.fromInt s ] ]
-                        ]
-                    ]
-                , mediaContent []
-                    [ title H4 [] [ text hero.name ]
-                    , healthPanel hp
-                    ]
-                ]
-            , div [ class "content" ]
-                [ subtitle H5 [] [ text hero.desc ] ]
-            ]
-        ]
-
-
-
--- OLD HTML
-
-
-body : Model -> Html Msg
-body model =
-    hero { heroModifiers | size = Large, color = Light, bold = True }
-        []
-        [ heroBody []
-            [ container []
-                [ score model
-                , deck model
-                , panel model
-                ]
-            ]
-        ]
-
-
-score : Model -> Html Msg
-score model =
-    container [ textCentered ]
-        [ title H1
-            (styleTitle ++ [ style "margin-bottom" "10px" ])
-            [ text cmsName
-            ]
-        , title H2
-            (styleNormal ++ [ style "margin-bottom" "20px" ])
-            [ text ("Score: " ++ String.fromInt model.score)
-            ]
-        , bestResult model.bestResult
-        ]
-
-
-bestResult : Maybe BestResult -> Html Msg
-bestResult result =
-    case result of
-        Nothing ->
-            title H3
-                (styleNormal ++ [ style "margin-bottom" "10px" ])
-                [ text "No results yet"
-                ]
-
-        Just br ->
-            title H3
-                (styleNormal ++ [ style "margin-bottom" "10px" ])
-                [ text ("Best result was made with " ++ br.name ++ ": " ++ String.fromInt br.score)
-                ]
-
-
-deck : Model -> Html Msg
-deck model =
-    columns { columnsModifiers | gap = Gap3 }
-        (Animation.render model.foodState)
-        (List.take 5 (List.map (\x -> foodCard <| Just x) model.food))
 
 
 foodCard : Maybe Food -> Html Msg
@@ -564,78 +479,61 @@ foodCard maybeFood =
                     [ style "cursor" "pointer" ]
                     [ img [ src food.picture, style "border-radius" "10px" ] []
                     ]
-                , Html.p
+                , title H2
                     [ class "has-text-centered" ]
                     [ text food.name
                     ]
                 ]
 
 
-panel : Model -> Html Msg
-panel model =
-    tileAncestor Auto
-        []
-        [ tileParent Width3
-            []
-            [ tileChild Auto
-                [ style "text-align" "center" ]
-                [ profile model.hero
-                , button { buttonModifiers | outlined = True, size = Small, color = Primary }
-                    [ onClick ChangeHero ]
-                    [ text "Change Hero" ]
-                ]
-            ]
-        , tileParent Width3
-            []
-          <|
-            healthContainer model.hp
-        , tileParent Width6
-            []
-            [ div [ style "position" "absolute", style "right" "0", style "bottom" "100px" ]
-                [ div
-                    (styleNormal ++ [ style "font-size" "150%", style "right" "0" ])
-                    [ a [ href "https://medium.com/@vladbatushkov", target "_blank" ] [ text "Created by Vlad Batushkov on Elm @ 2020" ]
+playPanel : Model -> Html Msg
+playPanel model =
+    card [ class "mt-3", style "margin-top" "1.5rem" ]
+        [ cardContent []
+            [ media []
+                [ mediaLeft [ style "width" "40%" ]
+                    [ image (OneByOne Unbounded)
+                        []
+                        [ img [ src model.hero.picture, class "is-rounded" ] []
+                        ]
                     ]
-                , div
-                    (styleNormal ++ [ style "font-size" "150%" ])
-                    [ a [ href "https://www.freepik.com", target "_blank" ] [ text "All illustrations are free from freepik.com" ]
+                , mediaContent []
+                    [ title H1 [] [ text model.hero.name ]
+                    , subtitle H2 [] [ text model.hero.desc ]
                     ]
-                , div
-                    (styleNormal ++ [ style "font-size" "150%", style "position" "absolute", style "right" "0" ])
-                    [ a [ href "https://www.brittneymurphydesign.com", target "_blank" ] [ text "`always * forever` is a font created and copyrighted by Brittney Murphy" ]
+                , mediaRight []
+                    [ title H1 [] [ text <| String.fromInt model.score ]
+                    , bestResult model.bestResult
                     ]
                 ]
+            , healthPanel model.hp
+
+            --, button { buttonModifiers | outlined = True, size = Large, color = Primary }
+            --  [ onClick ChangeHero ]
+            --[ text "Change Hero" ]
             ]
         ]
 
 
-profile : Hero -> Html Msg
-profile model =
-    div [ style "text-align" "-webkit-center" ]
-        [ image (OneByOne X128)
-            []
-            [ img [ src model.picture, class "is-rounded" ] []
-            ]
-        , div
-            (styleBold
-                ++ [ style "font-size" "250%"
-                   ]
-            )
-            [ text model.name ]
-        , title H4
-            (styleNormal
-                ++ [ style "font-size" "200%"
-                   , width 200
-                   ]
-            )
-            [ text model.desc ]
-        ]
+bestResult : Maybe BestResult -> Html Msg
+bestResult result =
+    case result of
+        Nothing ->
+            title H3
+                []
+                [ text "" ]
+
+        Just br ->
+            title H3
+                []
+                [ text (String.fromInt br.score ++ " by " ++ br.name)
+                ]
 
 
 healthPanel : Health -> Html Msg
 healthPanel model =
-    columns { columnsModifiers | centered = False, display = MobileAndBeyond }
-        []
+    columns { columnsModifiers | centered = True, display = MobileAndBeyond }
+        [ style "text-align" "-webkit-center" ]
     <|
         healthContainer model
 
@@ -665,7 +563,7 @@ healthContainer hp =
 heart : Html Msg
 heart =
     div []
-        [ image (OneByOne X64)
+        [ image (OneByOne X128)
             []
             [ img [ src "images/hero/heart.png" ] []
             ]

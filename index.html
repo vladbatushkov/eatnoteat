@@ -8880,7 +8880,6 @@ var $elm$browser$Browser$Document = F2(
 	function (title, body) {
 		return {body: body, title: title};
 	});
-var $surprisetalk$elm_bulma$Bulma$Elements$H2 = {$: 'H2'};
 var $surprisetalk$elm_bulma$Bulma$Layout$NotSpaced = {$: 'NotSpaced'};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
@@ -8911,7 +8910,7 @@ var $surprisetalk$elm_bulma$Bulma$Layout$container = A2(
 	_List_fromArray(
 		[$surprisetalk$elm_bulma$Bulma$Classes$container]));
 var $elm$html$Html$div = _VirtualDom_node('div');
-var $surprisetalk$elm_bulma$Bulma$Columns$Gap3 = {$: 'Gap3'};
+var $surprisetalk$elm_bulma$Bulma$Columns$Gap2 = {$: 'Gap2'};
 var $surprisetalk$elm_bulma$Bulma$Columns$MobileAndBeyond = {$: 'MobileAndBeyond'};
 var $surprisetalk$elm_bulma$Bulma$Classes$column = $elm$html$Html$Attributes$class('column');
 var $surprisetalk$elm_bulma$Bulma$Classes$is01Desktop = $elm$html$Html$Attributes$class('is-1-desktop');
@@ -9341,11 +9340,13 @@ var $surprisetalk$elm_bulma$Bulma$Columns$columns = function (_v0) {
 			}()
 			]));
 };
+var $surprisetalk$elm_bulma$Bulma$Columns$Gap3 = {$: 'Gap3'};
 var $surprisetalk$elm_bulma$Bulma$Columns$TabletAndBeyond = {$: 'TabletAndBeyond'};
 var $surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers = {centered: false, display: $surprisetalk$elm_bulma$Bulma$Columns$TabletAndBeyond, gap: $surprisetalk$elm_bulma$Bulma$Columns$Gap3, multiline: false};
 var $author$project$Main$FadeOutFadeIn = function (a) {
 	return {$: 'FadeOutFadeIn', a: a};
 };
+var $surprisetalk$elm_bulma$Bulma$Elements$H2 = {$: 'H2'};
 var $surprisetalk$elm_bulma$Bulma$Elements$OneByOne = function (a) {
 	return {$: 'OneByOne', a: a};
 };
@@ -9437,7 +9438,6 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
@@ -9448,6 +9448,48 @@ var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $surprisetalk$elm_bulma$Bulma$Classes$is3 = $elm$html$Html$Attributes$class('is-3');
+var $surprisetalk$elm_bulma$Bulma$Classes$title = $elm$html$Html$Attributes$class('title');
+var $surprisetalk$elm_bulma$Bulma$Elements$title = function (size) {
+	return A2(
+		$surprisetalk$elm_bulma$Helpers$node,
+		function () {
+			switch (size.$) {
+				case 'H1':
+					return 'h1';
+				case 'H2':
+					return 'h2';
+				case 'H3':
+					return 'h3';
+				case 'H4':
+					return 'h4';
+				case 'H5':
+					return 'h5';
+				default:
+					return 'h6';
+			}
+		}(),
+		_List_fromArray(
+			[
+				$surprisetalk$elm_bulma$Bulma$Classes$title,
+				function () {
+				switch (size.$) {
+					case 'H1':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is1;
+					case 'H2':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is2;
+					case 'H3':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is3;
+					case 'H4':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is4;
+					case 'H5':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is5;
+					default:
+						return $surprisetalk$elm_bulma$Bulma$Classes$is6;
+				}
+			}()
+			]));
+};
 var $author$project$Main$foodCard = function (maybeFood) {
 	if (maybeFood.$ === 'Nothing') {
 		return $elm$html$Html$text('');
@@ -9481,8 +9523,9 @@ var $author$project$Main$foodCard = function (maybeFood) {
 								]),
 							_List_Nil)
 						])),
-					A2(
-					$elm$html$Html$p,
+					A3(
+					$surprisetalk$elm_bulma$Bulma$Elements$title,
+					$surprisetalk$elm_bulma$Bulma$Elements$H2,
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('has-text-centered')
@@ -9494,6 +9537,44 @@ var $author$project$Main$foodCard = function (maybeFood) {
 				]));
 	}
 };
+var $surprisetalk$elm_bulma$Bulma$Classes$hasTextCentered = $elm$html$Html$Attributes$class('has-text-centered');
+var $surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered = $surprisetalk$elm_bulma$Bulma$Classes$hasTextCentered;
+var $author$project$Main$foodPair = F2(
+	function (food1, food2) {
+		return A3(
+			$surprisetalk$elm_bulma$Bulma$Columns$columns,
+			_Utils_update(
+				$surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers,
+				{centered: true, display: $surprisetalk$elm_bulma$Bulma$Columns$MobileAndBeyond, gap: $surprisetalk$elm_bulma$Bulma$Columns$Gap2}),
+			_List_Nil,
+			_List_fromArray(
+				[
+					A3(
+					$surprisetalk$elm_bulma$Bulma$Columns$column,
+					$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('is-6'),
+							$surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered
+						]),
+					_List_fromArray(
+						[
+							$author$project$Main$foodCard(food1)
+						])),
+					A3(
+					$surprisetalk$elm_bulma$Bulma$Columns$column,
+					$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('is-6'),
+							$surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered
+						]),
+					_List_fromArray(
+						[
+							$author$project$Main$foodCard(food2)
+						]))
+				]));
+	});
 var $elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -10039,48 +10120,6 @@ var $mdgriffith$elm_style_animation$Animation$Render$render = function (animatio
 	return _Utils_ap(styleAttr, otherAttrs);
 };
 var $mdgriffith$elm_style_animation$Animation$render = $mdgriffith$elm_style_animation$Animation$Render$render;
-var $surprisetalk$elm_bulma$Bulma$Classes$hasTextCentered = $elm$html$Html$Attributes$class('has-text-centered');
-var $surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered = $surprisetalk$elm_bulma$Bulma$Classes$hasTextCentered;
-var $author$project$Main$foodPair = F3(
-	function (food1, food2, foodState) {
-		return A3(
-			$surprisetalk$elm_bulma$Bulma$Columns$columns,
-			_Utils_update(
-				$surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers,
-				{centered: true, display: $surprisetalk$elm_bulma$Bulma$Columns$MobileAndBeyond, gap: $surprisetalk$elm_bulma$Bulma$Columns$Gap3}),
-			_List_Nil,
-			_List_fromArray(
-				[
-					A3(
-					$surprisetalk$elm_bulma$Bulma$Columns$column,
-					$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
-					_Utils_ap(
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('is-6'),
-								$surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered
-							]),
-						$mdgriffith$elm_style_animation$Animation$render(foodState)),
-					_List_fromArray(
-						[
-							$author$project$Main$foodCard(food1)
-						])),
-					A3(
-					$surprisetalk$elm_bulma$Bulma$Columns$column,
-					$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
-					_Utils_ap(
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('is-6'),
-								$surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered
-							]),
-						$mdgriffith$elm_style_animation$Animation$render(foodState)),
-					_List_fromArray(
-						[
-							$author$project$Main$foodCard(food2)
-						]))
-				]));
-	});
 var $elm$core$List$takeReverse = F3(
 	function (n, list, kept) {
 		takeReverse:
@@ -10216,17 +10255,38 @@ var $author$project$Main$foodGrid = function (model) {
 	var food1 = A2($elm$core$Array$get, 0, foods);
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
+		$mdgriffith$elm_style_animation$Animation$render(model.foodState),
 		_List_fromArray(
 			[
-				A3($author$project$Main$foodPair, food1, food2, model.foodState),
-				A3($author$project$Main$foodPair, food3, food4, model.foodState)
+				A2($author$project$Main$foodPair, food1, food2),
+				A2($author$project$Main$foodPair, food3, food4)
 			]));
 };
 var $surprisetalk$elm_bulma$Bulma$Elements$H1 = {$: 'H1'};
-var $surprisetalk$elm_bulma$Bulma$Elements$H4 = {$: 'H4'};
-var $surprisetalk$elm_bulma$Bulma$Elements$H5 = {$: 'H5'};
-var $surprisetalk$elm_bulma$Bulma$Elements$X128 = {$: 'X128'};
+var $surprisetalk$elm_bulma$Bulma$Elements$H3 = {$: 'H3'};
+var $author$project$Main$bestResult = function (result) {
+	if (result.$ === 'Nothing') {
+		return A3(
+			$surprisetalk$elm_bulma$Bulma$Elements$title,
+			$surprisetalk$elm_bulma$Bulma$Elements$H3,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('')
+				]));
+	} else {
+		var br = result.a;
+		return A3(
+			$surprisetalk$elm_bulma$Bulma$Elements$title,
+			$surprisetalk$elm_bulma$Bulma$Elements$H3,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text(
+					$elm$core$String$fromInt(br.score) + (' by ' + br.name))
+				]));
+	}
+};
 var $surprisetalk$elm_bulma$Bulma$Classes$card = $elm$html$Html$Attributes$class('card');
 var $surprisetalk$elm_bulma$Bulma$Components$card = A2(
 	$surprisetalk$elm_bulma$Helpers$node,
@@ -10239,7 +10299,7 @@ var $surprisetalk$elm_bulma$Bulma$Components$cardContent = A2(
 	'div',
 	_List_fromArray(
 		[$surprisetalk$elm_bulma$Bulma$Classes$cardContent]));
-var $surprisetalk$elm_bulma$Bulma$Elements$X64 = {$: 'X64'};
+var $surprisetalk$elm_bulma$Bulma$Elements$X128 = {$: 'X128'};
 var $author$project$Main$heart = A2(
 	$elm$html$Html$div,
 	_List_Nil,
@@ -10247,7 +10307,7 @@ var $author$project$Main$heart = A2(
 		[
 			A3(
 			$surprisetalk$elm_bulma$Bulma$Elements$image,
-			$surprisetalk$elm_bulma$Bulma$Elements$OneByOne($surprisetalk$elm_bulma$Bulma$Elements$X64),
+			$surprisetalk$elm_bulma$Bulma$Elements$OneByOne($surprisetalk$elm_bulma$Bulma$Elements$X128),
 			_List_Nil,
 			_List_fromArray(
 				[
@@ -10339,8 +10399,11 @@ var $author$project$Main$healthPanel = function (model) {
 		$surprisetalk$elm_bulma$Bulma$Columns$columns,
 		_Utils_update(
 			$surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers,
-			{centered: false, display: $surprisetalk$elm_bulma$Bulma$Columns$MobileAndBeyond}),
-		_List_Nil,
+			{centered: true, display: $surprisetalk$elm_bulma$Bulma$Columns$MobileAndBeyond}),
+		_List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'text-align', '-webkit-center')
+			]),
 		$author$project$Main$healthContainer(model));
 };
 var $surprisetalk$elm_bulma$Bulma$Classes$media = $elm$html$Html$Attributes$class('media');
@@ -10361,7 +10424,12 @@ var $surprisetalk$elm_bulma$Bulma$Layout$mediaLeft = A2(
 	'div',
 	_List_fromArray(
 		[$surprisetalk$elm_bulma$Bulma$Classes$mediaLeft]));
-var $surprisetalk$elm_bulma$Bulma$Classes$is3 = $elm$html$Html$Attributes$class('is-3');
+var $surprisetalk$elm_bulma$Bulma$Classes$mediaRight = $elm$html$Html$Attributes$class('media-right');
+var $surprisetalk$elm_bulma$Bulma$Layout$mediaRight = A2(
+	$surprisetalk$elm_bulma$Helpers$node,
+	'div',
+	_List_fromArray(
+		[$surprisetalk$elm_bulma$Bulma$Classes$mediaRight]));
 var $surprisetalk$elm_bulma$Bulma$Classes$subtitle = $elm$html$Html$Attributes$class('subtitle');
 var $surprisetalk$elm_bulma$Bulma$Elements$subtitle = function (size) {
 	return A2(
@@ -10403,146 +10471,93 @@ var $surprisetalk$elm_bulma$Bulma$Elements$subtitle = function (size) {
 			}()
 			]));
 };
-var $surprisetalk$elm_bulma$Bulma$Classes$title = $elm$html$Html$Attributes$class('title');
-var $surprisetalk$elm_bulma$Bulma$Elements$title = function (size) {
+var $author$project$Main$playPanel = function (model) {
 	return A2(
-		$surprisetalk$elm_bulma$Helpers$node,
-		function () {
-			switch (size.$) {
-				case 'H1':
-					return 'h1';
-				case 'H2':
-					return 'h2';
-				case 'H3':
-					return 'h3';
-				case 'H4':
-					return 'h4';
-				case 'H5':
-					return 'h5';
-				default:
-					return 'h6';
-			}
-		}(),
+		$surprisetalk$elm_bulma$Bulma$Components$card,
 		_List_fromArray(
 			[
-				$surprisetalk$elm_bulma$Bulma$Classes$title,
-				function () {
-				switch (size.$) {
-					case 'H1':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is1;
-					case 'H2':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is2;
-					case 'H3':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is3;
-					case 'H4':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is4;
-					case 'H5':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is5;
-					default:
-						return $surprisetalk$elm_bulma$Bulma$Classes$is6;
-				}
-			}()
+				$elm$html$Html$Attributes$class('mt-3'),
+				A2($elm$html$Html$Attributes$style, 'margin-top', '1.5rem')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$surprisetalk$elm_bulma$Bulma$Components$cardContent,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$surprisetalk$elm_bulma$Bulma$Layout$media,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$surprisetalk$elm_bulma$Bulma$Layout$mediaLeft,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'width', '40%')
+									]),
+								_List_fromArray(
+									[
+										A3(
+										$surprisetalk$elm_bulma$Bulma$Elements$image,
+										$surprisetalk$elm_bulma$Bulma$Elements$OneByOne($surprisetalk$elm_bulma$Bulma$Elements$Unbounded),
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$img,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$src(model.hero.picture),
+														$elm$html$Html$Attributes$class('is-rounded')
+													]),
+												_List_Nil)
+											]))
+									])),
+								A2(
+								$surprisetalk$elm_bulma$Bulma$Layout$mediaContent,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A3(
+										$surprisetalk$elm_bulma$Bulma$Elements$title,
+										$surprisetalk$elm_bulma$Bulma$Elements$H1,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(model.hero.name)
+											])),
+										A3(
+										$surprisetalk$elm_bulma$Bulma$Elements$subtitle,
+										$surprisetalk$elm_bulma$Bulma$Elements$H2,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(model.hero.desc)
+											]))
+									])),
+								A2(
+								$surprisetalk$elm_bulma$Bulma$Layout$mediaRight,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A3(
+										$surprisetalk$elm_bulma$Bulma$Elements$title,
+										$surprisetalk$elm_bulma$Bulma$Elements$H1,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(
+												$elm$core$String$fromInt(model.score))
+											])),
+										$author$project$Main$bestResult(model.bestResult)
+									]))
+							])),
+						$author$project$Main$healthPanel(model.hp)
+					]))
 			]));
 };
-var $author$project$Main$gamePlay = F3(
-	function (hero, hp, s) {
-		return A2(
-			$surprisetalk$elm_bulma$Bulma$Components$card,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('mt-3'),
-					A2($elm$html$Html$Attributes$style, 'margin-top', '1.5rem')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$surprisetalk$elm_bulma$Bulma$Components$cardContent,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							$surprisetalk$elm_bulma$Bulma$Layout$media,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									$surprisetalk$elm_bulma$Bulma$Layout$mediaLeft,
-									_List_Nil,
-									_List_fromArray(
-										[
-											A3(
-											$surprisetalk$elm_bulma$Bulma$Elements$image,
-											$surprisetalk$elm_bulma$Bulma$Elements$OneByOne($surprisetalk$elm_bulma$Bulma$Elements$X128),
-											_List_Nil,
-											_List_fromArray(
-												[
-													A2(
-													$elm$html$Html$img,
-													_List_fromArray(
-														[
-															$elm$html$Html$Attributes$src(hero.picture),
-															$elm$html$Html$Attributes$class('is-rounded')
-														]),
-													_List_Nil),
-													A2(
-													$elm$html$Html$div,
-													_List_fromArray(
-														[
-															A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-															A2($elm$html$Html$Attributes$style, 'left', '0rem'),
-															A2($elm$html$Html$Attributes$style, 'bottom', '0rem'),
-															A2($elm$html$Html$Attributes$style, 'background-color', 'white')
-														]),
-													_List_fromArray(
-														[
-															A3(
-															$surprisetalk$elm_bulma$Bulma$Elements$title,
-															$surprisetalk$elm_bulma$Bulma$Elements$H1,
-															_List_Nil,
-															_List_fromArray(
-																[
-																	$elm$html$Html$text(
-																	$elm$core$String$fromInt(s))
-																]))
-														]))
-												]))
-										])),
-									A2(
-									$surprisetalk$elm_bulma$Bulma$Layout$mediaContent,
-									_List_Nil,
-									_List_fromArray(
-										[
-											A3(
-											$surprisetalk$elm_bulma$Bulma$Elements$title,
-											$surprisetalk$elm_bulma$Bulma$Elements$H4,
-											_List_Nil,
-											_List_fromArray(
-												[
-													$elm$html$Html$text(hero.name)
-												])),
-											$author$project$Main$healthPanel(hp)
-										]))
-								])),
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('content')
-								]),
-							_List_fromArray(
-								[
-									A3(
-									$surprisetalk$elm_bulma$Bulma$Elements$subtitle,
-									$surprisetalk$elm_bulma$Bulma$Elements$H5,
-									_List_Nil,
-									_List_fromArray(
-										[
-											$elm$html$Html$text(hero.desc)
-										]))
-								]))
-						]))
-				]));
-	});
 var $surprisetalk$elm_bulma$Bulma$Classes$isLarge = $elm$html$Html$Attributes$class('is-large');
 var $surprisetalk$elm_bulma$Bulma$Classes$isMedium = $elm$html$Html$Attributes$class('is-medium');
 var $surprisetalk$elm_bulma$Bulma$Classes$section = $elm$html$Html$Attributes$class('section');
@@ -10565,7 +10580,8 @@ var $surprisetalk$elm_bulma$Bulma$Layout$section = function (spacing) {
 			}()
 			]));
 };
-var $author$project$Main$body2 = function (model) {
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $author$project$Main$body = function (model) {
 	return A3(
 		$surprisetalk$elm_bulma$Bulma$Layout$section,
 		$surprisetalk$elm_bulma$Bulma$Layout$NotSpaced,
@@ -10584,16 +10600,18 @@ var $author$project$Main$body2 = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A3(
-						$surprisetalk$elm_bulma$Bulma$Elements$title,
-						$surprisetalk$elm_bulma$Bulma$Elements$H2,
-						_List_Nil,
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'font-size', '5rem')
+							]),
 						_List_fromArray(
 							[
 								$elm$html$Html$text($author$project$Main$cmsName)
 							])),
 						$author$project$Main$foodGrid(model),
-						A3($author$project$Main$gamePlay, model.hero, model.hp, model.score)
+						$author$project$Main$playPanel(model)
 					]))
 			]));
 };
@@ -10636,7 +10654,7 @@ var $author$project$Main$view = function (model) {
 					[
 						$surprisetalk$elm_bulma$Bulma$CDN$stylesheet,
 						$author$project$Main$font,
-						$author$project$Main$body2(model)
+						$author$project$Main$body(model)
 					]))
 			]));
 };
