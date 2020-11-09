@@ -467,7 +467,6 @@ gameModal model =
                     ++ heroList model
                 )
             ]
-        , modalClose Large [ onClick CloseModal ] []
         ]
 
 

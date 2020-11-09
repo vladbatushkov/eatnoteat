@@ -10211,8 +10211,6 @@ var $author$project$Main$foodGrid = function (model) {
 				A2($author$project$Main$foodPair, food3, food4)
 			]));
 };
-var $author$project$Main$CloseModal = {$: 9};
-var $surprisetalk$elm_bulma$Bulma$Modifiers$Large = 3;
 var $author$project$Main$ChangeHero = function (a) {
 	return {$: 3, a: a};
 };
@@ -10457,31 +10455,6 @@ var $surprisetalk$elm_bulma$Bulma$Components$modalBackground = A2(
 	'div',
 	_List_fromArray(
 		[$surprisetalk$elm_bulma$Bulma$Classes$modalBackground]));
-var $surprisetalk$elm_bulma$Bulma$Classes$isLarge = $elm$html$Html$Attributes$class('is-large');
-var $surprisetalk$elm_bulma$Bulma$Classes$isMedium = $elm$html$Html$Attributes$class('is-medium');
-var $surprisetalk$elm_bulma$Bulma$Classes$isSmall = $elm$html$Html$Attributes$class('is-small');
-var $surprisetalk$elm_bulma$Bulma$Classes$modalClose = $elm$html$Html$Attributes$class('modal-close');
-var $surprisetalk$elm_bulma$Bulma$Components$modalClose = function (size) {
-	return A2(
-		$surprisetalk$elm_bulma$Helpers$node,
-		'a',
-		_List_fromArray(
-			[
-				$surprisetalk$elm_bulma$Bulma$Classes$modalClose,
-				function () {
-				switch (size) {
-					case 0:
-						return $surprisetalk$elm_bulma$Bulma$Classes$isSmall;
-					case 1:
-						return $surprisetalk$elm_bulma$Bulma$Classes$none;
-					case 2:
-						return $surprisetalk$elm_bulma$Bulma$Classes$isMedium;
-					default:
-						return $surprisetalk$elm_bulma$Bulma$Classes$isLarge;
-				}
-			}()
-			]));
-};
 var $surprisetalk$elm_bulma$Bulma$Classes$modalContent = $elm$html$Html$Attributes$class('modal-content');
 var $surprisetalk$elm_bulma$Bulma$Components$modalContent = A2(
 	$surprisetalk$elm_bulma$Helpers$node,
@@ -10532,15 +10505,7 @@ var $author$project$Main$gameModal = function (model) {
 										]))
 								]),
 							$author$project$Main$heroList(model)))
-					])),
-				A3(
-				$surprisetalk$elm_bulma$Bulma$Components$modalClose,
-				3,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick($author$project$Main$CloseModal)
-					]),
-				_List_Nil)
+					]))
 			]));
 };
 var $author$project$Main$currentScore = function (model) {
@@ -10765,6 +10730,8 @@ var $author$project$Main$heroPanel = function (model) {
 					]))
 			]));
 };
+var $surprisetalk$elm_bulma$Bulma$Classes$isLarge = $elm$html$Html$Attributes$class('is-large');
+var $surprisetalk$elm_bulma$Bulma$Classes$isMedium = $elm$html$Html$Attributes$class('is-medium');
 var $surprisetalk$elm_bulma$Bulma$Classes$section = $elm$html$Html$Attributes$class('section');
 var $surprisetalk$elm_bulma$Bulma$Layout$section = function (spacing) {
 	return A2(
