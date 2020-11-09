@@ -420,7 +420,7 @@ view model =
         (cmsName
             ++ " - tasty Elm game to kill your free time © created by Vlad Batushkov"
         )
-        [ main_ [ style "background-color" "#bebebe" ]
+        [ main_ [ style "background-color" "#fff" ]
             [ stylesheet
             , font
             , body model
@@ -459,8 +459,8 @@ gameModal model =
     in
     modal isVisible
         []
-        [ modalBackground [ style "background-color" "#bebebe" ] []
-        , modalContent [] <| heroList model
+        [ modalBackground [ style "background-color" "#fff" ] []
+        , modalContent [ style "width" "90%" ] <| heroList model
         , modalClose Large [ onClick CloseModal ] []
         ]
 
@@ -469,7 +469,7 @@ heroList : Model -> List (Html Msg)
 heroList model =
     List.map
         (\x ->
-            card [ class "mt-3", style "margin-top" "1.5rem" ]
+            card [ style "margin-top" "1.5rem" ]
                 [ cardContent []
                     [ media [ onClick <| ChangeHero x ]
                         [ mediaLeft [ style "width" "40%" ]
@@ -550,7 +550,7 @@ foodCard maybeFood =
 
 heroPanel : Model -> Html Msg
 heroPanel model =
-    card []
+    card [ class "mt-3", style "margin-top" "1.5rem" ]
         [ cardContent []
             [ media []
                 [ mediaLeft [ style "width" "40%" ]
@@ -567,10 +567,6 @@ heroPanel model =
                     ]
                 ]
             , healthPanel model.gameplay.hp
-
-            --, button { buttonModifiers | outlined = True, size = Large, color = Primary }
-            --  [ onClick ChangeHero ]
-            --[ text "Change Hero" ]
             ]
         ]
 
@@ -589,12 +585,7 @@ bestScore heroId gameplay gameState =
                     "150px"
 
                 SelectHero ->
-                    case heroId of
-                        1 ->
-                            "50px"
-
-                        _ ->
-                            "100px"
+                    "25px"
     in
     circle "gold" "0px" bottom <| span [ style "font-size" "4.5rem" ] [ bestResultText heroId gameplay.bestResults ]
 

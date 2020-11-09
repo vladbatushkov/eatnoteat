@@ -10287,11 +10287,7 @@ var $author$project$Main$bestScore = F3(
 			if (gameState.$ === 'Play') {
 				return '150px';
 			} else {
-				if (heroId === 1) {
-					return '50px';
-				} else {
-					return '100px';
-				}
+				return '25px';
 			}
 		}();
 		return A4(
@@ -10389,7 +10385,6 @@ var $author$project$Main$heroList = function (model) {
 				$surprisetalk$elm_bulma$Bulma$Components$card,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('mt-3'),
 						A2($elm$html$Html$Attributes$style, 'margin-top', '1.5rem')
 					]),
 				_List_fromArray(
@@ -10529,12 +10524,15 @@ var $author$project$Main$gameModal = function (model) {
 				$surprisetalk$elm_bulma$Bulma$Components$modalBackground,
 				_List_fromArray(
 					[
-						A2($elm$html$Html$Attributes$style, 'background-color', '#bebebe')
+						A2($elm$html$Html$Attributes$style, 'background-color', '#fff')
 					]),
 				_List_Nil),
 				A2(
 				$surprisetalk$elm_bulma$Bulma$Components$modalContent,
-				_List_Nil,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'width', '90%')
+					]),
 				$author$project$Main$heroList(model)),
 				A3(
 				$surprisetalk$elm_bulma$Bulma$Components$modalClose,
@@ -10698,7 +10696,11 @@ var $author$project$Main$healthPanel = function (model) {
 var $author$project$Main$heroPanel = function (model) {
 	return A2(
 		$surprisetalk$elm_bulma$Bulma$Components$card,
-		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('mt-3'),
+				A2($elm$html$Html$Attributes$style, 'margin-top', '1.5rem')
+			]),
 		_List_fromArray(
 			[
 				A2(
@@ -10883,7 +10885,7 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$main_,
 				_List_fromArray(
 					[
-						A2($elm$html$Html$Attributes$style, 'background-color', '#bebebe')
+						A2($elm$html$Html$Attributes$style, 'background-color', '#fff')
 					]),
 				_List_fromArray(
 					[
