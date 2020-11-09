@@ -40,6 +40,7 @@ type alias Model =
     { hero : Hero
     , foodPanel : FoodPanel
     , gameplay : Gameplay
+    , gameState : GameState
     }
 
 
@@ -91,8 +92,8 @@ type alias Food =
 
 
 type GameState
-    = KeepPlaying
-    | GameOver
+    = SelectHero
+    | Play
 
 
 type AnimatedObject
@@ -155,6 +156,7 @@ init _ =
         arnold
         initFoodPanel
         initGameplay
+        SelectHero
     , generate Shuffle <| shuffle allFood
     )
 
@@ -191,16 +193,24 @@ type Msg
     = DoNothing
     | Eat (List Tags)
     | Damage Int
-      --| ChangeHero
+    | ChangeHero Hero
     | Shuffle (List Food)
     | HealthCheck Int
     | Animate AnimatedObject Animation.Msg
     | ShuffleFood
+    | OpenModal
+    | CloseModal
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
     case action of
+        OpenModal ->
+            ( { model | gameState = SelectHero }, Cmd.none )
+
+        CloseModal ->
+            ( { model | gameState = Play }, Cmd.none )
+
         DoNothing ->
             ( model, Cmd.none )
 
@@ -215,20 +225,19 @@ update action model =
             ( model, generate Shuffle <| shuffle model.foodPanel.foods )
 
         HealthCheck points ->
-            -- GAMEOVER: save bestReult, nextHero, trigger Shuffle OR KEEPPLAYING: dec. hp, trigger Shuffle
             let
                 healthLeft =
                     model.gameplay.hp.value - points
 
                 gameState =
                     if healthLeft == 0 then
-                        GameOver
+                        SelectHero
 
                     else
-                        KeepPlaying
+                        Play
             in
             case gameState of
-                GameOver ->
+                SelectHero ->
                     let
                         newBestResult =
                             selectBestResult model.gameplay.bestResults (BestResult model.hero.id model.gameplay.score)
@@ -236,10 +245,9 @@ update action model =
                         newGameplay =
                             Gameplay 0 initHealth newBestResult
                     in
-                    ( { model | hero = nextHero model.hero, gameplay = newGameplay }, Cmd.none )
+                    ( { model | hero = nextHero model.hero, gameplay = newGameplay, gameState = gameState }, Cmd.none )
 
-                -- show modal
-                KeepPlaying ->
+                Play ->
                     let
                         newHealth =
                             Health healthLeft
@@ -252,7 +260,7 @@ update action model =
                         newGameplay =
                             Gameplay model.gameplay.score newHealth model.gameplay.bestResults
                     in
-                    ( { model | gameplay = newGameplay }, Cmd.none )
+                    ( { model | gameplay = newGameplay, gameState = gameState }, Cmd.none )
 
         Eat tags ->
             let
@@ -290,12 +298,9 @@ update action model =
             in
             ( { model | gameplay = newGameplay, foodPanel = newFoodPanel }, Cmd.none )
 
-        --ChangeHero ->
-        --  let
-        --    newGameplay =
-        --      Gameplay 0 initHealth model.gameplay.bestResults
-        --in
-        -- ( { model | hero = nextHero model.hero, gameplay = newGameplay }, generate Shuffle <| shuffle model.foodPanel.food )
+        ChangeHero hero ->
+            ( { model | hero = hero, gameState = Play }, Cmd.none )
+
         Damage points ->
             let
                 newHpState =
@@ -440,9 +445,49 @@ body model =
         [ container [ class "has-text-centered" ]
             [ span [ style "font-size" "5rem" ] [ text cmsName ]
             , foodGrid model
-            , playPanel model
+            , heroPanel model
             ]
+        , gameModal model
         ]
+
+
+gameModal : Model -> Html Msg
+gameModal model =
+    let
+        isVisible =
+            model.gameState == SelectHero
+    in
+    modal isVisible
+        []
+        [ modalBackground [ style "background-color" "#bebebe" ] []
+        , modalContent [] <| heroList model
+        , modalClose Large [ onClick CloseModal ] []
+        ]
+
+
+heroList : Model -> List (Html Msg)
+heroList model =
+    List.map
+        (\x ->
+            card [ class "mt-3", style "margin-top" "1.5rem" ]
+                [ cardContent []
+                    [ media [ onClick <| ChangeHero x ]
+                        [ mediaLeft [ style "width" "40%" ]
+                            [ image (OneByOne Unbounded)
+                                []
+                                [ img [ src x.picture, class "is-rounded" ] []
+                                ]
+                            , bestScore x.id model.gameplay SelectHero
+                            ]
+                        , mediaContent []
+                            [ title H1 [] [ text x.name ]
+                            , subtitle H2 [] [ text x.desc ]
+                            ]
+                        ]
+                    ]
+                ]
+        )
+        [ arnold, chuck, terry ]
 
 
 foodGrid : Model -> Html Msg
@@ -503,9 +548,9 @@ foodCard maybeFood =
                 ]
 
 
-playPanel : Model -> Html Msg
-playPanel model =
-    card [ class "mt-3", style "margin-top" "1.5rem" ]
+heroPanel : Model -> Html Msg
+heroPanel model =
+    card []
         [ cardContent []
             [ media []
                 [ mediaLeft [ style "width" "40%" ]
@@ -513,7 +558,7 @@ playPanel model =
                         []
                         [ img [ src model.hero.picture, class "is-rounded" ] []
                         ]
-                    , bestScore model
+                    , bestScore model.hero.id model.gameplay Play
                     , currentScore model
                     ]
                 , mediaContent []
@@ -532,16 +577,30 @@ playPanel model =
 
 currentScore : Model -> Html Msg
 currentScore model =
-    circle "white" "75px" <| span [ style "font-size" "4.5rem" ] [ text <| String.fromInt model.gameplay.score ]
+    circle "white" "75px" "150px" <| span [ style "font-size" "4.5rem" ] [ text <| String.fromInt model.gameplay.score ]
 
 
-bestScore : Model -> Html Msg
-bestScore model =
-    circle "gold" "0px" <| span [ style "font-size" "4.5rem" ] [ bestResultText model.hero.id model.gameplay.bestResults ]
+bestScore : Int -> Gameplay -> GameState -> Html Msg
+bestScore heroId gameplay gameState =
+    let
+        bottom =
+            case gameState of
+                Play ->
+                    "150px"
+
+                SelectHero ->
+                    case heroId of
+                        1 ->
+                            "50px"
+
+                        _ ->
+                            "100px"
+    in
+    circle "gold" "0px" bottom <| span [ style "font-size" "4.5rem" ] [ bestResultText heroId gameplay.bestResults ]
 
 
-circle : String -> String -> Html Msg -> Html Msg
-circle color side child =
+circle : String -> String -> String -> Html Msg -> Html Msg
+circle color side bottom child =
     div
         [ style "border-radius" "50%"
         , style "background-color" color
@@ -550,7 +609,7 @@ circle color side child =
         , style "height" "100px"
         , style "text-align" "center"
         , style "vertical-align" "middle"
-        , style "bottom" "150px"
+        , style "bottom" bottom
         , style "left" side
         ]
         [ child ]

@@ -5241,10 +5241,11 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$document = _Browser_document;
-var $author$project$Main$Model = F3(
-	function (hero, foodPanel, gameplay) {
-		return {foodPanel: foodPanel, gameplay: gameplay, hero: hero};
+var $author$project$Main$Model = F4(
+	function (hero, foodPanel, gameplay, gameState) {
+		return {foodPanel: foodPanel, gameState: gameState, gameplay: gameplay, hero: hero};
 	});
+var $author$project$Main$SelectHero = {$: 'SelectHero'};
 var $author$project$Main$Shuffle = function (a) {
 	return {$: 'Shuffle', a: a};
 };
@@ -6848,7 +6849,7 @@ var $elm_community$random_extra$Random$List$shuffle = function (list) {
 };
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		A3($author$project$Main$Model, $author$project$Main$arnold, $author$project$Main$initFoodPanel, $author$project$Main$initGameplay),
+		A4($author$project$Main$Model, $author$project$Main$arnold, $author$project$Main$initFoodPanel, $author$project$Main$initGameplay, $author$project$Main$SelectHero),
 		A2(
 			$elm$random$Random$generate,
 			$author$project$Main$Shuffle,
@@ -7027,11 +7028,10 @@ var $author$project$Main$Damage = function (a) {
 	return {$: 'Damage', a: a};
 };
 var $author$project$Main$DoNothing = {$: 'DoNothing'};
-var $author$project$Main$GameOver = {$: 'GameOver'};
 var $author$project$Main$HealthCheck = function (a) {
 	return {$: 'HealthCheck', a: a};
 };
-var $author$project$Main$KeepPlaying = {$: 'KeepPlaying'};
+var $author$project$Main$Play = {$: 'Play'};
 var $author$project$Main$ShuffleFood = {$: 'ShuffleFood'};
 var $elm$core$List$isEmpty = function (xs) {
 	if (!xs.b) {
@@ -8689,6 +8689,18 @@ var $mdgriffith$elm_style_animation$Animation$Messenger$update = F2(
 var $author$project$Main$update = F2(
 	function (action, model) {
 		switch (action.$) {
+			case 'OpenModal':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{gameState: $author$project$Main$SelectHero}),
+					$elm$core$Platform$Cmd$none);
+			case 'CloseModal':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{gameState: $author$project$Main$Play}),
+					$elm$core$Platform$Cmd$none);
 			case 'DoNothing':
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'Shuffle':
@@ -8709,8 +8721,8 @@ var $author$project$Main$update = F2(
 			case 'HealthCheck':
 				var points = action.a;
 				var healthLeft = model.gameplay.hp.value - points;
-				var gameState = (!healthLeft) ? $author$project$Main$GameOver : $author$project$Main$KeepPlaying;
-				if (gameState.$ === 'GameOver') {
+				var gameState = (!healthLeft) ? $author$project$Main$SelectHero : $author$project$Main$Play;
+				if (gameState.$ === 'SelectHero') {
 					var newBestResult = A2(
 						$author$project$Main$selectBestResult,
 						model.gameplay.bestResults,
@@ -8720,6 +8732,7 @@ var $author$project$Main$update = F2(
 						_Utils_update(
 							model,
 							{
+								gameState: gameState,
 								gameplay: newGameplay,
 								hero: $author$project$Main$nextHero(model.hero)
 							}),
@@ -8741,7 +8754,7 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{gameplay: newGameplay}),
+							{gameState: gameState, gameplay: newGameplay}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 'Eat':
@@ -8775,6 +8788,13 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{foodPanel: newFoodPanel, gameplay: newGameplay}),
+					$elm$core$Platform$Cmd$none);
+			case 'ChangeHero':
+				var hero = action.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{gameState: $author$project$Main$Play, hero: hero}),
 					$elm$core$Platform$Cmd$none);
 			case 'Damage':
 				var points = action.a;
@@ -10215,6 +10235,11 @@ var $author$project$Main$foodGrid = function (model) {
 				A2($author$project$Main$foodPair, food3, food4)
 			]));
 };
+var $author$project$Main$CloseModal = {$: 'CloseModal'};
+var $surprisetalk$elm_bulma$Bulma$Modifiers$Large = {$: 'Large'};
+var $author$project$Main$ChangeHero = function (a) {
+	return {$: 'ChangeHero', a: a};
+};
 var $surprisetalk$elm_bulma$Bulma$Elements$H1 = {$: 'H1'};
 var $author$project$Main$bestResultText = F2(
 	function (heroId, brs) {
@@ -10236,8 +10261,8 @@ var $author$project$Main$bestResultText = F2(
 				$elm$core$String$fromInt(val.score));
 		}
 	});
-var $author$project$Main$circle = F3(
-	function (color, side, child) {
+var $author$project$Main$circle = F4(
+	function (color, side, bottom, child) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -10249,29 +10274,42 @@ var $author$project$Main$circle = F3(
 					A2($elm$html$Html$Attributes$style, 'height', '100px'),
 					A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
 					A2($elm$html$Html$Attributes$style, 'vertical-align', 'middle'),
-					A2($elm$html$Html$Attributes$style, 'bottom', '150px'),
+					A2($elm$html$Html$Attributes$style, 'bottom', bottom),
 					A2($elm$html$Html$Attributes$style, 'left', side)
 				]),
 			_List_fromArray(
 				[child]));
 	});
 var $elm$html$Html$span = _VirtualDom_node('span');
-var $author$project$Main$bestScore = function (model) {
-	return A3(
-		$author$project$Main$circle,
-		'gold',
-		'0px',
-		A2(
-			$elm$html$Html$span,
-			_List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$style, 'font-size', '4.5rem')
-				]),
-			_List_fromArray(
-				[
-					A2($author$project$Main$bestResultText, model.hero.id, model.gameplay.bestResults)
-				])));
-};
+var $author$project$Main$bestScore = F3(
+	function (heroId, gameplay, gameState) {
+		var bottom = function () {
+			if (gameState.$ === 'Play') {
+				return '150px';
+			} else {
+				if (heroId === 1) {
+					return '50px';
+				} else {
+					return '100px';
+				}
+			}
+		}();
+		return A4(
+			$author$project$Main$circle,
+			'gold',
+			'0px',
+			bottom,
+			A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'font-size', '4.5rem')
+					]),
+				_List_fromArray(
+					[
+						A2($author$project$Main$bestResultText, heroId, gameplay.bestResults)
+					])));
+	});
 var $surprisetalk$elm_bulma$Bulma$Classes$card = $elm$html$Html$Attributes$class('card');
 var $surprisetalk$elm_bulma$Bulma$Components$card = A2(
 	$surprisetalk$elm_bulma$Helpers$node,
@@ -10284,11 +10322,236 @@ var $surprisetalk$elm_bulma$Bulma$Components$cardContent = A2(
 	'div',
 	_List_fromArray(
 		[$surprisetalk$elm_bulma$Bulma$Classes$cardContent]));
-var $author$project$Main$currentScore = function (model) {
+var $surprisetalk$elm_bulma$Bulma$Classes$media = $elm$html$Html$Attributes$class('media');
+var $surprisetalk$elm_bulma$Bulma$Layout$media = A2(
+	$surprisetalk$elm_bulma$Helpers$node,
+	'article',
+	_List_fromArray(
+		[$surprisetalk$elm_bulma$Bulma$Classes$media]));
+var $surprisetalk$elm_bulma$Bulma$Classes$mediaContent = $elm$html$Html$Attributes$class('media-content');
+var $surprisetalk$elm_bulma$Bulma$Layout$mediaContent = A2(
+	$surprisetalk$elm_bulma$Helpers$node,
+	'div',
+	_List_fromArray(
+		[$surprisetalk$elm_bulma$Bulma$Classes$mediaContent]));
+var $surprisetalk$elm_bulma$Bulma$Classes$mediaLeft = $elm$html$Html$Attributes$class('media-left');
+var $surprisetalk$elm_bulma$Bulma$Layout$mediaLeft = A2(
+	$surprisetalk$elm_bulma$Helpers$node,
+	'div',
+	_List_fromArray(
+		[$surprisetalk$elm_bulma$Bulma$Classes$mediaLeft]));
+var $surprisetalk$elm_bulma$Bulma$Classes$subtitle = $elm$html$Html$Attributes$class('subtitle');
+var $surprisetalk$elm_bulma$Bulma$Elements$subtitle = function (size) {
+	return A2(
+		$surprisetalk$elm_bulma$Helpers$node,
+		function () {
+			switch (size.$) {
+				case 'H1':
+					return 'h1';
+				case 'H2':
+					return 'h2';
+				case 'H3':
+					return 'h3';
+				case 'H4':
+					return 'h4';
+				case 'H5':
+					return 'h5';
+				default:
+					return 'h6';
+			}
+		}(),
+		_List_fromArray(
+			[
+				$surprisetalk$elm_bulma$Bulma$Classes$subtitle,
+				function () {
+				switch (size.$) {
+					case 'H1':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is1;
+					case 'H2':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is2;
+					case 'H3':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is3;
+					case 'H4':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is4;
+					case 'H5':
+						return $surprisetalk$elm_bulma$Bulma$Classes$is5;
+					default:
+						return $surprisetalk$elm_bulma$Bulma$Classes$is6;
+				}
+			}()
+			]));
+};
+var $author$project$Main$heroList = function (model) {
+	return A2(
+		$elm$core$List$map,
+		function (x) {
+			return A2(
+				$surprisetalk$elm_bulma$Bulma$Components$card,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('mt-3'),
+						A2($elm$html$Html$Attributes$style, 'margin-top', '1.5rem')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$surprisetalk$elm_bulma$Bulma$Components$cardContent,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$surprisetalk$elm_bulma$Bulma$Layout$media,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Main$ChangeHero(x))
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$surprisetalk$elm_bulma$Bulma$Layout$mediaLeft,
+										_List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$style, 'width', '40%')
+											]),
+										_List_fromArray(
+											[
+												A3(
+												$surprisetalk$elm_bulma$Bulma$Elements$image,
+												$surprisetalk$elm_bulma$Bulma$Elements$OneByOne($surprisetalk$elm_bulma$Bulma$Elements$Unbounded),
+												_List_Nil,
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$img,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$src(x.picture),
+																$elm$html$Html$Attributes$class('is-rounded')
+															]),
+														_List_Nil)
+													])),
+												A3($author$project$Main$bestScore, x.id, model.gameplay, $author$project$Main$SelectHero)
+											])),
+										A2(
+										$surprisetalk$elm_bulma$Bulma$Layout$mediaContent,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A3(
+												$surprisetalk$elm_bulma$Bulma$Elements$title,
+												$surprisetalk$elm_bulma$Bulma$Elements$H1,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text(x.name)
+													])),
+												A3(
+												$surprisetalk$elm_bulma$Bulma$Elements$subtitle,
+												$surprisetalk$elm_bulma$Bulma$Elements$H2,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text(x.desc)
+													]))
+											]))
+									]))
+							]))
+					]));
+		},
+		_List_fromArray(
+			[$author$project$Main$arnold, $author$project$Main$chuck, $author$project$Main$terry]));
+};
+var $surprisetalk$elm_bulma$Bulma$Classes$isActive = $elm$html$Html$Attributes$class('is-active');
+var $surprisetalk$elm_bulma$Bulma$Classes$modal = $elm$html$Html$Attributes$class('modal');
+var $surprisetalk$elm_bulma$Bulma$Components$modal = function (active) {
+	return A2(
+		$surprisetalk$elm_bulma$Helpers$node,
+		'div',
+		_List_fromArray(
+			[
+				$surprisetalk$elm_bulma$Bulma$Classes$modal,
+				function () {
+				if (active) {
+					return $surprisetalk$elm_bulma$Bulma$Classes$isActive;
+				} else {
+					return $surprisetalk$elm_bulma$Bulma$Classes$none;
+				}
+			}()
+			]));
+};
+var $surprisetalk$elm_bulma$Bulma$Classes$modalBackground = $elm$html$Html$Attributes$class('modal-background');
+var $surprisetalk$elm_bulma$Bulma$Components$modalBackground = A2(
+	$surprisetalk$elm_bulma$Helpers$node,
+	'div',
+	_List_fromArray(
+		[$surprisetalk$elm_bulma$Bulma$Classes$modalBackground]));
+var $surprisetalk$elm_bulma$Bulma$Classes$isLarge = $elm$html$Html$Attributes$class('is-large');
+var $surprisetalk$elm_bulma$Bulma$Classes$isMedium = $elm$html$Html$Attributes$class('is-medium');
+var $surprisetalk$elm_bulma$Bulma$Classes$isSmall = $elm$html$Html$Attributes$class('is-small');
+var $surprisetalk$elm_bulma$Bulma$Classes$modalClose = $elm$html$Html$Attributes$class('modal-close');
+var $surprisetalk$elm_bulma$Bulma$Components$modalClose = function (size) {
+	return A2(
+		$surprisetalk$elm_bulma$Helpers$node,
+		'a',
+		_List_fromArray(
+			[
+				$surprisetalk$elm_bulma$Bulma$Classes$modalClose,
+				function () {
+				switch (size.$) {
+					case 'Small':
+						return $surprisetalk$elm_bulma$Bulma$Classes$isSmall;
+					case 'Standard':
+						return $surprisetalk$elm_bulma$Bulma$Classes$none;
+					case 'Medium':
+						return $surprisetalk$elm_bulma$Bulma$Classes$isMedium;
+					default:
+						return $surprisetalk$elm_bulma$Bulma$Classes$isLarge;
+				}
+			}()
+			]));
+};
+var $surprisetalk$elm_bulma$Bulma$Classes$modalContent = $elm$html$Html$Attributes$class('modal-content');
+var $surprisetalk$elm_bulma$Bulma$Components$modalContent = A2(
+	$surprisetalk$elm_bulma$Helpers$node,
+	'div',
+	_List_fromArray(
+		[$surprisetalk$elm_bulma$Bulma$Classes$modalContent]));
+var $author$project$Main$gameModal = function (model) {
+	var isVisible = _Utils_eq(model.gameState, $author$project$Main$SelectHero);
 	return A3(
+		$surprisetalk$elm_bulma$Bulma$Components$modal,
+		isVisible,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$surprisetalk$elm_bulma$Bulma$Components$modalBackground,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'background-color', '#bebebe')
+					]),
+				_List_Nil),
+				A2(
+				$surprisetalk$elm_bulma$Bulma$Components$modalContent,
+				_List_Nil,
+				$author$project$Main$heroList(model)),
+				A3(
+				$surprisetalk$elm_bulma$Bulma$Components$modalClose,
+				$surprisetalk$elm_bulma$Bulma$Modifiers$Large,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$CloseModal)
+					]),
+				_List_Nil)
+			]));
+};
+var $author$project$Main$currentScore = function (model) {
+	return A4(
 		$author$project$Main$circle,
 		'white',
 		'75px',
+		'150px',
 		A2(
 			$elm$html$Html$span,
 			_List_fromArray(
@@ -10432,73 +10695,10 @@ var $author$project$Main$healthPanel = function (model) {
 			]),
 		$author$project$Main$healthContainer(model));
 };
-var $surprisetalk$elm_bulma$Bulma$Classes$media = $elm$html$Html$Attributes$class('media');
-var $surprisetalk$elm_bulma$Bulma$Layout$media = A2(
-	$surprisetalk$elm_bulma$Helpers$node,
-	'article',
-	_List_fromArray(
-		[$surprisetalk$elm_bulma$Bulma$Classes$media]));
-var $surprisetalk$elm_bulma$Bulma$Classes$mediaContent = $elm$html$Html$Attributes$class('media-content');
-var $surprisetalk$elm_bulma$Bulma$Layout$mediaContent = A2(
-	$surprisetalk$elm_bulma$Helpers$node,
-	'div',
-	_List_fromArray(
-		[$surprisetalk$elm_bulma$Bulma$Classes$mediaContent]));
-var $surprisetalk$elm_bulma$Bulma$Classes$mediaLeft = $elm$html$Html$Attributes$class('media-left');
-var $surprisetalk$elm_bulma$Bulma$Layout$mediaLeft = A2(
-	$surprisetalk$elm_bulma$Helpers$node,
-	'div',
-	_List_fromArray(
-		[$surprisetalk$elm_bulma$Bulma$Classes$mediaLeft]));
-var $surprisetalk$elm_bulma$Bulma$Classes$subtitle = $elm$html$Html$Attributes$class('subtitle');
-var $surprisetalk$elm_bulma$Bulma$Elements$subtitle = function (size) {
-	return A2(
-		$surprisetalk$elm_bulma$Helpers$node,
-		function () {
-			switch (size.$) {
-				case 'H1':
-					return 'h1';
-				case 'H2':
-					return 'h2';
-				case 'H3':
-					return 'h3';
-				case 'H4':
-					return 'h4';
-				case 'H5':
-					return 'h5';
-				default:
-					return 'h6';
-			}
-		}(),
-		_List_fromArray(
-			[
-				$surprisetalk$elm_bulma$Bulma$Classes$subtitle,
-				function () {
-				switch (size.$) {
-					case 'H1':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is1;
-					case 'H2':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is2;
-					case 'H3':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is3;
-					case 'H4':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is4;
-					case 'H5':
-						return $surprisetalk$elm_bulma$Bulma$Classes$is5;
-					default:
-						return $surprisetalk$elm_bulma$Bulma$Classes$is6;
-				}
-			}()
-			]));
-};
-var $author$project$Main$playPanel = function (model) {
+var $author$project$Main$heroPanel = function (model) {
 	return A2(
 		$surprisetalk$elm_bulma$Bulma$Components$card,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('mt-3'),
-				A2($elm$html$Html$Attributes$style, 'margin-top', '1.5rem')
-			]),
+		_List_Nil,
 		_List_fromArray(
 			[
 				A2(
@@ -10534,7 +10734,7 @@ var $author$project$Main$playPanel = function (model) {
 													]),
 												_List_Nil)
 											])),
-										$author$project$Main$bestScore(model),
+										A3($author$project$Main$bestScore, model.hero.id, model.gameplay, $author$project$Main$Play),
 										$author$project$Main$currentScore(model)
 									])),
 								A2(
@@ -10564,8 +10764,6 @@ var $author$project$Main$playPanel = function (model) {
 					]))
 			]));
 };
-var $surprisetalk$elm_bulma$Bulma$Classes$isLarge = $elm$html$Html$Attributes$class('is-large');
-var $surprisetalk$elm_bulma$Bulma$Classes$isMedium = $elm$html$Html$Attributes$class('is-medium');
 var $surprisetalk$elm_bulma$Bulma$Classes$section = $elm$html$Html$Attributes$class('section');
 var $surprisetalk$elm_bulma$Bulma$Layout$section = function (spacing) {
 	return A2(
@@ -10616,8 +10814,9 @@ var $author$project$Main$body = function (model) {
 								$elm$html$Html$text($author$project$Main$cmsName)
 							])),
 						$author$project$Main$foodGrid(model),
-						$author$project$Main$playPanel(model)
-					]))
+						$author$project$Main$heroPanel(model)
+					])),
+				$author$project$Main$gameModal(model)
 			]));
 };
 var $elm$html$Html$Attributes$href = function (url) {
