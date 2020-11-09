@@ -7072,7 +7072,7 @@ var $author$project$Main$chuck = A6(
 	$author$project$Main$Hero,
 	2,
 	'Chuck Muffin',
-	'Fan of organic food and drink. Avoid all unhealthy products, except desserts.',
+	'Fan of organic food and healthy drinks. Avoid all unhealthy products, except desserts.',
 	'images/hero/chuck.png',
 	_List_fromArray(
 		[$author$project$Main$Healthy, $author$project$Main$Drinks, $author$project$Main$Desserts]),
@@ -7082,7 +7082,7 @@ var $author$project$Main$terry = A6(
 	$author$project$Main$Hero,
 	3,
 	'Terry Fatness',
-	'Fast-food maniac and meat lover. Vomit on desserts and healthy food.',
+	'Fast-food maniac and meat lover. Vomit on healthy food and desserts.',
 	'images/hero/terry.png',
 	_List_fromArray(
 		[$author$project$Main$NotHealthy]),
@@ -10637,6 +10637,15 @@ var $author$project$Main$font = A3(
 		]),
 	_List_Nil);
 var $author$project$Main$imagesPreload = function (model) {
+	var heroImages = _List_fromArray(
+		[$author$project$Main$arnold.picture, $author$project$Main$chuck.picture, $author$project$Main$terry.picture]);
+	var foodImages = A2(
+		$elm$core$List$map,
+		function ($) {
+			return $.picture;
+		},
+		model.foodPanel.foods);
+	var allImages = _Utils_ap(foodImages, heroImages);
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -10647,13 +10656,13 @@ var $author$project$Main$imagesPreload = function (model) {
 					$elm$html$Html$img,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$src(x.picture),
+							$elm$html$Html$Attributes$src(x),
 							A2($elm$html$Html$Attributes$style, 'width', '0px'),
 							A2($elm$html$Html$Attributes$style, 'height', '0px')
 						]),
 					_List_Nil);
 			},
-			model.foodPanel.foods));
+			allImages));
 };
 var $elm$html$Html$main_ = _VirtualDom_node('main');
 var $surprisetalk$elm_bulma$Bulma$CDN$stylesheet = A3(

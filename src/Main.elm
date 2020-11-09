@@ -127,7 +127,7 @@ chuck : Hero
 chuck =
     Hero 2
         "Chuck Muffin"
-        "Fan of organic food and drink. Avoid all unhealthy products, except desserts."
+        "Fan of organic food and healthy drinks. Avoid all unhealthy products, except desserts."
         "images/hero/chuck.png"
         [ Healthy, Drinks, Desserts ]
         [ Junk
@@ -139,7 +139,7 @@ terry : Hero
 terry =
     Hero 3
         "Terry Fatness"
-        "Fast-food maniac and meat lover. Vomit on desserts and healthy food."
+        "Fast-food maniac and meat lover. Vomit on healthy food and desserts."
         "images/hero/terry.png"
         [ NotHealthy ]
         [ Junk
@@ -617,7 +617,17 @@ heart =
 
 imagesPreload : Model -> Html Msg
 imagesPreload model =
-    div [] (List.map (\x -> img [ src x.picture, style "width" "0px", style "height" "0px" ] []) model.foodPanel.foods)
+    let
+        foodImages =
+            List.map .picture model.foodPanel.foods
+
+        heroImages =
+            [ arnold.picture, chuck.picture, terry.picture ]
+
+        allImages =
+            foodImages ++ heroImages
+    in
+    div [] (List.map (\x -> img [ src x, style "width" "0px", style "height" "0px" ] []) allImages)
 
 
 
