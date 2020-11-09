@@ -54,7 +54,7 @@ type alias Hero =
 
 
 type alias FoodPanel =
-    { food : List Food
+    { foods : List Food
     , animationState : AnimationState
     }
 
@@ -113,11 +113,13 @@ arnold : Hero
 arnold =
     Hero 1
         "Arnold Trash"
-        "Eats any leftovers and junk. Drinks all the fluids. Never touches normal food."
+        "Eats only leftovers and junk. Never touches normal food."
         "images/hero/arnold.png"
-        [ Junk, Drinks ]
+        [ Junk ]
         [ Healthy
         , NotHealthy
+        , Drinks
+        , Desserts
         ]
 
 
@@ -125,9 +127,9 @@ chuck : Hero
 chuck =
     Hero 2
         "Chuck Muffin"
-        "Eats plant-based foods and liquid products. Avoiding any unhealthy food."
+        "Fan of organic food and drink. Avoid all unhealthy products, except desserts."
         "images/hero/chuck.png"
-        [ Healthy, Drinks ]
+        [ Healthy, Drinks, Desserts ]
         [ Junk
         , NotHealthy
         ]
@@ -137,12 +139,13 @@ terry : Hero
 terry =
     Hero 3
         "Terry Fatness"
-        "Loves fast-food and heavy meals. Vomit on desserts and healthy food."
+        "Fast-food maniac and meat lover. Vomit on desserts and healthy food."
         "images/hero/terry.png"
         [ NotHealthy ]
         [ Junk
         , Healthy
         , Drinks
+        , Desserts
         ]
 
 
@@ -185,12 +188,12 @@ initHealth =
 
 
 type Msg
-    = Eat Int Int
+    = DoNothing
+    | Eat (List Tags)
     | Damage Int
       --| ChangeHero
     | Shuffle (List Food)
-    | FadeOutFadeIn (List Tags)
-    | Disappear Int
+    | HealthCheck Int
     | Animate AnimatedObject Animation.Msg
     | ShuffleFood
 
@@ -198,10 +201,20 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
     case action of
-        ShuffleFood ->
-            ( model, generate Shuffle <| shuffle model.foodPanel.food )
+        DoNothing ->
+            ( model, Cmd.none )
 
-        Damage points ->
+        Shuffle randomFoods ->
+            let
+                newFoodPanel =
+                    FoodPanel randomFoods model.foodPanel.animationState
+            in
+            ( { model | foodPanel = newFoodPanel }, Cmd.none )
+
+        ShuffleFood ->
+            ( model, generate Shuffle <| shuffle model.foodPanel.foods )
+
+        HealthCheck points ->
             -- GAMEOVER: save bestReult, nextHero, trigger Shuffle OR KEEPPLAYING: dec. hp, trigger Shuffle
             let
                 healthLeft =
@@ -223,28 +236,51 @@ update action model =
                         newGameplay =
                             Gameplay 0 initHealth newBestResult
                     in
-                    update ShuffleFood { model | hero = nextHero model.hero, gameplay = newGameplay }
+                    ( { model | hero = nextHero model.hero, gameplay = newGameplay }, Cmd.none )
 
                 -- show modal
                 KeepPlaying ->
                     let
                         newHealth =
-                            Health healthLeft model.gameplay.hp.animationState
+                            Health healthLeft
+                                (Animation.style
+                                    [ Animation.opacity 1
+                                    , Animation.translate (px 0) (px 0)
+                                    ]
+                                )
 
                         newGameplay =
                             Gameplay model.gameplay.score newHealth model.gameplay.bestResults
                     in
-                    update ShuffleFood { model | gameplay = newGameplay }
+                    ( { model | gameplay = newGameplay }, Cmd.none )
 
-        Eat points damagePoints ->
-            -- gives new score, trigger Disappear OR ShuffleFood
+        Eat tags ->
             let
-                damageMsg =
-                    if damagePoints > 0 then
-                        Disappear damagePoints
+                ( points, damage ) =
+                    calcEat model tags
+
+                nextMsg =
+                    if damage > 0 then
+                        Damage damage
 
                     else
-                        ShuffleFood
+                        DoNothing
+
+                newFoodState =
+                    Animation.queue
+                        [ Animation.to
+                            [ Animation.opacity 0
+                            ]
+                        , Animation.Messenger.send ShuffleFood
+                        , Animation.Messenger.send nextMsg
+                        , Animation.to
+                            [ Animation.opacity 1
+                            ]
+                        ]
+                        model.foodPanel.animationState
+
+                newFoodPanel =
+                    FoodPanel model.foodPanel.foods newFoodState
 
                 newScore =
                     model.gameplay.score + points
@@ -252,27 +288,7 @@ update action model =
                 newGameplay =
                     Gameplay newScore model.gameplay.hp model.gameplay.bestResults
             in
-            update damageMsg { model | gameplay = newGameplay }
-
-        Shuffle randomFoods ->
-            let
-                newFoodState =
-                    Animation.queue
-                        [ --Animation.to
-                          --[ Animation.opacity 0
-                          --]
-                          --, Animation.Messenger.send <| Eat eatPoints
-                          --, Animation.Messenger.send damageAnimation
-                          Animation.to
-                            [ Animation.opacity 1
-                            ]
-                        ]
-                        model.foodPanel.animationState
-
-                newFoodPanel =
-                    FoodPanel randomFoods newFoodState
-            in
-            ( { model | foodPanel = newFoodPanel }, Cmd.none )
+            ( { model | gameplay = newGameplay, foodPanel = newFoodPanel }, Cmd.none )
 
         --ChangeHero ->
         --  let
@@ -280,39 +296,7 @@ update action model =
         --      Gameplay 0 initHealth model.gameplay.bestResults
         --in
         -- ( { model | hero = nextHero model.hero, gameplay = newGameplay }, generate Shuffle <| shuffle model.foodPanel.food )
-        FadeOutFadeIn tags ->
-            -- animate food, trigger Eat
-            let
-                ( eatPoints, damagePoints ) =
-                    calcEat model tags
-
-                -- damageAnimation =
-                --   if damagePoints > 0 then
-                --     Disappear damagePoints
-                --else
-                --  DoNothing
-                newFoodState =
-                    Animation.queue
-                        [ Animation.to
-                            [ Animation.opacity 0
-                            ]
-
-                        --, Animation.Messenger.send <| Eat eatPoints
-                        --, Animation.Messenger.send damageAnimation
-                        --, Animation.to
-                        --  [ Animation.opacity 1
-                        -- ]
-                        ]
-                        model.foodPanel.animationState
-
-                newFoodPanel =
-                    FoodPanel model.foodPanel.food newFoodState
-            in
-            update (Eat eatPoints damagePoints) model
-
-        --{ model | foodPanel = newFoodPanel }
-        Disappear damagePoints ->
-            -- animate heart, trigger Damage
+        Damage points ->
             let
                 newHpState =
                     Animation.queue
@@ -320,8 +304,7 @@ update action model =
                             [ Animation.translate (px 0) (px 100)
                             , Animation.opacity 0
                             ]
-
-                        --, Animation.Messenger.send <| Damage damagePoints
+                        , Animation.Messenger.send <| HealthCheck points
                         ]
                         model.gameplay.hp.animationState
 
@@ -331,9 +314,8 @@ update action model =
                 newGameplay =
                     Gameplay model.gameplay.score newHp model.gameplay.bestResults
             in
-            update (Damage damagePoints) model
+            ( { model | gameplay = newGameplay }, Cmd.none )
 
-        -- { model | gameplay = newGameplay }
         Animate aObject aMsg ->
             case aObject of
                 HealthObject ->
@@ -355,7 +337,7 @@ update action model =
                             Animation.Messenger.update aMsg model.foodPanel.animationState
 
                         newFoodPanel =
-                            FoodPanel model.foodPanel.food stateFood
+                            FoodPanel model.foodPanel.foods stateFood
                     in
                     ( { model | foodPanel = newFoodPanel }, cmdFood )
 
@@ -419,11 +401,8 @@ subscriptions model =
 
         healthState =
             { state = model.gameplay.hp.animationState, ao = HealthObject }
-
-        all =
-            [ healthState, foodState ]
     in
-    Sub.batch (List.map (\x -> Animation.subscription (Animate x.ao) [ x.state ]) all)
+    Sub.batch (List.map (\x -> Animation.subscription (Animate x.ao) [ x.state ]) [ healthState, foodState ])
 
 
 
@@ -436,10 +415,11 @@ view model =
         (cmsName
             ++ " - tasty Elm game to kill your free time © created by Vlad Batushkov"
         )
-        [ main_ []
+        [ main_ [ style "background-color" "#bebebe" ]
             [ stylesheet
             , font
             , body model
+            , imagesPreload model
             ]
         ]
 
@@ -469,7 +449,7 @@ foodGrid : Model -> Html Msg
 foodGrid model =
     let
         foods =
-            Array.fromList <| List.take 4 model.foodPanel.food
+            Array.fromList <| List.take 4 model.foodPanel.foods
 
         food1 =
             Array.get 0 foods
@@ -511,7 +491,7 @@ foodCard maybeFood =
             text ""
 
         Just food ->
-            box [ style "cursor" "pointer", onClick (FadeOutFadeIn food.tags) ]
+            box [ style "cursor" "pointer", onClick (Eat food.tags) ]
                 [ image (OneByOne Unbounded)
                     [ style "cursor" "pointer" ]
                     [ img [ src food.picture, style "border-radius" "10px" ] []
@@ -605,18 +585,20 @@ healthContainer : Health -> List (Html Msg)
 healthContainer hp =
     case hp.value of
         1 ->
-            [ column columnModifiers ([ class "is-4" ] ++ Animation.render hp.animationState) [ heart ]
+            [ column columnModifiers ([ class "is-4", style "opacity" "1" ] ++ Animation.render hp.animationState) [ heart ]
+            , column columnModifiers [ class "is-8" ] []
             ]
 
         2 ->
             [ column columnModifiers [ class "is-4" ] [ heart ]
-            , column columnModifiers ([ class "is-4" ] ++ Animation.render hp.animationState) [ heart ]
+            , column columnModifiers ([ class "is-4", style "opacity" "1" ] ++ Animation.render hp.animationState) [ heart ]
+            , column columnModifiers [ class "is-4" ] []
             ]
 
         3 ->
             [ column columnModifiers [ class "is-4" ] [ heart ]
             , column columnModifiers [ class "is-4" ] [ heart ]
-            , column columnModifiers (Animation.render hp.animationState) [ heart ]
+            , column columnModifiers ([ class "is-4", style "opacity" "1" ] ++ Animation.render hp.animationState) [ heart ]
             ]
 
         _ ->
@@ -631,6 +613,11 @@ heart =
             [ img [ src "images/hero/heart.png" ] []
             ]
         ]
+
+
+imagesPreload : Model -> Html Msg
+imagesPreload model =
+    div [] (List.map (\x -> img [ src x.picture, style "width" "0px", style "height" "0px" ] []) model.foodPanel.foods)
 
 
 
@@ -661,6 +648,7 @@ type Tags
     | NotHealthy
     | Junk
     | Drinks
+    | Desserts
 
 
 allFood : List Food
@@ -679,7 +667,7 @@ allFood =
         "images/food/pizza.png"
     , Food 3
         "Tiramisu"
-        [ NotHealthy ]
+        [ Desserts ]
         "images/food/tiramisu.png"
     , Food 4
         "Salad"
@@ -715,7 +703,7 @@ allFood =
         "images/food/cheese.png"
     , Food 12
         "Creamy"
-        [ NotHealthy ]
+        [ Desserts ]
         "images/food/creamy.png"
     , Food 13
         "Cucumber"
@@ -751,7 +739,7 @@ allFood =
         "images/food/milk.png"
     , Food 21
         "Fruity Cake"
-        [ NotHealthy ]
+        [ Desserts ]
         "images/food/orangecake.png"
     , Food 22
         "Pepperoni"
@@ -799,7 +787,7 @@ allFood =
         "images/food/wok.png"
     , Food 33
         "Strawberry Cake"
-        [ NotHealthy ]
+        [ Desserts ]
         "images/food/strawberrycake.png"
     , Food 34
         "Shake"
@@ -807,7 +795,7 @@ allFood =
         "images/food/shake.png"
     , Food 35
         "Pepper"
-        [ NotHealthy ]
+        [ Healthy ]
         "images/food/redhotchilipepper.png"
     , Food 36
         "Sausages"
