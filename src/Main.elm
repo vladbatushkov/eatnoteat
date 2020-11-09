@@ -460,7 +460,13 @@ gameModal model =
     modal isVisible
         []
         [ modalBackground [ style "background-color" "#fff" ] []
-        , modalContent [ style "width" "90%" ] <| heroList model
+        , modalContent [ style "width" "90%" ] <|
+            [ div [ class "has-text-centered" ]
+                ([ span [ style "font-size" "5rem" ] [ text cmsName ]
+                 ]
+                    ++ heroList model
+                )
+            ]
         , modalClose Large [ onClick CloseModal ] []
         ]
 

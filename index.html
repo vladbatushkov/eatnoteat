@@ -10533,7 +10533,30 @@ var $author$project$Main$gameModal = function (model) {
 					[
 						A2($elm$html$Html$Attributes$style, 'width', '90%')
 					]),
-				$author$project$Main$heroList(model)),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('has-text-centered')
+							]),
+						_Utils_ap(
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$span,
+									_List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$style, 'font-size', '5rem')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text($author$project$Main$cmsName)
+										]))
+								]),
+							$author$project$Main$heroList(model)))
+					])),
 				A3(
 				$surprisetalk$elm_bulma$Bulma$Components$modalClose,
 				$surprisetalk$elm_bulma$Bulma$Modifiers$Large,
