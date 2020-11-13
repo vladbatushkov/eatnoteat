@@ -12,7 +12,7 @@ import Bulma.Layout exposing (..)
 import Bulma.Modifiers exposing (..)
 import Bulma.Modifiers.Typography exposing (textCentered)
 import Html exposing (Attribute, Html, a, div, img, main_, span, text)
-import Html.Attributes exposing (class, href, src, style, target, width)
+import Html.Attributes exposing (class, href, src, style)
 import Html.Events exposing (..)
 import Random exposing (generate)
 import Random.List exposing (shuffle)
@@ -198,19 +198,11 @@ type Msg
     | HealthCheck Int
     | Animate AnimatedObject Animation.Msg
     | ShuffleFood
-    | OpenModal
-    | CloseModal
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
     case action of
-        OpenModal ->
-            ( { model | gameState = SelectHero }, Cmd.none )
-
-        CloseModal ->
-            ( { model | gameState = Play }, Cmd.none )
-
         DoNothing ->
             ( model, Cmd.none )
 
