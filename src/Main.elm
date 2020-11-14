@@ -37,11 +37,18 @@ main =
 
 
 type alias Model =
-    { hero : Hero
+    { screen : Screen
+    , hero : Hero
     , foodPanel : FoodPanel
-    , gameplay : Gameplay
-    , screen : Screen
+    , hp : Hp
+    , score : Int
+    , bestResults : List BestResult
     }
+
+
+type Screen
+    = SelectHeroScreen
+    | PlayScreen
 
 
 type alias Hero =
@@ -60,33 +67,6 @@ type alias FoodPanel =
     }
 
 
-type alias AnimationState =
-    Animation.Messenger.State Msg
-
-
-type alias Gameplay =
-    { score : Int
-    , hp : Hp
-    , bestResults : List BestResult
-    }
-
-
-type alias BestResult =
-    { heroId : Int
-    , score : Int
-    }
-
-
-
--- Health Points
-
-
-type alias Hp =
-    { value : Int
-    , animationState : AnimationState
-    }
-
-
 type alias Food =
     { id : Int
     , name : String
@@ -95,9 +75,20 @@ type alias Food =
     }
 
 
-type Screen
-    = SelectHeroScreen
-    | PlayScreen
+type alias Hp =
+    { value : Int
+    , animationState : AnimationState
+    }
+
+
+type alias AnimationState =
+    Animation.Messenger.State Msg
+
+
+type alias BestResult =
+    { heroId : Int
+    , score : Int
+    }
 
 
 type AnimatedObject
@@ -127,7 +118,7 @@ chuck : Hero
 chuck =
     Hero 2
         "Chuck Muffin"
-        "Fan of organic food and Hpy drinks. Avoid all unHpy products, except desserts."
+        "Fan of organic food and healthy drinks. Avoid unhealthy products, except desserts."
         "images/hero/chuck.png"
         [ Hpy, Drinks, Desserts ]
         [ Junk
@@ -139,7 +130,7 @@ terry : Hero
 terry =
     Hero 3
         "Terry Fatness"
-        "Fast-food maniac and meat lover. Vomit on Hpy food and desserts."
+        "Fast-food maniac and meat lover. Vomit on healthy food and desserts."
         "images/hero/terry.png"
         [ NotHpy ]
         [ Junk
@@ -152,10 +143,12 @@ terry =
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( Model
+        SelectHeroScreen
         arnold
         initFoodPanel
-        initGameplay
-        SelectHeroScreen
+        initHp
+        0
+        [ BestResult 1 0, BestResult 2 0, BestResult 3 0 ]
     , generate Shuffle <| shuffle allFood
     )
 
@@ -167,11 +160,6 @@ initFoodPanel =
             [ Animation.opacity 1
             ]
         )
-
-
-initGameplay : Gameplay
-initGameplay =
-    Gameplay 0 initHp [ BestResult 1 0, BestResult 2 0, BestResult 3 0 ]
 
 
 initHp : Hp
@@ -237,15 +225,9 @@ update action model =
                     { foodPanel | animationState = newAnimationState }
 
                 newScore =
-                    model.gameplay.score + points
-
-                gameplay =
-                    model.gameplay
-
-                newGameplay =
-                    { gameplay | score = newScore }
+                    model.score + points
             in
-            ( { model | gameplay = newGameplay, foodPanel = newFoodPanel }, Cmd.none )
+            ( { model | score = newScore, foodPanel = newFoodPanel }, Cmd.none )
 
         Damage points ->
             let
@@ -257,38 +239,32 @@ update action model =
                             ]
                         , Animation.Messenger.send <| HpCheck points
                         ]
-                        model.gameplay.hp.animationState
+                        model.hp.animationState
 
                 newHp =
-                    Hp model.gameplay.hp.value newHpState
-
-                newGameplay =
-                    Gameplay model.gameplay.score newHp model.gameplay.bestResults
+                    Hp model.hp.value newHpState
             in
-            ( { model | gameplay = newGameplay }, Cmd.none )
+            ( { model | hp = newHp }, Cmd.none )
 
         HpCheck points ->
             let
                 hpLeft =
-                    model.gameplay.hp.value - points
+                    model.hp.value - points
 
-                screen =
+                newScreen =
                     if hpLeft == 0 then
                         SelectHeroScreen
 
                     else
                         PlayScreen
             in
-            case screen of
+            case newScreen of
                 SelectHeroScreen ->
                     let
-                        newBestResult =
-                            selectBestResult model.gameplay.bestResults (BestResult model.hero.id model.gameplay.score)
-
-                        newGameplay =
-                            Gameplay 0 initHp newBestResult
+                        newBestResults =
+                            selectBestResults model.bestResults (BestResult model.hero.id model.score)
                     in
-                    ( { model | gameplay = newGameplay, screen = screen }, Cmd.none )
+                    ( { model | bestResults = newBestResults, screen = newScreen }, Cmd.none )
 
                 PlayScreen ->
                     let
@@ -299,14 +275,8 @@ update action model =
                                     , Animation.translate (px 0) (px 0)
                                     ]
                                 )
-
-                        gameplay =
-                            model.gameplay
-
-                        newGameplay =
-                            { gameplay | hp = newHp }
                     in
-                    ( { model | gameplay = newGameplay, screen = screen }, Cmd.none )
+                    ( { model | hp = newHp, screen = newScreen }, Cmd.none )
 
         ChangeHero hero ->
             ( { model | hero = hero, screen = PlayScreen }, Cmd.none )
@@ -329,21 +299,15 @@ update action model =
                 HpObject ->
                     let
                         ( stateHp, cmdHp ) =
-                            Animation.Messenger.update aMsg model.gameplay.hp.animationState
+                            Animation.Messenger.update aMsg model.hp.animationState
 
                         hp =
-                            model.gameplay.hp
+                            model.hp
 
                         newHp =
                             { hp | animationState = stateHp }
-
-                        gameplay =
-                            model.gameplay
-
-                        newGameplay =
-                            { gameplay | hp = newHp }
                     in
-                    ( { model | gameplay = newGameplay }, cmdHp )
+                    ( { model | hp = newHp }, cmdHp )
 
                 FoodObject ->
                     let
@@ -359,8 +323,8 @@ update action model =
                     ( { model | foodPanel = newFoodPanel }, cmdFood )
 
 
-selectBestResult : List BestResult -> BestResult -> List BestResult
-selectBestResult bestResults newResult =
+selectBestResults : List BestResult -> BestResult -> List BestResult
+selectBestResults bestResults newResult =
     List.map (\x -> mapBestResult x newResult) bestResults
 
 
@@ -404,7 +368,7 @@ subscriptions model =
             { state = model.foodPanel.animationState, ao = FoodObject }
 
         hpState =
-            { state = model.gameplay.hp.animationState, ao = HpObject }
+            { state = model.hp.animationState, ao = HpObject }
     in
     Sub.batch (List.map (\x -> Animation.subscription (Animate x.ao) [ x.state ]) [ hpState, foodState ])
 
@@ -478,7 +442,7 @@ heroList model =
                                 []
                                 [ img [ src x.picture, class "is-rounded" ] []
                                 ]
-                            , bestScore x.id model.gameplay SelectHeroScreen
+                            , bestScore x.id model.bestResults SelectHeroScreen
                             ]
                         , mediaContent []
                             [ title H1 [] [ text x.name ]
@@ -559,7 +523,7 @@ heroPanel model =
                         []
                         [ img [ src model.hero.picture, class "is-rounded" ] []
                         ]
-                    , bestScore model.hero.id model.gameplay PlayScreen
+                    , bestScore model.hero.id model.bestResults PlayScreen
                     , currentScore model
                     ]
                 , mediaContent []
@@ -567,18 +531,18 @@ heroPanel model =
                     , subtitle H2 [] [ text model.hero.desc ]
                     ]
                 ]
-            , hpPanel model.gameplay.hp
+            , hpPanel model.hp
             ]
         ]
 
 
 currentScore : Model -> Html Msg
 currentScore model =
-    circle "white" "75px" "150px" <| span [ style "font-size" "4.5rem" ] [ text <| String.fromInt model.gameplay.score ]
+    circle "white" "75px" "150px" <| span [ style "font-size" "4.5rem" ] [ text <| String.fromInt model.score ]
 
 
-bestScore : Int -> Gameplay -> Screen -> Html Msg
-bestScore heroId gameplay screen =
+bestScore : Int -> List BestResult -> Screen -> Html Msg
+bestScore heroId bestResults screen =
     let
         bottom =
             case screen of
@@ -588,7 +552,7 @@ bestScore heroId gameplay screen =
                 SelectHeroScreen ->
                     "25px"
     in
-    circle "gold" "0px" bottom <| span [ style "font-size" "4.5rem" ] [ bestResultText heroId gameplay.bestResults ]
+    circle "gold" "0px" bottom <| span [ style "font-size" "4.5rem" ] [ bestResultText heroId bestResults ]
 
 
 circle : String -> String -> String -> Html Msg -> Html Msg
