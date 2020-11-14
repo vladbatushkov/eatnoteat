@@ -11,7 +11,7 @@ import Bulma.Elements exposing (..)
 import Bulma.Layout exposing (..)
 import Bulma.Modifiers exposing (..)
 import Bulma.Modifiers.Typography exposing (textCentered)
-import Html exposing (Attribute, Html, a, div, img, main_, span, text)
+import Html exposing (Html, div, img, main_, span, text)
 import Html.Attributes exposing (class, href, src, style)
 import Html.Events exposing (..)
 import Random exposing (generate)
@@ -40,7 +40,7 @@ type alias Model =
     { hero : Hero
     , foodPanel : FoodPanel
     , gameplay : Gameplay
-    , gameState : GameState
+    , screen : Screen
     }
 
 
@@ -66,7 +66,7 @@ type alias AnimationState =
 
 type alias Gameplay =
     { score : Int
-    , hp : Health
+    , hp : Hp
     , bestResults : List BestResult
     }
 
@@ -77,7 +77,11 @@ type alias BestResult =
     }
 
 
-type alias Health =
+
+-- Health Points
+
+
+type alias Hp =
     { value : Int
     , animationState : AnimationState
     }
@@ -91,23 +95,18 @@ type alias Food =
     }
 
 
-type GameState
-    = SelectHero
-    | Play
+type Screen
+    = SelectHeroScreen
+    | PlayScreen
 
 
 type AnimatedObject
     = FoodObject
-    | HealthObject
+    | HpObject
 
 
 
 -- CONSTR
-
-
-cmsName : String
-cmsName =
-    "EatNotEat"
 
 
 arnold : Hero
@@ -117,8 +116,8 @@ arnold =
         "Eats only leftovers and junk. Never touches normal food."
         "images/hero/arnold.png"
         [ Junk ]
-        [ Healthy
-        , NotHealthy
+        [ Hpy
+        , NotHpy
         , Drinks
         , Desserts
         ]
@@ -128,11 +127,11 @@ chuck : Hero
 chuck =
     Hero 2
         "Chuck Muffin"
-        "Fan of organic food and healthy drinks. Avoid all unhealthy products, except desserts."
+        "Fan of organic food and Hpy drinks. Avoid all unHpy products, except desserts."
         "images/hero/chuck.png"
-        [ Healthy, Drinks, Desserts ]
+        [ Hpy, Drinks, Desserts ]
         [ Junk
-        , NotHealthy
+        , NotHpy
         ]
 
 
@@ -140,11 +139,11 @@ terry : Hero
 terry =
     Hero 3
         "Terry Fatness"
-        "Fast-food maniac and meat lover. Vomit on healthy food and desserts."
+        "Fast-food maniac and meat lover. Vomit on Hpy food and desserts."
         "images/hero/terry.png"
-        [ NotHealthy ]
+        [ NotHpy ]
         [ Junk
-        , Healthy
+        , Hpy
         , Drinks
         , Desserts
         ]
@@ -156,7 +155,7 @@ init _ =
         arnold
         initFoodPanel
         initGameplay
-        SelectHero
+        SelectHeroScreen
     , generate Shuffle <| shuffle allFood
     )
 
@@ -172,12 +171,12 @@ initFoodPanel =
 
 initGameplay : Gameplay
 initGameplay =
-    Gameplay 0 initHealth [ BestResult 1 0, BestResult 2 0, BestResult 3 0 ]
+    Gameplay 0 initHp [ BestResult 1 0, BestResult 2 0, BestResult 3 0 ]
 
 
-initHealth : Health
-initHealth =
-    Health 3
+initHp : Hp
+initHp =
+    Hp 3
         (Animation.style
             [ Animation.opacity 1
             , Animation.translate (px 0) (px 0)
@@ -190,69 +189,21 @@ initHealth =
 
 
 type Msg
-    = DoNothing
+    = Idle
     | Eat (List Tags)
     | Damage Int
+    | HpCheck Int
     | ChangeHero Hero
-    | Shuffle (List Food)
-    | HealthCheck Int
-    | Animate AnimatedObject Animation.Msg
     | ShuffleFood
+    | Shuffle (List Food)
+    | Animate AnimatedObject Animation.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
     case action of
-        DoNothing ->
+        Idle ->
             ( model, Cmd.none )
-
-        Shuffle randomFoods ->
-            let
-                newFoodPanel =
-                    FoodPanel randomFoods model.foodPanel.animationState
-            in
-            ( { model | foodPanel = newFoodPanel }, Cmd.none )
-
-        ShuffleFood ->
-            ( model, generate Shuffle <| shuffle model.foodPanel.foods )
-
-        HealthCheck points ->
-            let
-                healthLeft =
-                    model.gameplay.hp.value - points
-
-                gameState =
-                    if healthLeft == 0 then
-                        SelectHero
-
-                    else
-                        Play
-            in
-            case gameState of
-                SelectHero ->
-                    let
-                        newBestResult =
-                            selectBestResult model.gameplay.bestResults (BestResult model.hero.id model.gameplay.score)
-
-                        newGameplay =
-                            Gameplay 0 initHealth newBestResult
-                    in
-                    ( { model | hero = nextHero model.hero, gameplay = newGameplay, gameState = gameState }, Cmd.none )
-
-                Play ->
-                    let
-                        newHealth =
-                            Health healthLeft
-                                (Animation.style
-                                    [ Animation.opacity 1
-                                    , Animation.translate (px 0) (px 0)
-                                    ]
-                                )
-
-                        newGameplay =
-                            Gameplay model.gameplay.score newHealth model.gameplay.bestResults
-                    in
-                    ( { model | gameplay = newGameplay, gameState = gameState }, Cmd.none )
 
         Eat tags ->
             let
@@ -264,9 +215,9 @@ update action model =
                         Damage damage
 
                     else
-                        DoNothing
+                        Idle
 
-                newFoodState =
+                newAnimationState =
                     Animation.queue
                         [ Animation.to
                             [ Animation.opacity 0
@@ -279,19 +230,22 @@ update action model =
                         ]
                         model.foodPanel.animationState
 
+                foodPanel =
+                    model.foodPanel
+
                 newFoodPanel =
-                    FoodPanel model.foodPanel.foods newFoodState
+                    { foodPanel | animationState = newAnimationState }
 
                 newScore =
                     model.gameplay.score + points
 
+                gameplay =
+                    model.gameplay
+
                 newGameplay =
-                    Gameplay newScore model.gameplay.hp model.gameplay.bestResults
+                    { gameplay | score = newScore }
             in
             ( { model | gameplay = newGameplay, foodPanel = newFoodPanel }, Cmd.none )
-
-        ChangeHero hero ->
-            ( { model | hero = hero, gameState = Play }, Cmd.none )
 
         Damage points ->
             let
@@ -301,30 +255,93 @@ update action model =
                             [ Animation.translate (px 0) (px 100)
                             , Animation.opacity 0
                             ]
-                        , Animation.Messenger.send <| HealthCheck points
+                        , Animation.Messenger.send <| HpCheck points
                         ]
                         model.gameplay.hp.animationState
 
                 newHp =
-                    Health model.gameplay.hp.value newHpState
+                    Hp model.gameplay.hp.value newHpState
 
                 newGameplay =
                     Gameplay model.gameplay.score newHp model.gameplay.bestResults
             in
             ( { model | gameplay = newGameplay }, Cmd.none )
 
-        Animate aObject aMsg ->
-            case aObject of
-                HealthObject ->
+        HpCheck points ->
+            let
+                hpLeft =
+                    model.gameplay.hp.value - points
+
+                screen =
+                    if hpLeft == 0 then
+                        SelectHeroScreen
+
+                    else
+                        PlayScreen
+            in
+            case screen of
+                SelectHeroScreen ->
+                    let
+                        newBestResult =
+                            selectBestResult model.gameplay.bestResults (BestResult model.hero.id model.gameplay.score)
+
+                        newGameplay =
+                            Gameplay 0 initHp newBestResult
+                    in
+                    ( { model | gameplay = newGameplay, screen = screen }, Cmd.none )
+
+                PlayScreen ->
+                    let
+                        newHp =
+                            Hp hpLeft
+                                (Animation.style
+                                    [ Animation.opacity 1
+                                    , Animation.translate (px 0) (px 0)
+                                    ]
+                                )
+
+                        gameplay =
+                            model.gameplay
+
+                        newGameplay =
+                            { gameplay | hp = newHp }
+                    in
+                    ( { model | gameplay = newGameplay, screen = screen }, Cmd.none )
+
+        ChangeHero hero ->
+            ( { model | hero = hero, screen = PlayScreen }, Cmd.none )
+
+        ShuffleFood ->
+            ( model, generate Shuffle <| shuffle model.foodPanel.foods )
+
+        Shuffle randomFoods ->
+            let
+                foodPanel =
+                    model.foodPanel
+
+                newFoodPanel =
+                    { foodPanel | foods = randomFoods }
+            in
+            ( { model | foodPanel = newFoodPanel }, Cmd.none )
+
+        Animate aObj aMsg ->
+            case aObj of
+                HpObject ->
                     let
                         ( stateHp, cmdHp ) =
                             Animation.Messenger.update aMsg model.gameplay.hp.animationState
 
+                        hp =
+                            model.gameplay.hp
+
                         newHp =
-                            Health model.gameplay.hp.value stateHp
+                            { hp | animationState = stateHp }
+
+                        gameplay =
+                            model.gameplay
 
                         newGameplay =
-                            Gameplay model.gameplay.score newHp model.gameplay.bestResults
+                            { gameplay | hp = newHp }
                     in
                     ( { model | gameplay = newGameplay }, cmdHp )
 
@@ -333,8 +350,11 @@ update action model =
                         ( stateFood, cmdFood ) =
                             Animation.Messenger.update aMsg model.foodPanel.animationState
 
+                        foodPanel =
+                            model.foodPanel
+
                         newFoodPanel =
-                            FoodPanel model.foodPanel.foods stateFood
+                            { foodPanel | animationState = stateFood }
                     in
                     ( { model | foodPanel = newFoodPanel }, cmdFood )
 
@@ -373,19 +393,6 @@ calcEat model tags =
     ( points, damage )
 
 
-nextHero : Hero -> Hero
-nextHero hero =
-    case hero.id of
-        1 ->
-            chuck
-
-        2 ->
-            terry
-
-        _ ->
-            arnold
-
-
 
 -- SUBSCRIPTIONS
 
@@ -396,10 +403,10 @@ subscriptions model =
         foodState =
             { state = model.foodPanel.animationState, ao = FoodObject }
 
-        healthState =
-            { state = model.gameplay.hp.animationState, ao = HealthObject }
+        hpState =
+            { state = model.gameplay.hp.animationState, ao = HpObject }
     in
-    Sub.batch (List.map (\x -> Animation.subscription (Animate x.ao) [ x.state ]) [ healthState, foodState ])
+    Sub.batch (List.map (\x -> Animation.subscription (Animate x.ao) [ x.state ]) [ hpState, foodState ])
 
 
 
@@ -409,9 +416,7 @@ subscriptions model =
 view : Model -> Document Msg
 view model =
     Document
-        (cmsName
-            ++ " - tasty Elm game to kill your free time © created by Vlad Batushkov"
-        )
+        "EatNotEat - tasty Elm game to kill your free time © created by Vlad Batushkov"
         [ main_ [ style "background-color" "#fff" ]
             [ stylesheet
             , font
@@ -435,7 +440,7 @@ body model =
     section NotSpaced
         [ style "padding" "1rem", style "font-family" "Grandstander" ]
         [ container [ class "has-text-centered" ]
-            [ span [ style "font-size" "5rem" ] [ text cmsName ]
+            [ span [ style "font-size" "5rem" ] [ text "EatNotEat" ]
             , foodGrid model
             , heroPanel model
             ]
@@ -447,16 +452,15 @@ gameModal : Model -> Html Msg
 gameModal model =
     let
         isVisible =
-            model.gameState == SelectHero
+            model.screen == SelectHeroScreen
     in
     modal isVisible
         []
         [ modalBackground [ style "background-color" "#fff" ] []
         , modalContent [ style "width" "90%" ] <|
             [ div [ class "has-text-centered" ]
-                ([ span [ style "font-size" "5rem" ] [ text cmsName ]
-                 ]
-                    ++ heroList model
+                (span [ style "font-size" "5rem" ] [ text "EatNotEat" ]
+                    :: heroList model
                 )
             ]
         ]
@@ -474,7 +478,7 @@ heroList model =
                                 []
                                 [ img [ src x.picture, class "is-rounded" ] []
                                 ]
-                            , bestScore x.id model.gameplay SelectHero
+                            , bestScore x.id model.gameplay SelectHeroScreen
                             ]
                         , mediaContent []
                             [ title H1 [] [ text x.name ]
@@ -555,7 +559,7 @@ heroPanel model =
                         []
                         [ img [ src model.hero.picture, class "is-rounded" ] []
                         ]
-                    , bestScore model.hero.id model.gameplay Play
+                    , bestScore model.hero.id model.gameplay PlayScreen
                     , currentScore model
                     ]
                 , mediaContent []
@@ -563,7 +567,7 @@ heroPanel model =
                     , subtitle H2 [] [ text model.hero.desc ]
                     ]
                 ]
-            , healthPanel model.gameplay.hp
+            , hpPanel model.gameplay.hp
             ]
         ]
 
@@ -573,15 +577,15 @@ currentScore model =
     circle "white" "75px" "150px" <| span [ style "font-size" "4.5rem" ] [ text <| String.fromInt model.gameplay.score ]
 
 
-bestScore : Int -> Gameplay -> GameState -> Html Msg
-bestScore heroId gameplay gameState =
+bestScore : Int -> Gameplay -> Screen -> Html Msg
+bestScore heroId gameplay screen =
     let
         bottom =
-            case gameState of
-                Play ->
+            case screen of
+                PlayScreen ->
                     "150px"
 
-                SelectHero ->
+                SelectHeroScreen ->
                     "25px"
     in
     circle "gold" "0px" bottom <| span [ style "font-size" "4.5rem" ] [ bestResultText heroId gameplay.bestResults ]
@@ -620,16 +624,16 @@ bestResultText heroId brs =
             text <| String.fromInt val.score
 
 
-healthPanel : Health -> Html Msg
-healthPanel model =
+hpPanel : Hp -> Html Msg
+hpPanel model =
     columns { columnsModifiers | centered = True, display = MobileAndBeyond }
         [ style "text-align" "-webkit-center" ]
     <|
-        healthContainer model
+        hpContainer model
 
 
-healthContainer : Health -> List (Html Msg)
-healthContainer hp =
+hpContainer : Hp -> List (Html Msg)
+hpContainer hp =
     case hp.value of
         1 ->
             [ column columnModifiers ([ class "is-4", style "opacity" "1" ] ++ Animation.render hp.animationState) [ heart ]
@@ -678,31 +682,12 @@ imagesPreload model =
 
 
 
--- STYLE
-
-
-styleTitle : List (Attribute Msg)
-styleTitle =
-    [ style "font-family" "font", style "font-weight" "bold", style "font-size" "500%" ]
-
-
-styleBold : List (Attribute Msg)
-styleBold =
-    [ style "font-family" "font", style "font-weight" "bold" ]
-
-
-styleNormal : List (Attribute Msg)
-styleNormal =
-    [ style "font-family" "font" ]
-
-
-
 -- DATA
 
 
 type Tags
-    = Healthy
-    | NotHealthy
+    = Hpy
+    | NotHpy
     | Junk
     | Drinks
     | Desserts
@@ -712,15 +697,15 @@ allFood : List Food
 allFood =
     [ Food 0
         "Popcorn"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/popcorn.png"
     , Food 1
         "Happy Meal"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/happymeal.png"
     , Food 2
         "Pizza"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/pizza.png"
     , Food 3
         "Tiramisu"
@@ -728,7 +713,7 @@ allFood =
         "images/food/tiramisu.png"
     , Food 4
         "Salad"
-        [ Healthy ]
+        [ Hpy ]
         "images/food/salad.png"
     , Food 5
         "Apple Stump"
@@ -740,15 +725,15 @@ allFood =
         "images/food/bottle.png"
     , Food 7
         "Bread"
-        [ Healthy ]
+        [ Hpy ]
         "images/food/bread.png"
     , Food 8
         "Burgers"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/burgers.png"
     , Food 9
         "Carrot"
-        [ Healthy ]
+        [ Hpy ]
         "images/food/carrot.png"
     , Food 10
         "Sode Water"
@@ -756,7 +741,7 @@ allFood =
         "images/food/cola.png"
     , Food 11
         "Cheese"
-        [ Healthy ]
+        [ Hpy ]
         "images/food/cheese.png"
     , Food 12
         "Creamy"
@@ -764,11 +749,11 @@ allFood =
         "images/food/creamy.png"
     , Food 13
         "Cucumber"
-        [ Healthy ]
+        [ Hpy ]
         "images/food/cucumber.png"
     , Food 14
         "Eggs"
-        [ Healthy ]
+        [ Hpy ]
         "images/food/eggs.png"
     , Food 15
         "Fallen Ice Cream"
@@ -780,7 +765,7 @@ allFood =
         "images/food/jar.png"
     , Food 17
         "Chicken Drumsticks"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/kfc.png"
     , Food 18
         "Leftovers"
@@ -788,7 +773,7 @@ allFood =
         "images/food/leftovers.png"
     , Food 19
         "Lemon"
-        [ Healthy ]
+        [ Hpy ]
         "images/food/lemon.png"
     , Food 20
         "Milk"
@@ -800,7 +785,7 @@ allFood =
         "images/food/orangecake.png"
     , Food 22
         "Pepperoni"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/pepperoni.png"
     , Food 23
         "Plastic Box"
@@ -808,39 +793,39 @@ allFood =
         "images/food/plasticbox.png"
     , Food 24
         "Meat Ribs"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/ribs.png"
     , Food 25
         "Salmon"
-        [ Healthy ]
+        [ Hpy ]
         "images/food/salmon.png"
     , Food 26
         "Sausage Plate"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/sausageplate.png"
     , Food 27
         "Shawarma"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/shawarma.png"
     , Food 28
         "Steak"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/steak.png"
     , Food 29
         "Steak Plate"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/steakplate.png"
     , Food 30
         "Tacos"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/tacos.png"
     , Food 31
         "Tomatos"
-        [ Healthy ]
+        [ Hpy ]
         "images/food/tomatos.png"
     , Food 32
         "Wok"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/wok.png"
     , Food 33
         "Strawberry Cake"
@@ -852,10 +837,10 @@ allFood =
         "images/food/shake.png"
     , Food 35
         "Pepper"
-        [ Healthy ]
+        [ Hpy ]
         "images/food/redhotchilipepper.png"
     , Food 36
         "Sausages"
-        [ NotHealthy ]
+        [ NotHpy ]
         "images/food/sausages.png"
     ]
