@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.aM.Z === region.a2.Z)
+	if (region.aS._ === region.a7._)
 	{
-		return 'on line ' + region.aM.Z;
+		return 'on line ' + region.aS._;
 	}
-	return 'on lines ' + region.aM.Z + ' through ' + region.a2.Z;
+	return 'on lines ' + region.aS._ + ' through ' + region.a7._;
 }
 
 
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bM,
-		impl.bX,
 		impl.bT,
+		impl.b2,
+		impl.b_,
 		function() { return function() {} }
 	);
 });
@@ -2704,9 +2704,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		D: func(record.D),
-		aQ: record.aQ,
-		aI: record.aI
+		E: func(record.E),
+		aW: record.aW,
+		aN: record.aN
 	}
 });
 
@@ -2974,11 +2974,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.D;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.aQ;
+		var message = !tag ? value : tag < 3 ? value.a : value.E;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.aW;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.aI) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.aN) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3928,11 +3928,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bM,
-		impl.bX,
 		impl.bT,
+		impl.b2,
+		impl.b_,
 		function(sendToApp, initialModel) {
-			var view = impl.bZ;
+			var view = impl.b4;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3964,12 +3964,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bM,
-		impl.bX,
 		impl.bT,
+		impl.b2,
+		impl.b_,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.aL && impl.aL(sendToApp)
-			var view = impl.bZ;
+			var divertHrefToApp = impl.aR && impl.aR(sendToApp)
+			var view = impl.b4;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3977,12 +3977,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.bB);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.bJ);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.bV) && (_VirtualDom_doc.title = title = doc.bV);
+				(title !== doc.b0) && (_VirtualDom_doc.title = title = doc.b0);
 			});
 		}
 	);
@@ -4038,12 +4038,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.bO;
-	var onUrlRequest = impl.bP;
+	var onUrlChange = impl.bV;
+	var onUrlRequest = impl.bW;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		aL: function(sendToApp)
+		aR: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4059,9 +4059,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.bk === next.bk
-							&& curr.a7 === next.a7
-							&& curr.bg.a === next.bg.a
+							&& curr.bq === next.bq
+							&& curr.bd === next.bd
+							&& curr.bm.a === next.bm.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4069,13 +4069,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		bM: function(flags)
+		bT: function(flags)
 		{
-			return A3(impl.bM, flags, _Browser_getUrl(), key);
+			return A3(impl.bT, flags, _Browser_getUrl(), key);
 		},
-		bZ: impl.bZ,
-		bX: impl.bX,
-		bT: impl.bT
+		b4: impl.b4,
+		b2: impl.b2,
+		b_: impl.b_
 	});
 }
 
@@ -4141,17 +4141,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { bK: 'hidden', bC: 'visibilitychange' }
+		? { bR: 'hidden', bK: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { bK: 'mozHidden', bC: 'mozvisibilitychange' }
+		? { bR: 'mozHidden', bK: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { bK: 'msHidden', bC: 'msvisibilitychange' }
+		? { bR: 'msHidden', bK: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { bK: 'webkitHidden', bC: 'webkitvisibilitychange' }
-		: { bK: 'hidden', bC: 'visibilitychange' };
+		? { bR: 'webkitHidden', bK: 'webkitvisibilitychange' }
+		: { bR: 'hidden', bK: 'visibilitychange' };
 }
 
 
@@ -4232,12 +4232,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		bo: _Browser_getScene(),
-		bv: {
-			bx: _Browser_window.pageXOffset,
-			by: _Browser_window.pageYOffset,
-			bw: _Browser_doc.documentElement.clientWidth,
-			a6: _Browser_doc.documentElement.clientHeight
+		bu: _Browser_getScene(),
+		bD: {
+			bF: _Browser_window.pageXOffset,
+			bG: _Browser_window.pageYOffset,
+			bE: _Browser_doc.documentElement.clientWidth,
+			bc: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4247,8 +4247,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		bw: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		a6: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		bE: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		bc: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4271,15 +4271,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			bo: {
-				bw: node.scrollWidth,
-				a6: node.scrollHeight
+			bu: {
+				bE: node.scrollWidth,
+				bc: node.scrollHeight
 			},
-			bv: {
-				bx: node.scrollLeft,
-				by: node.scrollTop,
-				bw: node.clientWidth,
-				a6: node.clientHeight
+			bD: {
+				bF: node.scrollLeft,
+				bG: node.scrollTop,
+				bE: node.clientWidth,
+				bc: node.clientHeight
 			}
 		};
 	});
@@ -4309,18 +4309,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			bo: _Browser_getScene(),
-			bv: {
-				bx: x,
-				by: y,
-				bw: _Browser_doc.documentElement.clientWidth,
-				a6: _Browser_doc.documentElement.clientHeight
+			bu: _Browser_getScene(),
+			bD: {
+				bF: x,
+				bG: y,
+				bE: _Browser_doc.documentElement.clientWidth,
+				bc: _Browser_doc.documentElement.clientHeight
 			},
-			bF: {
-				bx: x + rect.left,
-				by: y + rect.top,
-				bw: rect.width,
-				a6: rect.height
+			bN: {
+				bF: x + rect.left,
+				bG: y + rect.top,
+				bE: rect.width,
+				bc: rect.height
 			}
 		};
 	});
@@ -4942,7 +4942,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {a4: fragment, a7: host, bd: path, bg: port_, bk: protocol, bl: query};
+		return {a9: fragment, bd: host, bj: path, bm: port_, bq: protocol, br: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5223,11 +5223,11 @@ var $elm$core$Task$perform = F2(
 var $elm$browser$Browser$element = _Browser_element;
 var $author$project$Main$BestResult = F2(
 	function (heroId, score) {
-		return {ag: heroId, B: score};
+		return {ai: heroId, z: score};
 	});
-var $author$project$Main$Model = F6(
-	function (screen, hero, foodPanel, hp, score, bestResults) {
-		return {S: bestResults, g: foodPanel, y: hero, q: hp, B: score, ab: screen};
+var $author$project$Main$Model = F7(
+	function (device, screen, hero, foodPanel, hp, score, bestResults) {
+		return {ah: bestResults, l: device, h: foodPanel, t: hero, f: hp, z: score, ac: screen};
 	});
 var $author$project$Main$SelectHeroScreen = 0;
 var $author$project$Main$Shuffle = function (a) {
@@ -5237,7 +5237,7 @@ var $author$project$Main$Desserts = 4;
 var $author$project$Main$Drinks = 3;
 var $author$project$Main$Food = F4(
 	function (id, name, tags, picture) {
-		return {Y: id, _: name, A: picture, bt: tags};
+		return {O: id, aa: name, C: picture, bB: tags};
 	});
 var $author$project$Main$Hpy = 0;
 var $author$project$Main$Junk = 2;
@@ -5506,7 +5506,7 @@ var $author$project$Main$allFood = _List_fromArray(
 	]);
 var $author$project$Main$Hero = F6(
 	function (id, name, desc, picture, goodTags, badTags) {
-		return {aW: badTags, ap: desc, a5: goodTags, Y: id, _: name, A: picture};
+		return {a0: badTags, as: desc, bb: goodTags, O: id, aa: name, C: picture};
 	});
 var $author$project$Main$arnold = A6(
 	$author$project$Main$Hero,
@@ -5518,6 +5518,17 @@ var $author$project$Main$arnold = A6(
 		[2]),
 	_List_fromArray(
 		[0, 1, 3, 4]));
+var $author$project$Main$Desktop = 1;
+var $author$project$Main$DeviceSettings = F6(
+	function (deviceType, scoreBottom, scoreSize, scoreFont, heroImageWidth, heartImageSize) {
+		return {a6: deviceType, I: heartImageSize, aA: heroImageWidth, bv: scoreBottom, bw: scoreFont, aP: scoreSize};
+	});
+var $author$project$Main$Phone = 0;
+var $surprisetalk$elm_bulma$Bulma$Elements$X128 = 6;
+var $surprisetalk$elm_bulma$Bulma$Elements$X64 = 4;
+var $author$project$Main$detectDevice = function (size) {
+	return (size > 768) ? A6($author$project$Main$DeviceSettings, 1, '50px', '50px', '2.25rem', '130px', 4) : A6($author$project$Main$DeviceSettings, 0, '75px', '100px', '4rem', '250px', 6);
+};
 var $elm$random$Random$Generate = $elm$core$Basics$identity;
 var $elm$random$Random$Seed = F2(
 	function (a, b) {
@@ -5618,7 +5629,7 @@ var $elm$random$Random$generate = F2(
 	});
 var $author$project$Main$FoodPanel = F2(
 	function (foods, animationState) {
-		return {e: animationState, X: foods};
+		return {e: animationState, Z: foods};
 	});
 var $mdgriffith$elm_style_animation$Animation$Model$Property = F2(
 	function (a, b) {
@@ -5630,13 +5641,13 @@ var $mdgriffith$elm_style_animation$Animation$Model$Spring = function (a) {
 var $mdgriffith$elm_style_animation$Animation$initMotion = F2(
 	function (position, unit) {
 		return {
-			M: $mdgriffith$elm_style_animation$Animation$Model$Spring(
-				{a$: 26, bp: 170}),
-			bN: $elm$core$Maybe$Nothing,
-			bR: position,
-			bU: position,
-			bW: unit,
-			bY: 0
+			P: $mdgriffith$elm_style_animation$Animation$Model$Spring(
+				{a4: 26, bx: 170}),
+			bU: $elm$core$Maybe$Nothing,
+			bY: position,
+			b$: position,
+			b1: unit,
+			b3: 0
 		};
 	});
 var $mdgriffith$elm_style_animation$Animation$custom = F3(
@@ -5652,13 +5663,13 @@ var $mdgriffith$elm_style_animation$Animation$opacity = function (val) {
 var $mdgriffith$elm_style_animation$Animation$Model$Animation = $elm$core$Basics$identity;
 var $mdgriffith$elm_style_animation$Animation$initialState = function (current) {
 	return {
-		az: _List_Nil,
-		ai: false,
-		aP: _List_Nil,
-		bq: current,
-		bu: {
-			a_: $elm$time$Time$millisToPosix(0),
-			bE: $elm$time$Time$millisToPosix(0)
+		aE: _List_Nil,
+		ak: false,
+		aV: _List_Nil,
+		by: current,
+		bC: {
+			a3: $elm$time$Time$millisToPosix(0),
+			bM: $elm$time$Time$millisToPosix(0)
 		}
 	};
 };
@@ -5675,10 +5686,10 @@ var $mdgriffith$elm_style_animation$Animation$speed = function (speedValue) {
 var $mdgriffith$elm_style_animation$Animation$defaultInterpolationByProperty = function (prop) {
 	var linear = function (duration) {
 		return $mdgriffith$elm_style_animation$Animation$Model$Easing(
-			{as: duration, at: $elm$core$Basics$identity, bj: 1, aM: 0});
+			{aw: duration, ax: $elm$core$Basics$identity, bp: 1, aS: 0});
 	};
 	var defaultSpring = $mdgriffith$elm_style_animation$Animation$Model$Spring(
-		{a$: 26, bp: 170});
+		{a4: 26, bx: 170});
 	switch (prop.$) {
 		case 0:
 			return defaultSpring;
@@ -5694,12 +5705,12 @@ var $mdgriffith$elm_style_animation$Animation$defaultInterpolationByProperty = f
 		case 5:
 			var name = prop.a;
 			return (name === 'rotate3d') ? $mdgriffith$elm_style_animation$Animation$speed(
-				{be: $elm$core$Basics$pi}) : defaultSpring;
+				{bk: $elm$core$Basics$pi}) : defaultSpring;
 		case 6:
 			return defaultSpring;
 		case 7:
 			return $mdgriffith$elm_style_animation$Animation$speed(
-				{be: $elm$core$Basics$pi});
+				{bk: $elm$core$Basics$pi});
 		case 8:
 			return defaultSpring;
 		default:
@@ -5863,58 +5874,58 @@ var $mdgriffith$elm_style_animation$Animation$Model$mapPathMotion = F2(
 				return $mdgriffith$elm_style_animation$Animation$Model$VerticalTo(
 					fn(motion));
 			case 8:
-				var control1 = cmd.a.U;
-				var control2 = cmd.a.V;
-				var point = cmd.a.w;
+				var control1 = cmd.a.W;
+				var control2 = cmd.a.X;
+				var point = cmd.a.y;
 				return $mdgriffith$elm_style_animation$Animation$Model$Curve(
 					{
-						U: _Utils_Tuple2(
+						W: _Utils_Tuple2(
 							fn(control1.a),
 							fn(control1.b)),
-						V: _Utils_Tuple2(
+						X: _Utils_Tuple2(
 							fn(control2.a),
 							fn(control2.b)),
-						w: _Utils_Tuple2(
+						y: _Utils_Tuple2(
 							fn(point.a),
 							fn(point.b))
 					});
 			case 9:
-				var control1 = cmd.a.U;
-				var control2 = cmd.a.V;
-				var point = cmd.a.w;
+				var control1 = cmd.a.W;
+				var control2 = cmd.a.X;
+				var point = cmd.a.y;
 				return $mdgriffith$elm_style_animation$Animation$Model$CurveTo(
 					{
-						U: _Utils_Tuple2(
+						W: _Utils_Tuple2(
 							fn(control1.a),
 							fn(control1.b)),
-						V: _Utils_Tuple2(
+						X: _Utils_Tuple2(
 							fn(control2.a),
 							fn(control2.b)),
-						w: _Utils_Tuple2(
+						y: _Utils_Tuple2(
 							fn(point.a),
 							fn(point.b))
 					});
 			case 10:
-				var control = cmd.a.T;
-				var point = cmd.a.w;
+				var control = cmd.a.V;
+				var point = cmd.a.y;
 				return $mdgriffith$elm_style_animation$Animation$Model$Quadratic(
 					{
-						T: _Utils_Tuple2(
+						V: _Utils_Tuple2(
 							fn(control.a),
 							fn(control.b)),
-						w: _Utils_Tuple2(
+						y: _Utils_Tuple2(
 							fn(point.a),
 							fn(point.b))
 					});
 			case 11:
-				var control = cmd.a.T;
-				var point = cmd.a.w;
+				var control = cmd.a.V;
+				var point = cmd.a.y;
 				return $mdgriffith$elm_style_animation$Animation$Model$QuadraticTo(
 					{
-						T: _Utils_Tuple2(
+						V: _Utils_Tuple2(
 							fn(control.a),
 							fn(control.b)),
-						w: _Utils_Tuple2(
+						y: _Utils_Tuple2(
 							fn(point.a),
 							fn(point.b))
 					});
@@ -5938,38 +5949,38 @@ var $mdgriffith$elm_style_animation$Animation$Model$mapPathMotion = F2(
 				var arc = cmd.a;
 				return $mdgriffith$elm_style_animation$Animation$Model$ClockwiseArc(
 					function () {
-						var y = arc.by;
-						var x = arc.bx;
-						var startAngle = arc.ac;
-						var radius = arc.aa;
-						var endAngle = arc.W;
+						var y = arc.bG;
+						var x = arc.bF;
+						var startAngle = arc.ad;
+						var radius = arc.ab;
+						var endAngle = arc.Y;
 						return _Utils_update(
 							arc,
 							{
-								W: fn(endAngle),
-								aa: fn(radius),
-								ac: fn(startAngle),
-								bx: fn(x),
-								by: fn(y)
+								Y: fn(endAngle),
+								ab: fn(radius),
+								ad: fn(startAngle),
+								bF: fn(x),
+								bG: fn(y)
 							});
 					}());
 			case 17:
 				var arc = cmd.a;
 				return $mdgriffith$elm_style_animation$Animation$Model$AntiClockwiseArc(
 					function () {
-						var y = arc.by;
-						var x = arc.bx;
-						var startAngle = arc.ac;
-						var radius = arc.aa;
-						var endAngle = arc.W;
+						var y = arc.bG;
+						var x = arc.bF;
+						var startAngle = arc.ad;
+						var radius = arc.ab;
+						var endAngle = arc.Y;
 						return _Utils_update(
 							arc,
 							{
-								W: fn(endAngle),
-								aa: fn(radius),
-								ac: fn(startAngle),
-								bx: fn(x),
-								by: fn(y)
+								Y: fn(endAngle),
+								ab: fn(radius),
+								ad: fn(startAngle),
+								bF: fn(x),
+								bG: fn(y)
 							});
 					}());
 			default:
@@ -6000,27 +6011,27 @@ var $mdgriffith$elm_style_animation$Animation$Model$mapToMotion = F2(
 				var name = prop.a;
 				var inset = prop.b;
 				var shadow = prop.c;
-				var size = shadow.x;
-				var red = shadow.o;
-				var offsetY = shadow.u;
-				var offsetX = shadow.t;
-				var green = shadow.n;
-				var blur = shadow.r;
-				var blue = shadow.j;
-				var alpha = shadow.i;
+				var size = shadow.A;
+				var red = shadow.q;
+				var offsetY = shadow.w;
+				var offsetX = shadow.v;
+				var green = shadow.p;
+				var blur = shadow.s;
+				var blue = shadow.k;
+				var alpha = shadow.j;
 				return A3(
 					$mdgriffith$elm_style_animation$Animation$Model$ShadowProperty,
 					name,
 					inset,
 					{
-						i: fn(alpha),
-						j: fn(blue),
-						r: fn(blur),
-						n: fn(green),
-						t: fn(offsetX),
-						u: fn(offsetY),
-						o: fn(red),
-						x: fn(size)
+						j: fn(alpha),
+						k: fn(blue),
+						s: fn(blur),
+						p: fn(green),
+						v: fn(offsetX),
+						w: fn(offsetY),
+						q: fn(red),
+						A: fn(size)
 					});
 			case 3:
 				var name = prop.a;
@@ -6098,7 +6109,7 @@ var $mdgriffith$elm_style_animation$Animation$setDefaultInterpolation = function
 		function (m) {
 			return _Utils_update(
 				m,
-				{M: interp});
+				{P: interp});
 		},
 		prop);
 };
@@ -6310,7 +6321,7 @@ var $author$project$Main$initFoodPanel = A2(
 			])));
 var $author$project$Main$Hp = F2(
 	function (value, animationState) {
-		return {e: animationState, aj: value};
+		return {e: animationState, al: value};
 	});
 var $mdgriffith$elm_style_animation$Animation$Length = F2(
 	function (a, b) {
@@ -6799,10 +6810,11 @@ var $elm_community$random_extra$Random$List$shuffle = function (list) {
 			length,
 			A2($elm$random$Random$int, 0, length - 1)));
 };
-var $author$project$Main$init = function (_v0) {
+var $author$project$Main$init = function (size) {
 	return _Utils_Tuple2(
-		A6(
+		A7(
 			$author$project$Main$Model,
+			$author$project$Main$detectDevice(size),
 			0,
 			$author$project$Main$arnold,
 			$author$project$Main$initFoodPanel,
@@ -6819,6 +6831,7 @@ var $author$project$Main$init = function (_v0) {
 			$author$project$Main$Shuffle,
 			$elm_community$random_extra$Random$List$shuffle($author$project$Main$allFood)));
 };
+var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $author$project$Main$Animate = F2(
 	function (a, b) {
 		return {$: 7, a: a, b: b};
@@ -6829,7 +6842,7 @@ var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $mdgriffith$elm_style_animation$Animation$Model$Tick = $elm$core$Basics$identity;
 var $mdgriffith$elm_style_animation$Animation$isRunning = function (_v0) {
 	var model = _v0;
-	return model.ai;
+	return model.ak;
 };
 var $elm$core$Platform$Sub$map = _Platform_map;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
@@ -6838,7 +6851,7 @@ var $elm$browser$Browser$AnimationManager$Time = function (a) {
 };
 var $elm$browser$Browser$AnimationManager$State = F3(
 	function (subs, request, oldTime) {
-		return {aG: oldTime, bn: request, br: subs};
+		return {aL: oldTime, bt: request, bz: subs};
 	});
 var $elm$browser$Browser$AnimationManager$init = $elm$core$Task$succeed(
 	A3($elm$browser$Browser$AnimationManager$State, _List_Nil, $elm$core$Maybe$Nothing, 0));
@@ -6849,8 +6862,8 @@ var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
 var $elm$core$Process$spawn = _Scheduler_spawn;
 var $elm$browser$Browser$AnimationManager$onEffects = F3(
 	function (router, subs, _v0) {
-		var request = _v0.bn;
-		var oldTime = _v0.aG;
+		var request = _v0.bt;
+		var oldTime = _v0.aL;
 		var _v1 = _Utils_Tuple2(request, subs);
 		if (_v1.a.$ === 1) {
 			if (!_v1.b.b) {
@@ -6896,8 +6909,8 @@ var $elm$browser$Browser$AnimationManager$onEffects = F3(
 	});
 var $elm$browser$Browser$AnimationManager$onSelfMsg = F3(
 	function (router, newTime, _v0) {
-		var subs = _v0.br;
-		var oldTime = _v0.aG;
+		var subs = _v0.bz;
+		var oldTime = _v0.aL;
 		var send = function (sub) {
 			if (!sub.$) {
 				var tagger = sub.a;
@@ -6971,17 +6984,17 @@ var $mdgriffith$elm_style_animation$Animation$subscription = F2(
 			$elm$browser$Browser$Events$onAnimationFrame($elm$core$Basics$identity)) : $elm$core$Platform$Sub$none;
 	});
 var $author$project$Main$subscriptions = function (model) {
-	var hpState = {am: 1, aN: model.q.e};
-	var foodState = {am: 0, aN: model.g.e};
+	var hpState = {ao: 1, aT: model.f.e};
+	var foodState = {ao: 0, aT: model.h.e};
 	return $elm$core$Platform$Sub$batch(
 		A2(
 			$elm$core$List$map,
 			function (x) {
 				return A2(
 					$mdgriffith$elm_style_animation$Animation$subscription,
-					$author$project$Main$Animate(x.am),
+					$author$project$Main$Animate(x.ao),
 					_List_fromArray(
-						[x.aN]));
+						[x.aT]));
 			},
 			_List_fromArray(
 				[hpState, foodState])));
@@ -7015,7 +7028,7 @@ var $author$project$Main$calcEat = F2(
 						},
 						tags);
 				},
-				model.y.a5));
+				model.t.bb));
 		var damage = $elm$core$List$isEmpty(
 			A2(
 				$elm$core$List$filter,
@@ -7027,7 +7040,7 @@ var $author$project$Main$calcEat = F2(
 						},
 						tags);
 				},
-				model.y.aW)) ? 0 : 1;
+				model.t.a0)) ? 0 : 1;
 		return _Utils_Tuple2(points, damage);
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
@@ -7038,13 +7051,13 @@ var $mdgriffith$elm_style_animation$Animation$queue = F2(
 		return _Utils_update(
 			model,
 			{
-				ai: true,
-				aP: _Utils_ap(model.aP, steps)
+				ak: true,
+				aV: _Utils_ap(model.aV, steps)
 			});
 	});
 var $author$project$Main$mapBestResult = F2(
 	function (a, b) {
-		return _Utils_eq(a.ag, b.ag) ? ((_Utils_cmp(a.B, b.B) > 0) ? a : b) : a;
+		return _Utils_eq(a.ai, b.ai) ? ((_Utils_cmp(a.z, b.z) > 0) ? a : b) : a;
 	});
 var $author$project$Main$selectBestResults = F2(
 	function (bestResults, newResult) {
@@ -7089,10 +7102,10 @@ var $elm$core$List$partition = F2(
 var $elm$core$Basics$round = _Basics_round;
 var $mdgriffith$elm_style_animation$Animation$Model$refreshTiming = F2(
 	function (now, timing) {
-		var dt = $elm$time$Time$posixToMillis(now) - $elm$time$Time$posixToMillis(timing.a_);
+		var dt = $elm$time$Time$posixToMillis(now) - $elm$time$Time$posixToMillis(timing.a3);
 		return {
-			a_: now,
-			bE: ((dt > 34) || (!$elm$time$Time$posixToMillis(timing.a_))) ? $elm$time$Time$millisToPosix(
+			a3: now,
+			bM: ((dt > 34) || (!$elm$time$Time$posixToMillis(timing.a3))) ? $elm$time$Time$millisToPosix(
 				$elm$core$Basics$round(16.666)) : $elm$time$Time$millisToPosix(dt)
 		};
 	});
@@ -7116,7 +7129,7 @@ var $elm$core$List$all = F2(
 	});
 var $mdgriffith$elm_style_animation$Animation$Model$isCmdDone = function (cmd) {
 	var motionDone = function (motion) {
-		return (!motion.bY) && _Utils_eq(motion.bR, motion.bU);
+		return (!motion.b3) && _Utils_eq(motion.bY, motion.b$);
 	};
 	switch (cmd.$) {
 		case 0:
@@ -7148,22 +7161,22 @@ var $mdgriffith$elm_style_animation$Animation$Model$isCmdDone = function (cmd) {
 			var motion = cmd.a;
 			return motionDone(motion);
 		case 8:
-			var control1 = cmd.a.U;
-			var control2 = cmd.a.V;
-			var point = cmd.a.w;
+			var control1 = cmd.a.W;
+			var control2 = cmd.a.X;
+			var point = cmd.a.y;
 			return motionDone(control1.a) && (motionDone(control1.b) && (motionDone(control2.a) && (motionDone(control2.b) && (motionDone(point.a) && motionDone(point.b)))));
 		case 9:
-			var control1 = cmd.a.U;
-			var control2 = cmd.a.V;
-			var point = cmd.a.w;
+			var control1 = cmd.a.W;
+			var control2 = cmd.a.X;
+			var point = cmd.a.y;
 			return motionDone(control1.a) && (motionDone(control1.b) && (motionDone(control2.a) && (motionDone(control2.b) && (motionDone(point.a) && motionDone(point.b)))));
 		case 10:
-			var control = cmd.a.T;
-			var point = cmd.a.w;
+			var control = cmd.a.V;
+			var point = cmd.a.y;
 			return motionDone(control.a) && (motionDone(control.b) && (motionDone(point.a) && motionDone(point.b)));
 		case 11:
-			var control = cmd.a.T;
-			var point = cmd.a.w;
+			var control = cmd.a.V;
+			var point = cmd.a.y;
 			return motionDone(control.a) && (motionDone(control.b) && (motionDone(point.a) && motionDone(point.b)));
 		case 12:
 			var coords = cmd.a;
@@ -7207,10 +7220,10 @@ var $mdgriffith$elm_style_animation$Animation$Model$isCmdDone = function (cmd) {
 				coords);
 		case 16:
 			var arc = cmd.a;
-			return motionDone(arc.bx) && (motionDone(arc.by) && (motionDone(arc.aa) && (motionDone(arc.ac) && motionDone(arc.W))));
+			return motionDone(arc.bF) && (motionDone(arc.bG) && (motionDone(arc.ab) && (motionDone(arc.ad) && motionDone(arc.Y))));
 		case 17:
 			var arc = cmd.a;
-			return motionDone(arc.bx) && (motionDone(arc.by) && (motionDone(arc.aa) && (motionDone(arc.ac) && motionDone(arc.W))));
+			return motionDone(arc.bF) && (motionDone(arc.bG) && (motionDone(arc.ab) && (motionDone(arc.ad) && motionDone(arc.Y))));
 		default:
 			return true;
 	}
@@ -7226,16 +7239,16 @@ var $elm$core$Maybe$withDefault = F2(
 	});
 var $mdgriffith$elm_style_animation$Animation$Model$isDone = function (property) {
 	var motionDone = function (motion) {
-		var runningInterpolation = A2($elm$core$Maybe$withDefault, motion.M, motion.bN);
+		var runningInterpolation = A2($elm$core$Maybe$withDefault, motion.P, motion.bU);
 		switch (runningInterpolation.$) {
 			case 0:
-				return (!motion.bY) && _Utils_eq(motion.bR, motion.bU);
+				return (!motion.b3) && _Utils_eq(motion.bY, motion.b$);
 			case 1:
 				var eased = runningInterpolation.a;
-				return (eased.bj === 1) || ((!eased.bj) && _Utils_eq(motion.bR, motion.bU));
+				return (eased.bp === 1) || ((!eased.bp) && _Utils_eq(motion.bY, motion.b$));
 			default:
 				var speed = runningInterpolation.a;
-				return _Utils_eq(motion.bR, motion.bU);
+				return _Utils_eq(motion.bY, motion.b$);
 		}
 	};
 	switch (property.$) {
@@ -7257,7 +7270,7 @@ var $mdgriffith$elm_style_animation$Animation$Model$isDone = function (property)
 				$elm$core$List$all,
 				motionDone,
 				_List_fromArray(
-					[shadow.t, shadow.u, shadow.x, shadow.r, shadow.o, shadow.n, shadow.j, shadow.i]));
+					[shadow.v, shadow.w, shadow.A, shadow.s, shadow.q, shadow.p, shadow.k, shadow.j]));
 		case 3:
 			var m1 = property.b;
 			return motionDone(m1);
@@ -7389,22 +7402,22 @@ var $mdgriffith$elm_style_animation$Animation$Model$setPathTarget = F2(
 	function (cmd, targetCmd) {
 		var setMotionTarget = F2(
 			function (motion, targetMotion) {
-				var _v27 = motion.M;
+				var _v27 = motion.P;
 				if (_v27.$ === 1) {
 					var ease = _v27.a;
 					return _Utils_update(
 						motion,
 						{
-							M: $mdgriffith$elm_style_animation$Animation$Model$Easing(
+							P: $mdgriffith$elm_style_animation$Animation$Model$Easing(
 								_Utils_update(
 									ease,
-									{aM: motion.bR})),
-							bU: targetMotion.bR
+									{aS: motion.bY})),
+							b$: targetMotion.bY
 						});
 				} else {
 					return _Utils_update(
 						motion,
-						{bU: targetMotion.bR});
+						{b$: targetMotion.bY});
 				}
 			});
 		switch (cmd.$) {
@@ -7502,15 +7515,15 @@ var $mdgriffith$elm_style_animation$Animation$Model$setPathTarget = F2(
 					var targets = targetCmd.a;
 					return $mdgriffith$elm_style_animation$Animation$Model$Curve(
 						{
-							U: _Utils_Tuple2(
-								A2(setMotionTarget, points.U.a, targets.U.a),
-								A2(setMotionTarget, points.U.b, targets.U.b)),
-							V: _Utils_Tuple2(
-								A2(setMotionTarget, points.V.a, targets.V.a),
-								A2(setMotionTarget, points.V.b, targets.V.b)),
-							w: _Utils_Tuple2(
-								A2(setMotionTarget, points.w.a, targets.w.a),
-								A2(setMotionTarget, points.w.b, targets.w.b))
+							W: _Utils_Tuple2(
+								A2(setMotionTarget, points.W.a, targets.W.a),
+								A2(setMotionTarget, points.W.b, targets.W.b)),
+							X: _Utils_Tuple2(
+								A2(setMotionTarget, points.X.a, targets.X.a),
+								A2(setMotionTarget, points.X.b, targets.X.b)),
+							y: _Utils_Tuple2(
+								A2(setMotionTarget, points.y.a, targets.y.a),
+								A2(setMotionTarget, points.y.b, targets.y.b))
 						});
 				} else {
 					return cmd;
@@ -7521,15 +7534,15 @@ var $mdgriffith$elm_style_animation$Animation$Model$setPathTarget = F2(
 					var targets = targetCmd.a;
 					return $mdgriffith$elm_style_animation$Animation$Model$CurveTo(
 						{
-							U: _Utils_Tuple2(
-								A2(setMotionTarget, points.U.a, targets.U.a),
-								A2(setMotionTarget, points.U.b, targets.U.b)),
-							V: _Utils_Tuple2(
-								A2(setMotionTarget, points.V.a, targets.V.a),
-								A2(setMotionTarget, points.V.b, targets.V.b)),
-							w: _Utils_Tuple2(
-								A2(setMotionTarget, points.w.a, targets.w.a),
-								A2(setMotionTarget, points.w.b, targets.w.b))
+							W: _Utils_Tuple2(
+								A2(setMotionTarget, points.W.a, targets.W.a),
+								A2(setMotionTarget, points.W.b, targets.W.b)),
+							X: _Utils_Tuple2(
+								A2(setMotionTarget, points.X.a, targets.X.a),
+								A2(setMotionTarget, points.X.b, targets.X.b)),
+							y: _Utils_Tuple2(
+								A2(setMotionTarget, points.y.a, targets.y.a),
+								A2(setMotionTarget, points.y.b, targets.y.b))
 						});
 				} else {
 					return cmd;
@@ -7540,12 +7553,12 @@ var $mdgriffith$elm_style_animation$Animation$Model$setPathTarget = F2(
 					var targets = targetCmd.a;
 					return $mdgriffith$elm_style_animation$Animation$Model$Quadratic(
 						{
-							T: _Utils_Tuple2(
-								A2(setMotionTarget, points.T.a, targets.T.a),
-								A2(setMotionTarget, points.T.b, targets.T.b)),
-							w: _Utils_Tuple2(
-								A2(setMotionTarget, points.w.a, targets.w.a),
-								A2(setMotionTarget, points.w.b, targets.w.b))
+							V: _Utils_Tuple2(
+								A2(setMotionTarget, points.V.a, targets.V.a),
+								A2(setMotionTarget, points.V.b, targets.V.b)),
+							y: _Utils_Tuple2(
+								A2(setMotionTarget, points.y.a, targets.y.a),
+								A2(setMotionTarget, points.y.b, targets.y.b))
 						});
 				} else {
 					return cmd;
@@ -7556,12 +7569,12 @@ var $mdgriffith$elm_style_animation$Animation$Model$setPathTarget = F2(
 					var targets = targetCmd.a;
 					return $mdgriffith$elm_style_animation$Animation$Model$QuadraticTo(
 						{
-							T: _Utils_Tuple2(
-								A2(setMotionTarget, points.T.a, targets.T.a),
-								A2(setMotionTarget, points.T.b, targets.T.b)),
-							w: _Utils_Tuple2(
-								A2(setMotionTarget, points.w.a, targets.w.a),
-								A2(setMotionTarget, points.w.b, targets.w.b))
+							V: _Utils_Tuple2(
+								A2(setMotionTarget, points.V.a, targets.V.a),
+								A2(setMotionTarget, points.V.b, targets.V.b)),
+							y: _Utils_Tuple2(
+								A2(setMotionTarget, points.y.a, targets.y.a),
+								A2(setMotionTarget, points.y.b, targets.y.b))
 						});
 				} else {
 					return cmd;
@@ -7660,19 +7673,19 @@ var $mdgriffith$elm_style_animation$Animation$Model$setPathTarget = F2(
 					var target = targetCmd.a;
 					return $mdgriffith$elm_style_animation$Animation$Model$ClockwiseArc(
 						function () {
-							var y = arc.by;
-							var x = arc.bx;
-							var startAngle = arc.ac;
-							var radius = arc.aa;
-							var endAngle = arc.W;
+							var y = arc.bG;
+							var x = arc.bF;
+							var startAngle = arc.ad;
+							var radius = arc.ab;
+							var endAngle = arc.Y;
 							return _Utils_update(
 								arc,
 								{
-									W: A2(setMotionTarget, endAngle, target.W),
-									aa: A2(setMotionTarget, radius, target.aa),
-									ac: A2(setMotionTarget, startAngle, target.ac),
-									bx: A2(setMotionTarget, x, target.bx),
-									by: A2(setMotionTarget, y, target.by)
+									Y: A2(setMotionTarget, endAngle, target.Y),
+									ab: A2(setMotionTarget, radius, target.ab),
+									ad: A2(setMotionTarget, startAngle, target.ad),
+									bF: A2(setMotionTarget, x, target.bF),
+									bG: A2(setMotionTarget, y, target.bG)
 								});
 						}());
 				} else {
@@ -7684,19 +7697,19 @@ var $mdgriffith$elm_style_animation$Animation$Model$setPathTarget = F2(
 					var target = targetCmd.a;
 					return $mdgriffith$elm_style_animation$Animation$Model$AntiClockwiseArc(
 						function () {
-							var y = arc.by;
-							var x = arc.bx;
-							var startAngle = arc.ac;
-							var radius = arc.aa;
-							var endAngle = arc.W;
+							var y = arc.bG;
+							var x = arc.bF;
+							var startAngle = arc.ad;
+							var radius = arc.ab;
+							var endAngle = arc.Y;
 							return _Utils_update(
 								arc,
 								{
-									W: A2(setMotionTarget, endAngle, target.W),
-									aa: A2(setMotionTarget, radius, target.aa),
-									ac: A2(setMotionTarget, startAngle, target.ac),
-									bx: A2(setMotionTarget, x, target.bx),
-									by: A2(setMotionTarget, y, target.by)
+									Y: A2(setMotionTarget, endAngle, target.Y),
+									ab: A2(setMotionTarget, radius, target.ab),
+									ad: A2(setMotionTarget, startAngle, target.ad),
+									bF: A2(setMotionTarget, x, target.bF),
+									bG: A2(setMotionTarget, y, target.bG)
 								});
 						}());
 				} else {
@@ -7713,26 +7726,26 @@ var $mdgriffith$elm_style_animation$Animation$Model$setTarget = F3(
 				var newMotion = overrideInterpolation ? _Utils_update(
 					motion,
 					{
-						bN: $elm$core$Maybe$Just(targetMotion.M)
+						bU: $elm$core$Maybe$Just(targetMotion.P)
 					}) : motion;
-				var _v13 = newMotion.bN;
+				var _v13 = newMotion.bU;
 				if (_v13.$ === 1) {
-					var _v14 = newMotion.M;
+					var _v14 = newMotion.P;
 					if (_v14.$ === 1) {
 						var ease = _v14.a;
 						return _Utils_update(
 							newMotion,
 							{
-								M: $mdgriffith$elm_style_animation$Animation$Model$Easing(
+								P: $mdgriffith$elm_style_animation$Animation$Model$Easing(
 									_Utils_update(
 										ease,
-										{bj: 0, aM: motion.bR})),
-								bU: targetMotion.bR
+										{bp: 0, aS: motion.bY})),
+								b$: targetMotion.bY
 							});
 					} else {
 						return _Utils_update(
 							newMotion,
-							{bU: targetMotion.bR});
+							{b$: targetMotion.bY});
 					}
 				} else {
 					var override = _v13.a;
@@ -7741,17 +7754,17 @@ var $mdgriffith$elm_style_animation$Animation$Model$setTarget = F3(
 						return _Utils_update(
 							newMotion,
 							{
-								bN: $elm$core$Maybe$Just(
+								bU: $elm$core$Maybe$Just(
 									$mdgriffith$elm_style_animation$Animation$Model$Easing(
 										_Utils_update(
 											ease,
-											{bj: 0, aM: motion.bR}))),
-								bU: targetMotion.bR
+											{bp: 0, aS: motion.bY}))),
+								b$: targetMotion.bY
 							});
 					} else {
 						return _Utils_update(
 							newMotion,
-							{bU: targetMotion.bR});
+							{b$: targetMotion.bY});
 					}
 				}
 			});
@@ -7792,14 +7805,14 @@ var $mdgriffith$elm_style_animation$Animation$Model$setTarget = F3(
 						name,
 						inset,
 						{
-							i: A2(setMotionTarget, shadow.i, targetShadow.i),
 							j: A2(setMotionTarget, shadow.j, targetShadow.j),
-							r: A2(setMotionTarget, shadow.r, targetShadow.r),
-							n: A2(setMotionTarget, shadow.n, targetShadow.n),
-							t: A2(setMotionTarget, shadow.t, targetShadow.t),
-							u: A2(setMotionTarget, shadow.u, targetShadow.u),
-							o: A2(setMotionTarget, shadow.o, targetShadow.o),
-							x: A2(setMotionTarget, shadow.x, targetShadow.x)
+							k: A2(setMotionTarget, shadow.k, targetShadow.k),
+							s: A2(setMotionTarget, shadow.s, targetShadow.s),
+							p: A2(setMotionTarget, shadow.p, targetShadow.p),
+							v: A2(setMotionTarget, shadow.v, targetShadow.v),
+							w: A2(setMotionTarget, shadow.w, targetShadow.w),
+							q: A2(setMotionTarget, shadow.q, targetShadow.q),
+							A: A2(setMotionTarget, shadow.A, targetShadow.A)
 						});
 				} else {
 					return current;
@@ -8017,79 +8030,79 @@ var $elm$core$Basics$truncate = _Basics_truncate;
 var $mdgriffith$elm_style_animation$Animation$Model$vTolerance = 0.1;
 var $mdgriffith$elm_style_animation$Animation$Model$stepInterpolation = F2(
 	function (posix, motion) {
-		var interpolationToUse = A2($elm$core$Maybe$withDefault, motion.M, motion.bN);
+		var interpolationToUse = A2($elm$core$Maybe$withDefault, motion.P, motion.bU);
 		var dtms = $elm$time$Time$posixToMillis(posix);
 		switch (interpolationToUse.$) {
 			case 2:
-				var perSecond = interpolationToUse.a.be;
+				var perSecond = interpolationToUse.a.bk;
 				var _v1 = function () {
-					if (_Utils_cmp(motion.bR, motion.bU) < 0) {
-						var _new = motion.bR + (perSecond * (dtms / 1000));
+					if (_Utils_cmp(motion.bY, motion.b$) < 0) {
+						var _new = motion.bY + (perSecond * (dtms / 1000));
 						return _Utils_Tuple2(
 							_new,
-							_Utils_cmp(_new, motion.bU) > -1);
+							_Utils_cmp(_new, motion.b$) > -1);
 					} else {
-						var _new = motion.bR - (perSecond * (dtms / 1000));
+						var _new = motion.bY - (perSecond * (dtms / 1000));
 						return _Utils_Tuple2(
 							_new,
-							_Utils_cmp(_new, motion.bU) < 1);
+							_Utils_cmp(_new, motion.b$) < 1);
 					}
 				}();
 				var newPos = _v1.a;
 				var finished = _v1.b;
 				return finished ? _Utils_update(
 					motion,
-					{bR: motion.bU, bY: 0.0}) : _Utils_update(
+					{bY: motion.b$, b3: 0.0}) : _Utils_update(
 					motion,
-					{bR: newPos, bY: perSecond * 1000});
+					{bY: newPos, b3: perSecond * 1000});
 			case 0:
-				var stiffness = interpolationToUse.a.bp;
-				var damping = interpolationToUse.a.a$;
-				var fspring = stiffness * (motion.bU - motion.bR);
-				var fdamper = ((-1) * damping) * motion.bY;
+				var stiffness = interpolationToUse.a.bx;
+				var damping = interpolationToUse.a.a4;
+				var fspring = stiffness * (motion.b$ - motion.bY);
+				var fdamper = ((-1) * damping) * motion.b3;
 				var dt = dtms / 1000;
 				var a = fspring + fdamper;
-				var newVelocity = motion.bY + (a * dt);
-				var newPos = motion.bR + (newVelocity * dt);
-				var dx = $elm$core$Basics$abs(motion.bU - newPos);
+				var newVelocity = motion.b3 + (a * dt);
+				var newPos = motion.bY + (newVelocity * dt);
+				var dx = $elm$core$Basics$abs(motion.b$ - newPos);
 				return ((_Utils_cmp(dx, $mdgriffith$elm_style_animation$Animation$Model$tolerance) < 0) && (_Utils_cmp(
 					$elm$core$Basics$abs(newVelocity),
 					$mdgriffith$elm_style_animation$Animation$Model$vTolerance) < 0)) ? _Utils_update(
 					motion,
-					{bR: motion.bU, bY: 0.0}) : _Utils_update(
+					{bY: motion.b$, b3: 0.0}) : _Utils_update(
 					motion,
-					{bR: newPos, bY: newVelocity});
+					{bY: newPos, b3: newVelocity});
 			default:
-				var progress = interpolationToUse.a.bj;
-				var duration = interpolationToUse.a.as;
-				var ease = interpolationToUse.a.at;
-				var start = interpolationToUse.a.aM;
+				var progress = interpolationToUse.a.bp;
+				var duration = interpolationToUse.a.aw;
+				var ease = interpolationToUse.a.ax;
+				var start = interpolationToUse.a.aS;
 				var durationMs = $elm$time$Time$posixToMillis(duration);
 				var newProgress = (((dtms / durationMs) + progress) < 1) ? ((dtms / durationMs) + progress) : 1;
 				var eased = ease(newProgress);
-				var distance = motion.bU - start;
+				var distance = motion.b$ - start;
 				var newPos = ((((eased * distance) + start) * 10000) | 0) / 10000;
-				var newVelocity = (newProgress === 1) ? 0 : ((newPos - motion.bR) / dtms);
-				var _v2 = motion.bN;
+				var newVelocity = (newProgress === 1) ? 0 : ((newPos - motion.bY) / dtms);
+				var _v2 = motion.bU;
 				if (_v2.$ === 1) {
 					return _Utils_update(
 						motion,
 						{
-							M: $mdgriffith$elm_style_animation$Animation$Model$Easing(
-								{as: duration, at: ease, bj: newProgress, aM: start}),
-							bR: newPos,
-							bY: newVelocity
+							P: $mdgriffith$elm_style_animation$Animation$Model$Easing(
+								{aw: duration, ax: ease, bp: newProgress, aS: start}),
+							bY: newPos,
+							b3: newVelocity
 						});
 				} else {
 					var override = _v2.a;
 					return _Utils_update(
 						motion,
 						{
-							bN: $elm$core$Maybe$Just(
+							bU: $elm$core$Maybe$Just(
 								$mdgriffith$elm_style_animation$Animation$Model$Easing(
-									{as: duration, at: ease, bj: newProgress, aM: start})),
-							bR: newPos,
-							bY: newVelocity
+									{aw: duration, ax: ease, bp: newProgress, aS: start})),
+							bY: newPos,
+							b3: newVelocity
 						});
 				}
 		}
@@ -8154,58 +8167,58 @@ var $mdgriffith$elm_style_animation$Animation$Model$stepPath = F2(
 				return $mdgriffith$elm_style_animation$Animation$Model$VerticalTo(
 					A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, motion));
 			case 8:
-				var control1 = cmd.a.U;
-				var control2 = cmd.a.V;
-				var point = cmd.a.w;
+				var control1 = cmd.a.W;
+				var control2 = cmd.a.X;
+				var point = cmd.a.y;
 				return $mdgriffith$elm_style_animation$Animation$Model$Curve(
 					{
-						U: _Utils_Tuple2(
+						W: _Utils_Tuple2(
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, control1.a),
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, control1.b)),
-						V: _Utils_Tuple2(
+						X: _Utils_Tuple2(
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, control2.a),
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, control2.b)),
-						w: _Utils_Tuple2(
+						y: _Utils_Tuple2(
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, point.a),
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, point.b))
 					});
 			case 9:
-				var control1 = cmd.a.U;
-				var control2 = cmd.a.V;
-				var point = cmd.a.w;
+				var control1 = cmd.a.W;
+				var control2 = cmd.a.X;
+				var point = cmd.a.y;
 				return $mdgriffith$elm_style_animation$Animation$Model$CurveTo(
 					{
-						U: _Utils_Tuple2(
+						W: _Utils_Tuple2(
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, control1.a),
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, control1.b)),
-						V: _Utils_Tuple2(
+						X: _Utils_Tuple2(
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, control2.a),
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, control2.b)),
-						w: _Utils_Tuple2(
+						y: _Utils_Tuple2(
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, point.a),
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, point.b))
 					});
 			case 10:
-				var control = cmd.a.T;
-				var point = cmd.a.w;
+				var control = cmd.a.V;
+				var point = cmd.a.y;
 				return $mdgriffith$elm_style_animation$Animation$Model$Quadratic(
 					{
-						T: _Utils_Tuple2(
+						V: _Utils_Tuple2(
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, control.a),
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, control.b)),
-						w: _Utils_Tuple2(
+						y: _Utils_Tuple2(
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, point.a),
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, point.b))
 					});
 			case 11:
-				var control = cmd.a.T;
-				var point = cmd.a.w;
+				var control = cmd.a.V;
+				var point = cmd.a.y;
 				return $mdgriffith$elm_style_animation$Animation$Model$QuadraticTo(
 					{
-						T: _Utils_Tuple2(
+						V: _Utils_Tuple2(
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, control.a),
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, control.b)),
-						w: _Utils_Tuple2(
+						y: _Utils_Tuple2(
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, point.a),
 							A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, point.b))
 					});
@@ -8231,11 +8244,11 @@ var $mdgriffith$elm_style_animation$Animation$Model$stepPath = F2(
 					_Utils_update(
 						arc,
 						{
-							W: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.W),
-							aa: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.aa),
-							ac: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.ac),
-							bx: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.bx),
-							by: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.by)
+							Y: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.Y),
+							ab: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.ab),
+							ad: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.ad),
+							bF: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.bF),
+							bG: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.bG)
 						}));
 			case 17:
 				var arc = cmd.a;
@@ -8243,11 +8256,11 @@ var $mdgriffith$elm_style_animation$Animation$Model$stepPath = F2(
 					_Utils_update(
 						arc,
 						{
-							W: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.W),
-							aa: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.aa),
-							ac: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.ac),
-							bx: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.bx),
-							by: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.by)
+							Y: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.Y),
+							ab: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.ab),
+							ad: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.ad),
+							bF: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.bF),
+							bG: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, arc.bG)
 						}));
 			default:
 				return $mdgriffith$elm_style_animation$Animation$Model$Close;
@@ -8330,14 +8343,14 @@ var $mdgriffith$elm_style_animation$Animation$Model$step = F2(
 						name,
 						inset,
 						{
-							i: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.i),
 							j: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.j),
-							r: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.r),
-							n: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.n),
-							t: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.t),
-							u: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.u),
-							o: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.o),
-							x: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.x)
+							k: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.k),
+							s: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.s),
+							p: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.p),
+							v: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.v),
+							w: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.w),
+							q: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.q),
+							A: A2($mdgriffith$elm_style_animation$Animation$Model$stepInterpolation, dt, shadow.A)
 						});
 				case 8:
 					var points = property.a;
@@ -8488,7 +8501,7 @@ var $mdgriffith$elm_style_animation$Animation$Model$resolveSteps = F3(
 									function (m) {
 										return _Utils_update(
 											m,
-											{bN: $elm$core$Maybe$Nothing});
+											{bU: $elm$core$Maybe$Nothing});
 									}),
 								stepped),
 							_List_Nil,
@@ -8542,7 +8555,7 @@ var $mdgriffith$elm_style_animation$Animation$Model$updateAnimation = F2(
 	function (_v0, _v1) {
 		var now = _v0;
 		var model = _v1;
-		var timing = A2($mdgriffith$elm_style_animation$Animation$Model$refreshTiming, now, model.bu);
+		var timing = A2($mdgriffith$elm_style_animation$Animation$Model$refreshTiming, now, model.bC);
 		var _v2 = A2(
 			$elm$core$List$partition,
 			function (_v4) {
@@ -8557,10 +8570,10 @@ var $mdgriffith$elm_style_animation$Animation$Model$updateAnimation = F2(
 					var mySteps = _v3.b;
 					return _Utils_Tuple2(
 						$elm$time$Time$millisToPosix(
-							$elm$time$Time$posixToMillis(wait) - $elm$time$Time$posixToMillis(timing.bE)),
+							$elm$time$Time$posixToMillis(wait) - $elm$time$Time$posixToMillis(timing.bM)),
 						mySteps);
 				},
-				model.az));
+				model.aE));
 		var readyInterruption = _v2.a;
 		var queuedInterruptions = _v2.b;
 		var _v5 = function () {
@@ -8577,16 +8590,16 @@ var $mdgriffith$elm_style_animation$Animation$Model$updateAnimation = F2(
 							function (m) {
 								return _Utils_update(
 									m,
-									{bN: $elm$core$Maybe$Nothing});
+									{bU: $elm$core$Maybe$Nothing});
 							}),
-						model.bq));
+						model.by));
 			} else {
-				return _Utils_Tuple2(model.aP, model.bq);
+				return _Utils_Tuple2(model.aV, model.by);
 			}
 		}();
 		var steps = _v5.a;
 		var style = _v5.b;
-		var _v8 = A3($mdgriffith$elm_style_animation$Animation$Model$resolveSteps, style, steps, timing.bE);
+		var _v8 = A3($mdgriffith$elm_style_animation$Animation$Model$resolveSteps, style, steps, timing.bM);
 		var revisedStyle = _v8.a;
 		var sentMessages = _v8.b;
 		var revisedSteps = _v8.c;
@@ -8594,11 +8607,11 @@ var $mdgriffith$elm_style_animation$Animation$Model$updateAnimation = F2(
 			_Utils_update(
 				model,
 				{
-					az: queuedInterruptions,
-					ai: (!(!$elm$core$List$length(revisedSteps))) || (!(!$elm$core$List$length(queuedInterruptions))),
-					aP: revisedSteps,
-					bq: revisedStyle,
-					bu: timing
+					aE: queuedInterruptions,
+					ak: (!(!$elm$core$List$length(revisedSteps))) || (!(!$elm$core$List$length(queuedInterruptions))),
+					aV: revisedSteps,
+					by: revisedStyle,
+					bC: timing
 				}),
 			$elm$core$Platform$Cmd$batch(
 				A2(
@@ -8622,7 +8635,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 1:
 				var tags = action.a;
-				var foodPanel = model.g;
+				var foodPanel = model.h;
 				var _v1 = A2($author$project$Main$calcEat, model, tags);
 				var points = _v1.a;
 				var damage = _v1.b;
@@ -8644,15 +8657,15 @@ var $author$project$Main$update = F2(
 									$mdgriffith$elm_style_animation$Animation$opacity(1)
 								]))
 						]),
-					model.g.e);
+					model.h.e);
 				var newFoodPanel = _Utils_update(
 					foodPanel,
 					{e: newAnimationState});
-				var newScore = model.B + points;
+				var newScore = model.z + points;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{g: newFoodPanel, B: newScore}),
+						{h: newFoodPanel, z: newScore}),
 					$elm$core$Platform$Cmd$none);
 			case 2:
 				var points = action.a;
@@ -8672,26 +8685,26 @@ var $author$project$Main$update = F2(
 							$mdgriffith$elm_style_animation$Animation$Messenger$send(
 							$author$project$Main$HpCheck(points))
 						]),
-					model.q.e);
-				var newHp = A2($author$project$Main$Hp, model.q.aj, newHpState);
+					model.f.e);
+				var newHp = A2($author$project$Main$Hp, model.f.al, newHpState);
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{q: newHp}),
+						{f: newHp}),
 					$elm$core$Platform$Cmd$none);
 			case 3:
 				var points = action.a;
-				var hpLeft = model.q.aj - points;
+				var hpLeft = model.f.al - points;
 				var newScreen = (!hpLeft) ? 0 : 1;
 				if (!newScreen) {
 					var newBestResults = A2(
 						$author$project$Main$selectBestResults,
-						model.S,
-						A2($author$project$Main$BestResult, model.y.Y, model.B));
+						model.ah,
+						A2($author$project$Main$BestResult, model.t.O, model.z));
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{S: newBestResults, ab: newScreen}),
+							{ah: newBestResults, f: $author$project$Main$initHp, z: 0, ac: newScreen}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					var newHp = A2(
@@ -8709,7 +8722,7 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{q: newHp, ab: newScreen}),
+							{f: newHp, ac: newScreen}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 4:
@@ -8717,7 +8730,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{y: hero, ab: 1}),
+						{t: hero, ac: 1}),
 					$elm$core$Platform$Cmd$none);
 			case 5:
 				return _Utils_Tuple2(
@@ -8725,24 +8738,24 @@ var $author$project$Main$update = F2(
 					A2(
 						$elm$random$Random$generate,
 						$author$project$Main$Shuffle,
-						$elm_community$random_extra$Random$List$shuffle(model.g.X)));
+						$elm_community$random_extra$Random$List$shuffle(model.h.Z)));
 			case 6:
 				var randomFoods = action.a;
-				var foodPanel = model.g;
+				var foodPanel = model.h;
 				var newFoodPanel = _Utils_update(
 					foodPanel,
-					{X: randomFoods});
+					{Z: randomFoods});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{g: newFoodPanel}),
+						{h: newFoodPanel}),
 					$elm$core$Platform$Cmd$none);
 			default:
 				var aObj = action.a;
 				var aMsg = action.b;
 				if (aObj === 1) {
-					var hp = model.q;
-					var _v4 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, model.q.e);
+					var hp = model.f;
+					var _v4 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, model.f.e);
 					var stateHp = _v4.a;
 					var cmdHp = _v4.b;
 					var newHp = _Utils_update(
@@ -8751,11 +8764,11 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{q: newHp}),
+							{f: newHp}),
 						cmdHp);
 				} else {
-					var foodPanel = model.g;
-					var _v5 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, model.g.e);
+					var foodPanel = model.h;
+					var _v5 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, model.h.e);
 					var stateFood = _v5.a;
 					var cmdFood = _v5.b;
 					var newFoodPanel = _Utils_update(
@@ -8764,7 +8777,7 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{g: newFoodPanel}),
+							{h: newFoodPanel}),
 						cmdFood);
 				}
 		}
@@ -8874,8 +8887,8 @@ var $surprisetalk$elm_bulma$Bulma$Classes$isOffset10 = $elm$html$Html$Attributes
 var $surprisetalk$elm_bulma$Bulma$Classes$isOffset11 = $elm$html$Html$Attributes$class('is-offset-11');
 var $surprisetalk$elm_bulma$Bulma$Classes$none = $elm$html$Html$Attributes$class('');
 var $surprisetalk$elm_bulma$Bulma$Columns$column = function (_v0) {
-	var widths = _v0.al;
-	var offset = _v0.bb;
+	var widths = _v0.an;
+	var offset = _v0.bh;
 	return A2(
 		$surprisetalk$elm_bulma$Helpers$node,
 		'div',
@@ -8883,7 +8896,7 @@ var $surprisetalk$elm_bulma$Bulma$Columns$column = function (_v0) {
 			[
 				$surprisetalk$elm_bulma$Bulma$Classes$column,
 				function () {
-				var _v1 = widths.aD;
+				var _v1 = widths.aI;
 				if (!_v1.$) {
 					switch (_v1.a) {
 						case 0:
@@ -8928,7 +8941,7 @@ var $surprisetalk$elm_bulma$Bulma$Columns$column = function (_v0) {
 				}
 			}(),
 				function () {
-				var _v14 = widths.aS;
+				var _v14 = widths.aY;
 				if (!_v14.$) {
 					switch (_v14.a) {
 						case 0:
@@ -8973,7 +8986,7 @@ var $surprisetalk$elm_bulma$Bulma$Columns$column = function (_v0) {
 				}
 			}(),
 				function () {
-				var _v27 = widths.aq;
+				var _v27 = widths.at;
 				if (!_v27.$) {
 					switch (_v27.a) {
 						case 0:
@@ -9018,7 +9031,7 @@ var $surprisetalk$elm_bulma$Bulma$Columns$column = function (_v0) {
 				}
 			}(),
 				function () {
-				var _v40 = widths.aU;
+				var _v40 = widths.a_;
 				if (!_v40.$) {
 					switch (_v40.a) {
 						case 0:
@@ -9063,7 +9076,7 @@ var $surprisetalk$elm_bulma$Bulma$Columns$column = function (_v0) {
 				}
 			}(),
 				function () {
-				var _v53 = widths.au;
+				var _v53 = widths.ay;
 				if (!_v53.$) {
 					switch (_v53.a) {
 						case 0:
@@ -9139,13 +9152,13 @@ var $surprisetalk$elm_bulma$Bulma$Columns$column = function (_v0) {
 };
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Auto = 0;
 var $surprisetalk$elm_bulma$Bulma$Columns$columnModifiers = {
-	bb: 0,
-	al: {
-		aq: $elm$core$Maybe$Just(0),
-		au: $elm$core$Maybe$Just(0),
-		aD: $elm$core$Maybe$Just(0),
-		aS: $elm$core$Maybe$Just(0),
-		aU: $elm$core$Maybe$Just(0)
+	bh: 0,
+	an: {
+		at: $elm$core$Maybe$Just(0),
+		ay: $elm$core$Maybe$Just(0),
+		aI: $elm$core$Maybe$Just(0),
+		aY: $elm$core$Maybe$Just(0),
+		a_: $elm$core$Maybe$Just(0)
 	}
 };
 var $surprisetalk$elm_bulma$Bulma$Classes$columns = $elm$html$Html$Attributes$class('columns');
@@ -9163,10 +9176,10 @@ var $surprisetalk$elm_bulma$Bulma$Classes$isGapless = $elm$html$Html$Attributes$
 var $surprisetalk$elm_bulma$Bulma$Classes$isMobile = $elm$html$Html$Attributes$class('is-mobile');
 var $surprisetalk$elm_bulma$Bulma$Classes$isMultiline = $elm$html$Html$Attributes$class('is-multiline');
 var $surprisetalk$elm_bulma$Bulma$Columns$columns = function (_v0) {
-	var centered = _v0.aX;
-	var multiline = _v0.aE;
-	var gap = _v0.bI;
-	var display = _v0.a1;
+	var centered = _v0.ar;
+	var multiline = _v0.aJ;
+	var gap = _v0.ba;
+	var display = _v0.av;
 	return A2(
 		$surprisetalk$elm_bulma$Helpers$node,
 		'div',
@@ -9230,11 +9243,11 @@ var $surprisetalk$elm_bulma$Bulma$Columns$columns = function (_v0) {
 };
 var $surprisetalk$elm_bulma$Bulma$Columns$Gap3 = 3;
 var $surprisetalk$elm_bulma$Bulma$Columns$TabletAndBeyond = 1;
-var $surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers = {aX: false, a1: 1, bI: 3, aE: false};
+var $surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers = {ar: false, av: 1, ba: 3, aJ: false};
 var $author$project$Main$Eat = function (a) {
 	return {$: 1, a: a};
 };
-var $surprisetalk$elm_bulma$Bulma$Elements$H2 = 1;
+var $surprisetalk$elm_bulma$Bulma$Elements$H3 = 2;
 var $surprisetalk$elm_bulma$Bulma$Elements$OneByOne = function (a) {
 	return {$: 1, a: a};
 };
@@ -9389,7 +9402,7 @@ var $author$project$Main$foodCard = function (maybeFood) {
 				[
 					A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
 					$elm$html$Html$Events$onClick(
-					$author$project$Main$Eat(food.bt))
+					$author$project$Main$Eat(food.bB))
 				]),
 			_List_fromArray(
 				[
@@ -9406,34 +9419,34 @@ var $author$project$Main$foodCard = function (maybeFood) {
 							$elm$html$Html$img,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$src(food.A),
+									$elm$html$Html$Attributes$src(food.C),
 									A2($elm$html$Html$Attributes$style, 'border-radius', '10px')
 								]),
 							_List_Nil)
 						])),
 					A3(
 					$surprisetalk$elm_bulma$Bulma$Elements$title,
-					1,
+					2,
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('has-text-centered')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text(food._)
+							$elm$html$Html$text(food.aa)
 						]))
 				]));
 	}
 };
 var $surprisetalk$elm_bulma$Bulma$Classes$hasTextCentered = $elm$html$Html$Attributes$class('has-text-centered');
 var $surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered = $surprisetalk$elm_bulma$Bulma$Classes$hasTextCentered;
-var $author$project$Main$foodPair = F2(
-	function (food1, food2) {
+var $author$project$Main$foodPair = F3(
+	function (foods, i, j) {
 		return A3(
 			$surprisetalk$elm_bulma$Bulma$Columns$columns,
 			_Utils_update(
 				$surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers,
-				{aX: true, a1: 0, bI: 2}),
+				{ar: true, av: 0, ba: 2}),
 			_List_Nil,
 			_List_fromArray(
 				[
@@ -9447,7 +9460,8 @@ var $author$project$Main$foodPair = F2(
 						]),
 					_List_fromArray(
 						[
-							$author$project$Main$foodCard(food1)
+							$author$project$Main$foodCard(
+							A2($elm$core$Array$get, i, foods))
 						])),
 					A3(
 					$surprisetalk$elm_bulma$Bulma$Columns$column,
@@ -9459,10 +9473,74 @@ var $author$project$Main$foodPair = F2(
 						]),
 					_List_fromArray(
 						[
-							$author$project$Main$foodCard(food2)
+							$author$project$Main$foodCard(
+							A2($elm$core$Array$get, j, foods))
 						]))
 				]));
 	});
+var $author$project$Main$foodRow = function (foods) {
+	return A3(
+		$surprisetalk$elm_bulma$Bulma$Columns$columns,
+		_Utils_update(
+			$surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers,
+			{ar: true, av: 0, ba: 2}),
+		_List_Nil,
+		_List_fromArray(
+			[
+				A3(
+				$surprisetalk$elm_bulma$Bulma$Columns$column,
+				$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('is-3'),
+						$surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$foodCard(
+						A2($elm$core$Array$get, 0, foods))
+					])),
+				A3(
+				$surprisetalk$elm_bulma$Bulma$Columns$column,
+				$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('is-3'),
+						$surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$foodCard(
+						A2($elm$core$Array$get, 1, foods))
+					])),
+				A3(
+				$surprisetalk$elm_bulma$Bulma$Columns$column,
+				$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('is-3'),
+						$surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$foodCard(
+						A2($elm$core$Array$get, 2, foods))
+					])),
+				A3(
+				$surprisetalk$elm_bulma$Bulma$Columns$column,
+				$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('is-3'),
+						$surprisetalk$elm_bulma$Bulma$Modifiers$Typography$textCentered
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$foodCard(
+						A2($elm$core$Array$get, 3, foods))
+					]))
+			]));
+};
 var $elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -9552,7 +9630,7 @@ var $mdgriffith$elm_style_animation$Animation$Render$pathCmdValue = function (cm
 				function (_v11) {
 					var x = _v11.a;
 					var y = _v11.b;
-					return $elm$core$String$fromFloat(x.bR) + (',' + $elm$core$String$fromFloat(y.bR));
+					return $elm$core$String$fromFloat(x.bY) + (',' + $elm$core$String$fromFloat(y.bY));
 				},
 				coords));
 	};
@@ -9560,35 +9638,35 @@ var $mdgriffith$elm_style_animation$Animation$Render$pathCmdValue = function (cm
 		case 0:
 			var x = cmd.a;
 			var y = cmd.b;
-			return 'm ' + ($elm$core$String$fromFloat(x.bR) + (',' + $elm$core$String$fromFloat(y.bR)));
+			return 'm ' + ($elm$core$String$fromFloat(x.bY) + (',' + $elm$core$String$fromFloat(y.bY)));
 		case 1:
 			var x = cmd.a;
 			var y = cmd.b;
-			return 'M ' + ($elm$core$String$fromFloat(x.bR) + (',' + $elm$core$String$fromFloat(y.bR)));
+			return 'M ' + ($elm$core$String$fromFloat(x.bY) + (',' + $elm$core$String$fromFloat(y.bY)));
 		case 2:
 			var x = cmd.a;
 			var y = cmd.b;
-			return 'l ' + ($elm$core$String$fromFloat(x.bR) + (',' + $elm$core$String$fromFloat(y.bR)));
+			return 'l ' + ($elm$core$String$fromFloat(x.bY) + (',' + $elm$core$String$fromFloat(y.bY)));
 		case 3:
 			var x = cmd.a;
 			var y = cmd.b;
-			return 'L ' + ($elm$core$String$fromFloat(x.bR) + (',' + $elm$core$String$fromFloat(y.bR)));
+			return 'L ' + ($elm$core$String$fromFloat(x.bY) + (',' + $elm$core$String$fromFloat(y.bY)));
 		case 4:
 			var a = cmd.a;
-			return 'h ' + $elm$core$String$fromFloat(a.bR);
+			return 'h ' + $elm$core$String$fromFloat(a.bY);
 		case 5:
 			var a = cmd.a;
-			return 'H ' + $elm$core$String$fromFloat(a.bR);
+			return 'H ' + $elm$core$String$fromFloat(a.bY);
 		case 6:
 			var a = cmd.a;
-			return 'v ' + $elm$core$String$fromFloat(a.bR);
+			return 'v ' + $elm$core$String$fromFloat(a.bY);
 		case 7:
 			var a = cmd.a;
-			return 'V ' + $elm$core$String$fromFloat(a.bR);
+			return 'V ' + $elm$core$String$fromFloat(a.bY);
 		case 8:
-			var control1 = cmd.a.U;
-			var control2 = cmd.a.V;
-			var point = cmd.a.w;
+			var control1 = cmd.a.W;
+			var control2 = cmd.a.X;
+			var point = cmd.a.y;
 			var _v1 = point;
 			var p1x = _v1.a;
 			var p1y = _v1.b;
@@ -9598,11 +9676,11 @@ var $mdgriffith$elm_style_animation$Animation$Render$pathCmdValue = function (cm
 			var _v3 = control1;
 			var c1x = _v3.a;
 			var c1y = _v3.b;
-			return 'c ' + ($elm$core$String$fromFloat(c1x.bR) + (' ' + ($elm$core$String$fromFloat(c1y.bR) + (', ' + ($elm$core$String$fromFloat(c2x.bR) + (' ' + ($elm$core$String$fromFloat(c2y.bR) + (', ' + ($elm$core$String$fromFloat(p1x.bR) + (' ' + $elm$core$String$fromFloat(p1y.bR)))))))))));
+			return 'c ' + ($elm$core$String$fromFloat(c1x.bY) + (' ' + ($elm$core$String$fromFloat(c1y.bY) + (', ' + ($elm$core$String$fromFloat(c2x.bY) + (' ' + ($elm$core$String$fromFloat(c2y.bY) + (', ' + ($elm$core$String$fromFloat(p1x.bY) + (' ' + $elm$core$String$fromFloat(p1y.bY)))))))))));
 		case 9:
-			var control1 = cmd.a.U;
-			var control2 = cmd.a.V;
-			var point = cmd.a.w;
+			var control1 = cmd.a.W;
+			var control2 = cmd.a.X;
+			var point = cmd.a.y;
 			var _v4 = point;
 			var p1x = _v4.a;
 			var p1y = _v4.b;
@@ -9612,27 +9690,27 @@ var $mdgriffith$elm_style_animation$Animation$Render$pathCmdValue = function (cm
 			var _v6 = control1;
 			var c1x = _v6.a;
 			var c1y = _v6.b;
-			return 'C ' + ($elm$core$String$fromFloat(c1x.bR) + (' ' + ($elm$core$String$fromFloat(c1y.bR) + (', ' + ($elm$core$String$fromFloat(c2x.bR) + (' ' + ($elm$core$String$fromFloat(c2y.bR) + (', ' + ($elm$core$String$fromFloat(p1x.bR) + (' ' + $elm$core$String$fromFloat(p1y.bR)))))))))));
+			return 'C ' + ($elm$core$String$fromFloat(c1x.bY) + (' ' + ($elm$core$String$fromFloat(c1y.bY) + (', ' + ($elm$core$String$fromFloat(c2x.bY) + (' ' + ($elm$core$String$fromFloat(c2y.bY) + (', ' + ($elm$core$String$fromFloat(p1x.bY) + (' ' + $elm$core$String$fromFloat(p1y.bY)))))))))));
 		case 10:
-			var control = cmd.a.T;
-			var point = cmd.a.w;
+			var control = cmd.a.V;
+			var point = cmd.a.y;
 			var _v7 = point;
 			var p1x = _v7.a;
 			var p1y = _v7.b;
 			var _v8 = control;
 			var c1x = _v8.a;
 			var c1y = _v8.b;
-			return 'q ' + ($elm$core$String$fromFloat(c1x.bR) + (' ' + ($elm$core$String$fromFloat(c1y.bR) + (', ' + ($elm$core$String$fromFloat(p1x.bR) + (' ' + $elm$core$String$fromFloat(p1y.bR)))))));
+			return 'q ' + ($elm$core$String$fromFloat(c1x.bY) + (' ' + ($elm$core$String$fromFloat(c1y.bY) + (', ' + ($elm$core$String$fromFloat(p1x.bY) + (' ' + $elm$core$String$fromFloat(p1y.bY)))))));
 		case 11:
-			var control = cmd.a.T;
-			var point = cmd.a.w;
+			var control = cmd.a.V;
+			var point = cmd.a.y;
 			var _v9 = point;
 			var p1x = _v9.a;
 			var p1y = _v9.b;
 			var _v10 = control;
 			var c1x = _v10.a;
 			var c1y = _v10.b;
-			return 'Q ' + ($elm$core$String$fromFloat(c1x.bR) + (' ' + ($elm$core$String$fromFloat(c1y.bR) + (', ' + ($elm$core$String$fromFloat(p1x.bR) + (' ' + $elm$core$String$fromFloat(p1y.bR)))))));
+			return 'Q ' + ($elm$core$String$fromFloat(c1x.bY) + (' ' + ($elm$core$String$fromFloat(c1y.bY) + (', ' + ($elm$core$String$fromFloat(p1x.bY) + (' ' + $elm$core$String$fromFloat(p1y.bY)))))));
 		case 12:
 			var points = cmd.a;
 			return 't ' + renderPoints(points);
@@ -9647,33 +9725,33 @@ var $mdgriffith$elm_style_animation$Animation$Render$pathCmdValue = function (cm
 			return 'S ' + renderPoints(points);
 		case 16:
 			var arc = cmd.a;
-			var deltaAngle = arc.W.bR - arc.ac.bR;
+			var deltaAngle = arc.Y.bY - arc.ad.bY;
 			if (_Utils_cmp(deltaAngle, 360 - 1.0e-6) > 0) {
-				var dy = arc.aa.bR * $elm$core$Basics$sin(
-					$elm$core$Basics$degrees(arc.ac.bR));
-				var dx = arc.aa.bR * $elm$core$Basics$cos(
-					$elm$core$Basics$degrees(arc.ac.bR));
-				return 'A ' + ($elm$core$String$fromFloat(arc.aa.bR) + (',' + ($elm$core$String$fromFloat(arc.aa.bR) + (',0,1,1,' + ($elm$core$String$fromFloat(arc.bx.bR - dx) + (',' + ($elm$core$String$fromFloat(arc.by.bR - dy) + (' A ' + ($elm$core$String$fromFloat(arc.aa.bR) + (',' + ($elm$core$String$fromFloat(arc.aa.bR) + (',0,1,1,' + ($elm$core$String$fromFloat(arc.bx.bR + dx) + (',' + $elm$core$String$fromFloat(arc.by.bR + dy)))))))))))))));
+				var dy = arc.ab.bY * $elm$core$Basics$sin(
+					$elm$core$Basics$degrees(arc.ad.bY));
+				var dx = arc.ab.bY * $elm$core$Basics$cos(
+					$elm$core$Basics$degrees(arc.ad.bY));
+				return 'A ' + ($elm$core$String$fromFloat(arc.ab.bY) + (',' + ($elm$core$String$fromFloat(arc.ab.bY) + (',0,1,1,' + ($elm$core$String$fromFloat(arc.bF.bY - dx) + (',' + ($elm$core$String$fromFloat(arc.bG.bY - dy) + (' A ' + ($elm$core$String$fromFloat(arc.ab.bY) + (',' + ($elm$core$String$fromFloat(arc.ab.bY) + (',0,1,1,' + ($elm$core$String$fromFloat(arc.bF.bY + dx) + (',' + $elm$core$String$fromFloat(arc.bG.bY + dy)))))))))))))));
 			} else {
-				return 'A ' + ($elm$core$String$fromFloat(arc.aa.bR) + (',' + ($elm$core$String$fromFloat(arc.aa.bR) + (' 0 ' + (((deltaAngle >= 180) ? '1' : '0') + (' ' + ('1' + (' ' + ($elm$core$String$fromFloat(
-					arc.bx.bR + (arc.aa.bR * $elm$core$Basics$cos(
-						$elm$core$Basics$degrees(arc.W.bR)))) + (',' + $elm$core$String$fromFloat(
-					arc.by.bR + (arc.aa.bR * $elm$core$Basics$sin(
-						$elm$core$Basics$degrees(arc.W.bR))))))))))))));
+				return 'A ' + ($elm$core$String$fromFloat(arc.ab.bY) + (',' + ($elm$core$String$fromFloat(arc.ab.bY) + (' 0 ' + (((deltaAngle >= 180) ? '1' : '0') + (' ' + ('1' + (' ' + ($elm$core$String$fromFloat(
+					arc.bF.bY + (arc.ab.bY * $elm$core$Basics$cos(
+						$elm$core$Basics$degrees(arc.Y.bY)))) + (',' + $elm$core$String$fromFloat(
+					arc.bG.bY + (arc.ab.bY * $elm$core$Basics$sin(
+						$elm$core$Basics$degrees(arc.Y.bY))))))))))))));
 			}
 		case 17:
 			var arc = cmd.a;
-			var deltaAngle = arc.W.bR - arc.ac.bR;
+			var deltaAngle = arc.Y.bY - arc.ad.bY;
 			if (_Utils_cmp(deltaAngle, 360 - 1.0e-6) > 0) {
-				var dy = arc.aa.bR * $elm$core$Basics$sin(
-					$elm$core$Basics$degrees(arc.ac.bR));
-				var dx = arc.aa.bR * $elm$core$Basics$cos(
-					$elm$core$Basics$degrees(arc.ac.bR));
-				return 'A ' + ($elm$core$String$fromFloat(arc.aa.bR) + (',' + ($elm$core$String$fromFloat(arc.aa.bR) + (',0,1,0,' + ($elm$core$String$fromFloat(arc.bx.bR - dx) + (',' + ($elm$core$String$fromFloat(arc.by.bR - dy) + (' A ' + ($elm$core$String$fromFloat(arc.aa.bR) + (',' + ($elm$core$String$fromFloat(arc.aa.bR) + (',0,1,1,' + ($elm$core$String$fromFloat(arc.bx.bR + dx) + (',' + $elm$core$String$fromFloat(arc.by.bR + dy)))))))))))))));
+				var dy = arc.ab.bY * $elm$core$Basics$sin(
+					$elm$core$Basics$degrees(arc.ad.bY));
+				var dx = arc.ab.bY * $elm$core$Basics$cos(
+					$elm$core$Basics$degrees(arc.ad.bY));
+				return 'A ' + ($elm$core$String$fromFloat(arc.ab.bY) + (',' + ($elm$core$String$fromFloat(arc.ab.bY) + (',0,1,0,' + ($elm$core$String$fromFloat(arc.bF.bY - dx) + (',' + ($elm$core$String$fromFloat(arc.bG.bY - dy) + (' A ' + ($elm$core$String$fromFloat(arc.ab.bY) + (',' + ($elm$core$String$fromFloat(arc.ab.bY) + (',0,1,1,' + ($elm$core$String$fromFloat(arc.bF.bY + dx) + (',' + $elm$core$String$fromFloat(arc.bG.bY + dy)))))))))))))));
 			} else {
-				return 'A ' + ($elm$core$String$fromFloat(arc.aa.bR) + (',' + ($elm$core$String$fromFloat(arc.aa.bR) + (' 0 ' + ((((arc.ac.bR - arc.W.bR) >= 180) ? '1' : '0') + (' ' + ('0' + (' ' + ($elm$core$String$fromFloat(
-					arc.bx.bR + (arc.aa.bR * $elm$core$Basics$cos(arc.W.bR))) + (',' + $elm$core$String$fromFloat(
-					arc.by.bR + (arc.aa.bR * $elm$core$Basics$sin(arc.W.bR)))))))))))));
+				return 'A ' + ($elm$core$String$fromFloat(arc.ab.bY) + (',' + ($elm$core$String$fromFloat(arc.ab.bY) + (' 0 ' + ((((arc.ad.bY - arc.Y.bY) >= 180) ? '1' : '0') + (' ' + ('0' + (' ' + ($elm$core$String$fromFloat(
+					arc.bF.bY + (arc.ab.bY * $elm$core$Basics$cos(arc.Y.bY))) + (',' + $elm$core$String$fromFloat(
+					arc.bG.bY + (arc.ab.bY * $elm$core$Basics$sin(arc.Y.bY)))))))))))));
 			}
 		default:
 			return 'z';
@@ -9691,84 +9769,84 @@ var $mdgriffith$elm_style_animation$Animation$Render$propertyValue = F2(
 				var b = prop.d;
 				var a = prop.e;
 				return 'rgba(' + ($elm$core$String$fromInt(
-					$elm$core$Basics$round(r.bR)) + (',' + ($elm$core$String$fromInt(
-					$elm$core$Basics$round(g.bR)) + (',' + ($elm$core$String$fromInt(
-					$elm$core$Basics$round(b.bR)) + (',' + ($elm$core$String$fromFloat(a.bR) + ')')))))));
+					$elm$core$Basics$round(r.bY)) + (',' + ($elm$core$String$fromInt(
+					$elm$core$Basics$round(g.bY)) + (',' + ($elm$core$String$fromInt(
+					$elm$core$Basics$round(b.bY)) + (',' + ($elm$core$String$fromFloat(a.bY) + ')')))))));
 			case 2:
 				var name = prop.a;
 				var inset = prop.b;
 				var shadow = prop.c;
-				return (inset ? 'inset ' : '') + ($elm$core$String$fromFloat(shadow.t.bR) + ('px' + (' ' + ($elm$core$String$fromFloat(shadow.u.bR) + ('px' + (' ' + ($elm$core$String$fromFloat(shadow.r.bR) + ('px' + (' ' + ((((name === 'text-shadow') || (name === 'drop-shadow')) ? '' : ($elm$core$String$fromFloat(shadow.x.bR) + ('px' + ' '))) + ('rgba(' + ($elm$core$String$fromInt(
-					$elm$core$Basics$round(shadow.o.bR)) + (', ' + ($elm$core$String$fromInt(
-					$elm$core$Basics$round(shadow.n.bR)) + (', ' + ($elm$core$String$fromInt(
-					$elm$core$Basics$round(shadow.j.bR)) + (', ' + ($elm$core$String$fromFloat(shadow.i.bR) + ')'))))))))))))))))));
+				return (inset ? 'inset ' : '') + ($elm$core$String$fromFloat(shadow.v.bY) + ('px' + (' ' + ($elm$core$String$fromFloat(shadow.w.bY) + ('px' + (' ' + ($elm$core$String$fromFloat(shadow.s.bY) + ('px' + (' ' + ((((name === 'text-shadow') || (name === 'drop-shadow')) ? '' : ($elm$core$String$fromFloat(shadow.A.bY) + ('px' + ' '))) + ('rgba(' + ($elm$core$String$fromInt(
+					$elm$core$Basics$round(shadow.q.bY)) + (', ' + ($elm$core$String$fromInt(
+					$elm$core$Basics$round(shadow.p.bY)) + (', ' + ($elm$core$String$fromInt(
+					$elm$core$Basics$round(shadow.k.bY)) + (', ' + ($elm$core$String$fromFloat(shadow.j.bY) + ')'))))))))))))))))));
 			case 3:
 				var x = prop.b;
 				return _Utils_ap(
-					$elm$core$String$fromFloat(x.bR),
-					x.bW);
+					$elm$core$String$fromFloat(x.bY),
+					x.b1);
 			case 4:
 				var x = prop.b;
 				var y = prop.c;
 				return _Utils_ap(
-					$elm$core$String$fromFloat(x.bR),
+					$elm$core$String$fromFloat(x.bY),
 					_Utils_ap(
-						x.bW,
+						x.b1,
 						_Utils_ap(
 							delim,
 							_Utils_ap(
-								$elm$core$String$fromFloat(y.bR),
-								y.bW))));
+								$elm$core$String$fromFloat(y.bY),
+								y.b1))));
 			case 5:
 				var x = prop.b;
 				var y = prop.c;
 				var z = prop.d;
 				return _Utils_ap(
-					$elm$core$String$fromFloat(x.bR),
+					$elm$core$String$fromFloat(x.bY),
 					_Utils_ap(
-						x.bW,
+						x.b1,
 						_Utils_ap(
 							delim,
 							_Utils_ap(
-								$elm$core$String$fromFloat(y.bR),
+								$elm$core$String$fromFloat(y.bY),
 								_Utils_ap(
-									y.bW,
+									y.b1,
 									_Utils_ap(
 										delim,
 										_Utils_ap(
-											$elm$core$String$fromFloat(z.bR),
-											z.bW)))))));
+											$elm$core$String$fromFloat(z.bY),
+											z.b1)))))));
 			case 6:
 				var w = prop.b;
 				var x = prop.c;
 				var y = prop.d;
 				var z = prop.e;
 				return _Utils_ap(
-					$elm$core$String$fromFloat(w.bR),
+					$elm$core$String$fromFloat(w.bY),
 					_Utils_ap(
-						w.bW,
+						w.b1,
 						_Utils_ap(
 							delim,
 							_Utils_ap(
-								$elm$core$String$fromFloat(x.bR),
+								$elm$core$String$fromFloat(x.bY),
 								_Utils_ap(
-									x.bW,
+									x.b1,
 									_Utils_ap(
 										delim,
 										_Utils_ap(
-											$elm$core$String$fromFloat(y.bR),
+											$elm$core$String$fromFloat(y.bY),
 											_Utils_ap(
-												y.bW,
+												y.b1,
 												_Utils_ap(
 													delim,
 													_Utils_ap(
-														$elm$core$String$fromFloat(z.bR),
-														z.bW))))))))));
+														$elm$core$String$fromFloat(z.bY),
+														z.b1))))))))));
 			case 7:
 				var x = prop.b;
 				return _Utils_ap(
-					$elm$core$String$fromFloat(x.bR),
-					x.bW);
+					$elm$core$String$fromFloat(x.bY),
+					x.b1);
 			case 8:
 				var coords = prop.a;
 				return A2(
@@ -9779,7 +9857,7 @@ var $mdgriffith$elm_style_animation$Animation$Render$propertyValue = F2(
 						function (_v1) {
 							var x = _v1.a;
 							var y = _v1.b;
-							return $elm$core$String$fromFloat(x.bR) + (',' + $elm$core$String$fromFloat(y.bR));
+							return $elm$core$String$fromFloat(x.bY) + (',' + $elm$core$String$fromFloat(y.bY));
 						},
 						coords));
 			default:
@@ -9907,14 +9985,14 @@ var $mdgriffith$elm_style_animation$Animation$Render$render3dRotation = function
 		var x = prop.b;
 		var y = prop.c;
 		var z = prop.d;
-		return 'rotateX(' + ($elm$core$String$fromFloat(x.bR) + (x.bW + (') rotateY(' + ($elm$core$String$fromFloat(y.bR) + (y.bW + (') rotateZ(' + ($elm$core$String$fromFloat(z.bR) + (z.bW + ')'))))))));
+		return 'rotateX(' + ($elm$core$String$fromFloat(x.bY) + (x.b1 + (') rotateY(' + ($elm$core$String$fromFloat(y.bY) + (y.b1 + (') rotateZ(' + ($elm$core$String$fromFloat(z.bY) + (z.b1 + ')'))))))));
 	} else {
 		return '';
 	}
 };
 var $mdgriffith$elm_style_animation$Animation$Render$renderValues = function (_v0) {
 	var model = _v0;
-	var _v1 = A2($elm$core$List$partition, $mdgriffith$elm_style_animation$Animation$Render$isAttr, model.bq);
+	var _v1 = A2($elm$core$List$partition, $mdgriffith$elm_style_animation$Animation$Render$isAttr, model.by);
 	var attrProps = _v1.a;
 	var styleProps = _v1.b;
 	var _v2 = A3(
@@ -10136,89 +10214,31 @@ var $elm$core$List$take = F2(
 	});
 var $author$project$Main$foodGrid = function (model) {
 	var foods = $elm$core$Array$fromList(
-		A2($elm$core$List$take, 4, model.g.X));
-	var food4 = A2($elm$core$Array$get, 3, foods);
-	var food3 = A2($elm$core$Array$get, 2, foods);
-	var food2 = A2($elm$core$Array$get, 1, foods);
-	var food1 = A2($elm$core$Array$get, 0, foods);
+		A2($elm$core$List$take, 4, model.h.Z));
 	return A2(
 		$elm$html$Html$div,
-		$mdgriffith$elm_style_animation$Animation$render(model.g.e),
-		_List_fromArray(
-			[
-				A2($author$project$Main$foodPair, food1, food2),
-				A2($author$project$Main$foodPair, food3, food4)
-			]));
+		$mdgriffith$elm_style_animation$Animation$render(model.h.e),
+		function () {
+			var _v0 = model.l.a6;
+			if (!_v0) {
+				return _List_fromArray(
+					[
+						A3($author$project$Main$foodPair, foods, 0, 1),
+						A3($author$project$Main$foodPair, foods, 2, 3)
+					]);
+			} else {
+				return _List_fromArray(
+					[
+						$author$project$Main$foodRow(foods)
+					]);
+			}
+		}());
 };
 var $author$project$Main$ChangeHero = function (a) {
 	return {$: 4, a: a};
 };
 var $surprisetalk$elm_bulma$Bulma$Elements$H1 = 0;
-var $author$project$Main$bestResultText = F2(
-	function (heroId, brs) {
-		var bestResults = A2(
-			$elm$core$List$filter,
-			function (x) {
-				return _Utils_eq(x.ag, heroId);
-			},
-			brs);
-		var br = A2(
-			$elm$core$Array$get,
-			0,
-			$elm$core$Array$fromList(bestResults));
-		if (br.$ === 1) {
-			return $elm$html$Html$text('');
-		} else {
-			var val = br.a;
-			return $elm$html$Html$text(
-				$elm$core$String$fromInt(val.B));
-		}
-	});
-var $author$project$Main$circle = F4(
-	function (color, side, bottom, child) {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$style, 'border-radius', '50%'),
-					A2($elm$html$Html$Attributes$style, 'background-color', color),
-					A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-					A2($elm$html$Html$Attributes$style, 'width', '100px'),
-					A2($elm$html$Html$Attributes$style, 'height', '100px'),
-					A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
-					A2($elm$html$Html$Attributes$style, 'vertical-align', 'middle'),
-					A2($elm$html$Html$Attributes$style, 'bottom', bottom),
-					A2($elm$html$Html$Attributes$style, 'left', side)
-				]),
-			_List_fromArray(
-				[child]));
-	});
-var $elm$html$Html$span = _VirtualDom_node('span');
-var $author$project$Main$bestScore = F3(
-	function (heroId, bestResults, screen) {
-		var bottom = function () {
-			if (screen === 1) {
-				return '150px';
-			} else {
-				return '25px';
-			}
-		}();
-		return A4(
-			$author$project$Main$circle,
-			'gold',
-			'0px',
-			bottom,
-			A2(
-				$elm$html$Html$span,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'font-size', '4.5rem')
-					]),
-				_List_fromArray(
-					[
-						A2($author$project$Main$bestResultText, heroId, bestResults)
-					])));
-	});
+var $surprisetalk$elm_bulma$Bulma$Elements$H2 = 1;
 var $surprisetalk$elm_bulma$Bulma$Classes$card = $elm$html$Html$Attributes$class('card');
 var $surprisetalk$elm_bulma$Bulma$Components$card = A2(
 	$surprisetalk$elm_bulma$Helpers$node,
@@ -10259,6 +10279,63 @@ var $surprisetalk$elm_bulma$Bulma$Layout$mediaLeft = A2(
 	'div',
 	_List_fromArray(
 		[$surprisetalk$elm_bulma$Bulma$Classes$mediaLeft]));
+var $author$project$Main$circle = F3(
+	function (color, ds, child) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$style, 'border-radius', '50%'),
+					A2($elm$html$Html$Attributes$style, 'background-color', color),
+					A2($elm$html$Html$Attributes$style, 'position', 'relative'),
+					A2($elm$html$Html$Attributes$style, 'width', ds.aP),
+					A2($elm$html$Html$Attributes$style, 'height', ds.aP),
+					A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
+					A2($elm$html$Html$Attributes$style, 'vertical-align', 'middle'),
+					A2($elm$html$Html$Attributes$style, 'bottom', ds.bv),
+					A2($elm$html$Html$Attributes$style, 'left', '')
+				]),
+			_List_fromArray(
+				[child]));
+	});
+var $author$project$Main$resultText = F2(
+	function (heroId, brs) {
+		var bestResults = A2(
+			$elm$core$List$filter,
+			function (x) {
+				return _Utils_eq(x.ai, heroId);
+			},
+			brs);
+		var br = A2(
+			$elm$core$Array$get,
+			0,
+			$elm$core$Array$fromList(bestResults));
+		if (br.$ === 1) {
+			return $elm$html$Html$text('');
+		} else {
+			var val = br.a;
+			return $elm$html$Html$text(
+				$elm$core$String$fromInt(val.z));
+		}
+	});
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $author$project$Main$score = F3(
+	function (heroId, results, model) {
+		return A3(
+			$author$project$Main$circle,
+			'gold',
+			model.l,
+			A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'font-size', model.l.bw)
+					]),
+				_List_fromArray(
+					[
+						A2($author$project$Main$resultText, heroId, results)
+					])));
+	});
 var $surprisetalk$elm_bulma$Bulma$Classes$subtitle = $elm$html$Html$Attributes$class('subtitle');
 var $surprisetalk$elm_bulma$Bulma$Elements$subtitle = function (size) {
 	return A2(
@@ -10340,7 +10417,7 @@ var $author$project$Main$heroList = function (model) {
 										$surprisetalk$elm_bulma$Bulma$Layout$mediaLeft,
 										_List_fromArray(
 											[
-												A2($elm$html$Html$Attributes$style, 'width', '40%')
+												A2($elm$html$Html$Attributes$style, 'width', model.l.aA)
 											]),
 										_List_fromArray(
 											[
@@ -10354,12 +10431,12 @@ var $author$project$Main$heroList = function (model) {
 														$elm$html$Html$img,
 														_List_fromArray(
 															[
-																$elm$html$Html$Attributes$src(x.A),
+																$elm$html$Html$Attributes$src(x.C),
 																$elm$html$Html$Attributes$class('is-rounded')
 															]),
 														_List_Nil)
 													])),
-												A3($author$project$Main$bestScore, x.Y, model.S, 0)
+												A3($author$project$Main$score, x.O, model.ah, model)
 											])),
 										A2(
 										$surprisetalk$elm_bulma$Bulma$Layout$mediaContent,
@@ -10372,7 +10449,7 @@ var $author$project$Main$heroList = function (model) {
 												_List_Nil,
 												_List_fromArray(
 													[
-														$elm$html$Html$text(x._)
+														$elm$html$Html$text(x.aa)
 													])),
 												A3(
 												$surprisetalk$elm_bulma$Bulma$Elements$subtitle,
@@ -10380,7 +10457,7 @@ var $author$project$Main$heroList = function (model) {
 												_List_Nil,
 												_List_fromArray(
 													[
-														$elm$html$Html$text(x.ap)
+														$elm$html$Html$text(x.as)
 													]))
 											]))
 									]))
@@ -10421,7 +10498,7 @@ var $surprisetalk$elm_bulma$Bulma$Components$modalContent = A2(
 	_List_fromArray(
 		[$surprisetalk$elm_bulma$Bulma$Classes$modalContent]));
 var $author$project$Main$gameModal = function (model) {
-	var isVisible = !model.ab;
+	var isVisible = !model.ac;
 	return A3(
 		$surprisetalk$elm_bulma$Bulma$Components$modal,
 		isVisible,
@@ -10465,47 +10542,30 @@ var $author$project$Main$gameModal = function (model) {
 					]))
 			]));
 };
-var $author$project$Main$currentScore = function (model) {
-	return A4(
-		$author$project$Main$circle,
-		'white',
-		'75px',
-		'150px',
-		A2(
-			$elm$html$Html$span,
-			_List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$style, 'font-size', '4.5rem')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(
-					$elm$core$String$fromInt(model.B))
-				])));
+var $author$project$Main$heart = function (size) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A3(
+				$surprisetalk$elm_bulma$Bulma$Elements$image,
+				$surprisetalk$elm_bulma$Bulma$Elements$OneByOne(size),
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src('images/hero/heart.png')
+							]),
+						_List_Nil)
+					]))
+			]));
 };
-var $surprisetalk$elm_bulma$Bulma$Elements$X128 = 6;
-var $author$project$Main$heart = A2(
-	$elm$html$Html$div,
-	_List_Nil,
-	_List_fromArray(
-		[
-			A3(
-			$surprisetalk$elm_bulma$Bulma$Elements$image,
-			$surprisetalk$elm_bulma$Bulma$Elements$OneByOne(6),
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$img,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$src('images/hero/heart.png')
-						]),
-					_List_Nil)
-				]))
-		]));
-var $author$project$Main$hpContainer = function (hp) {
-	var _v0 = hp.aj;
+var $author$project$Main$hpContainer = function (model) {
+	var _v0 = model.f.al;
 	switch (_v0) {
 		case 1:
 			return _List_fromArray(
@@ -10519,9 +10579,11 @@ var $author$project$Main$hpContainer = function (hp) {
 								$elm$html$Html$Attributes$class('is-4'),
 								A2($elm$html$Html$Attributes$style, 'opacity', '1')
 							]),
-						$mdgriffith$elm_style_animation$Animation$render(hp.e)),
+						$mdgriffith$elm_style_animation$Animation$render(model.f.e)),
 					_List_fromArray(
-						[$author$project$Main$heart])),
+						[
+							$author$project$Main$heart(model.l.I)
+						])),
 					A3(
 					$surprisetalk$elm_bulma$Bulma$Columns$column,
 					$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
@@ -10542,7 +10604,9 @@ var $author$project$Main$hpContainer = function (hp) {
 							$elm$html$Html$Attributes$class('is-4')
 						]),
 					_List_fromArray(
-						[$author$project$Main$heart])),
+						[
+							$author$project$Main$heart(model.l.I)
+						])),
 					A3(
 					$surprisetalk$elm_bulma$Bulma$Columns$column,
 					$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
@@ -10552,9 +10616,11 @@ var $author$project$Main$hpContainer = function (hp) {
 								$elm$html$Html$Attributes$class('is-4'),
 								A2($elm$html$Html$Attributes$style, 'opacity', '1')
 							]),
-						$mdgriffith$elm_style_animation$Animation$render(hp.e)),
+						$mdgriffith$elm_style_animation$Animation$render(model.f.e)),
 					_List_fromArray(
-						[$author$project$Main$heart])),
+						[
+							$author$project$Main$heart(model.l.I)
+						])),
 					A3(
 					$surprisetalk$elm_bulma$Bulma$Columns$column,
 					$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
@@ -10575,7 +10641,9 @@ var $author$project$Main$hpContainer = function (hp) {
 							$elm$html$Html$Attributes$class('is-4')
 						]),
 					_List_fromArray(
-						[$author$project$Main$heart])),
+						[
+							$author$project$Main$heart(model.l.I)
+						])),
 					A3(
 					$surprisetalk$elm_bulma$Bulma$Columns$column,
 					$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
@@ -10584,7 +10652,9 @@ var $author$project$Main$hpContainer = function (hp) {
 							$elm$html$Html$Attributes$class('is-4')
 						]),
 					_List_fromArray(
-						[$author$project$Main$heart])),
+						[
+							$author$project$Main$heart(model.l.I)
+						])),
 					A3(
 					$surprisetalk$elm_bulma$Bulma$Columns$column,
 					$surprisetalk$elm_bulma$Bulma$Columns$columnModifiers,
@@ -10594,9 +10664,11 @@ var $author$project$Main$hpContainer = function (hp) {
 								$elm$html$Html$Attributes$class('is-4'),
 								A2($elm$html$Html$Attributes$style, 'opacity', '1')
 							]),
-						$mdgriffith$elm_style_animation$Animation$render(hp.e)),
+						$mdgriffith$elm_style_animation$Animation$render(model.f.e)),
 					_List_fromArray(
-						[$author$project$Main$heart]))
+						[
+							$author$project$Main$heart(model.l.I)
+						]))
 				]);
 		default:
 			return _List_Nil;
@@ -10607,7 +10679,7 @@ var $author$project$Main$hpPanel = function (model) {
 		$surprisetalk$elm_bulma$Bulma$Columns$columns,
 		_Utils_update(
 			$surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers,
-			{aX: true, a1: 0}),
+			{ar: true, av: 0}),
 		_List_fromArray(
 			[
 				A2($elm$html$Html$Attributes$style, 'text-align', '-webkit-center')
@@ -10638,7 +10710,7 @@ var $author$project$Main$heroPanel = function (model) {
 								$surprisetalk$elm_bulma$Bulma$Layout$mediaLeft,
 								_List_fromArray(
 									[
-										A2($elm$html$Html$Attributes$style, 'width', '40%')
+										A2($elm$html$Html$Attributes$style, 'width', model.l.aA)
 									]),
 								_List_fromArray(
 									[
@@ -10652,13 +10724,19 @@ var $author$project$Main$heroPanel = function (model) {
 												$elm$html$Html$img,
 												_List_fromArray(
 													[
-														$elm$html$Html$Attributes$src(model.y.A),
+														$elm$html$Html$Attributes$src(model.t.C),
 														$elm$html$Html$Attributes$class('is-rounded')
 													]),
 												_List_Nil)
 											])),
-										A3($author$project$Main$bestScore, model.y.Y, model.S, 1),
-										$author$project$Main$currentScore(model)
+										A3(
+										$author$project$Main$score,
+										model.t.O,
+										_List_fromArray(
+											[
+												A2($author$project$Main$BestResult, model.t.O, model.z)
+											]),
+										model)
 									])),
 								A2(
 								$surprisetalk$elm_bulma$Bulma$Layout$mediaContent,
@@ -10671,7 +10749,7 @@ var $author$project$Main$heroPanel = function (model) {
 										_List_Nil,
 										_List_fromArray(
 											[
-												$elm$html$Html$text(model.y._)
+												$elm$html$Html$text(model.t.aa)
 											])),
 										A3(
 										$surprisetalk$elm_bulma$Bulma$Elements$subtitle,
@@ -10679,11 +10757,11 @@ var $author$project$Main$heroPanel = function (model) {
 										_List_Nil,
 										_List_fromArray(
 											[
-												$elm$html$Html$text(model.y.ap)
+												$elm$html$Html$text(model.t.as)
 											]))
 									]))
 							])),
-						$author$project$Main$hpPanel(model.q)
+						$author$project$Main$hpPanel(model)
 					]))
 			]));
 };
@@ -10762,13 +10840,13 @@ var $author$project$Main$font = A3(
 	_List_Nil);
 var $author$project$Main$imagesPreload = function (model) {
 	var heroImages = _List_fromArray(
-		[$author$project$Main$arnold.A, $author$project$Main$chuck.A, $author$project$Main$terry.A]);
+		[$author$project$Main$arnold.C, $author$project$Main$chuck.C, $author$project$Main$terry.C]);
 	var foodImages = A2(
 		$elm$core$List$map,
 		function ($) {
-			return $.A;
+			return $.C;
 		},
-		model.g.X);
+		model.h.Z);
 	var allImages = _Utils_ap(foodImages, heroImages);
 	return A2(
 		$elm$html$Html$div,
@@ -10814,6 +10892,5 @@ var $author$project$Main$view = function (model) {
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
-	{bM: $author$project$Main$init, bT: $author$project$Main$subscriptions, bX: $author$project$Main$update, bZ: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(0))(0)}});}(this));
+	{bT: $author$project$Main$init, b_: $author$project$Main$subscriptions, b2: $author$project$Main$update, b4: $author$project$Main$view});
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$int)(0)}});}(this));
