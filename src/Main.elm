@@ -22,7 +22,7 @@ import Random.List exposing (shuffle)
 -- MAIN
 
 
-main : Program Int Model Msg
+main : Program () Model Msg
 main =
     Browser.element
         { init = init
@@ -37,29 +37,13 @@ main =
 
 
 type alias Model =
-    { device : Device
-    , screen : Screen
+    { screen : Screen
     , hero : Hero
     , foodPanel : FoodPanel
     , hp : Hp
     , score : Int
     , bestResults : List BestResult
     }
-
-
-type alias Device =
-    { deviceType : DeviceType
-    , scoreBottom : String
-    , scoreSize : String
-    , scoreFont : String
-    , heroImageWidth : String
-    , heartImageSize : ImageSize
-    }
-
-
-type DeviceType
-    = Phone
-    | Desktop
 
 
 type Screen
@@ -156,10 +140,9 @@ terry =
         ]
 
 
-init : Int -> ( Model, Cmd Msg )
-init size =
+init : () -> ( Model, Cmd Msg )
+init _ =
     ( Model
-        (detectDevice size)
         SelectHeroScreen
         arnold
         initFoodPanel
@@ -168,15 +151,6 @@ init size =
         [ BestResult 1 0, BestResult 2 0, BestResult 3 0 ]
     , generate Shuffle <| shuffle allFood
     )
-
-
-detectDevice : Int -> Device
-detectDevice size =
-    if size > 768 then
-        Device Desktop "50px" "50px" "2.25rem" "130px" X64
-
-    else
-        Device Phone "75px" "100px" "4rem" "250px" X128
 
 
 initFoodPanel : FoodPanel
@@ -290,7 +264,7 @@ update action model =
                         newBestResults =
                             selectBestResults model.bestResults (BestResult model.hero.id model.score)
                     in
-                    ( { model | hp = initHp, score = 0, bestResults = newBestResults, screen = newScreen }, Cmd.none )
+                    ( { model | bestResults = newBestResults, screen = newScreen }, Cmd.none )
 
                 PlayScreen ->
                     let
@@ -460,12 +434,12 @@ heroList model =
             card [ style "margin-top" "1.5rem" ]
                 [ cardContent []
                     [ media [ onClick <| ChangeHero x ]
-                        [ mediaLeft [ style "width" model.device.heroImageWidth ]
+                        [ mediaLeft [ style "width" "40%" ]
                             [ image (OneByOne Unbounded)
                                 []
                                 [ img [ src x.picture, class "is-rounded" ] []
                                 ]
-                            , score x.id model.bestResults model
+                            , bestScore x.id model.bestResults SelectHeroScreen
                             ]
                         , mediaContent []
                             [ title H1 [] [ text x.name ]
@@ -483,54 +457,36 @@ foodGrid model =
     let
         foods =
             Array.fromList <| List.take 4 model.foodPanel.foods
+
+        food1 =
+            Array.get 0 foods
+
+        food2 =
+            Array.get 1 foods
+
+        food3 =
+            Array.get 2 foods
+
+        food4 =
+            Array.get 3 foods
     in
     div (Animation.render model.foodPanel.animationState)
-        (case model.device.deviceType of
-            Phone ->
-                [ foodPair foods 0 1
-                , foodPair foods 2 3
-                ]
-
-            Desktop ->
-                [ foodRow foods
-                ]
-        )
-
-
-foodRow : Array Food -> Html Msg
-foodRow foods =
-    columns { columnsModifiers | centered = True, display = MobileAndBeyond, gap = Gap2 }
-        []
-        [ column columnModifiers
-            [ class "is-3", textCentered ]
-            [ foodCard <| Array.get 0 foods
-            ]
-        , column columnModifiers
-            [ class "is-3", textCentered ]
-            [ foodCard <| Array.get 1 foods
-            ]
-        , column columnModifiers
-            [ class "is-3", textCentered ]
-            [ foodCard <| Array.get 2 foods
-            ]
-        , column columnModifiers
-            [ class "is-3", textCentered ]
-            [ foodCard <| Array.get 3 foods
-            ]
+        [ foodPair food1 food2
+        , foodPair food3 food4
         ]
 
 
-foodPair : Array Food -> Int -> Int -> Html Msg
-foodPair foods i j =
+foodPair : Maybe Food -> Maybe Food -> Html Msg
+foodPair food1 food2 =
     columns { columnsModifiers | centered = True, display = MobileAndBeyond, gap = Gap2 }
         []
         [ column columnModifiers
             [ class "is-6", textCentered ]
-            [ foodCard <| Array.get i foods
+            [ foodCard food1
             ]
         , column columnModifiers
             [ class "is-6", textCentered ]
-            [ foodCard <| Array.get j foods
+            [ foodCard food2
             ]
         ]
 
@@ -547,7 +503,7 @@ foodCard maybeFood =
                     [ style "cursor" "pointer" ]
                     [ img [ src food.picture, style "border-radius" "10px" ] []
                     ]
-                , title H3
+                , title H2
                     [ class "has-text-centered" ]
                     [ text food.name
                     ]
@@ -559,48 +515,61 @@ heroPanel model =
     card [ class "mt-3", style "margin-top" "1.5rem" ]
         [ cardContent []
             [ media []
-                [ mediaLeft
-                    [ style "width" model.device.heroImageWidth
-                    ]
+                [ mediaLeft [ style "width" "40%" ]
                     [ image (OneByOne Unbounded)
                         []
                         [ img [ src model.hero.picture, class "is-rounded" ] []
                         ]
-                    , score model.hero.id [ BestResult model.hero.id model.score ] model
+                    , bestScore model.hero.id model.bestResults PlayScreen
+                    , currentScore model
                     ]
                 , mediaContent []
                     [ title H1 [] [ text model.hero.name ]
                     , subtitle H2 [] [ text model.hero.desc ]
                     ]
                 ]
-            , hpPanel model
+            , hpPanel model.hp
             ]
         ]
 
 
-score : Int -> List BestResult -> Model -> Html Msg
-score heroId results model =
-    circle "gold" model.device <| span [ style "font-size" model.device.scoreFont ] [ resultText heroId results ]
+currentScore : Model -> Html Msg
+currentScore model =
+    circle "white" "75px" "150px" <| span [ style "font-size" "4.5rem" ] [ text <| String.fromInt model.score ]
 
 
-circle : String -> Device -> Html Msg -> Html Msg
-circle color ds child =
+bestScore : Int -> List BestResult -> Screen -> Html Msg
+bestScore heroId bestResults screen =
+    let
+        bottom =
+            case screen of
+                PlayScreen ->
+                    "150px"
+
+                SelectHeroScreen ->
+                    "25px"
+    in
+    circle "gold" "0px" bottom <| span [ style "font-size" "4.5rem" ] [ bestResultText heroId bestResults ]
+
+
+circle : String -> String -> String -> Html Msg -> Html Msg
+circle color side bottom child =
     div
         [ style "border-radius" "50%"
         , style "background-color" color
-        , style "position" "relative"
-        , style "width" ds.scoreSize
-        , style "height" ds.scoreSize
+        , style "position" "absolute"
+        , style "width" "100px"
+        , style "height" "100px"
         , style "text-align" "center"
         , style "vertical-align" "middle"
-        , style "bottom" ds.scoreBottom
-        , style "left" ""
+        , style "bottom" bottom
+        , style "left" side
         ]
         [ child ]
 
 
-resultText : Int -> List BestResult -> Html Msg
-resultText heroId brs =
+bestResultText : Int -> List BestResult -> Html Msg
+bestResultText heroId brs =
     let
         bestResults =
             List.filter (\x -> x.heroId == heroId) brs
@@ -616,7 +585,7 @@ resultText heroId brs =
             text <| String.fromInt val.score
 
 
-hpPanel : Model -> Html Msg
+hpPanel : Hp -> Html Msg
 hpPanel model =
     columns { columnsModifiers | centered = True, display = MobileAndBeyond }
         [ style "text-align" "-webkit-center" ]
@@ -624,34 +593,34 @@ hpPanel model =
         hpContainer model
 
 
-hpContainer : Model -> List (Html Msg)
-hpContainer model =
-    case model.hp.value of
+hpContainer : Hp -> List (Html Msg)
+hpContainer hp =
+    case hp.value of
         1 ->
-            [ column columnModifiers ([ class "is-4", style "opacity" "1" ] ++ Animation.render model.hp.animationState) [ heart model.device.heartImageSize ]
+            [ column columnModifiers ([ class "is-4", style "opacity" "1" ] ++ Animation.render hp.animationState) [ heart ]
             , column columnModifiers [ class "is-8" ] []
             ]
 
         2 ->
-            [ column columnModifiers [ class "is-4" ] [ heart model.device.heartImageSize ]
-            , column columnModifiers ([ class "is-4", style "opacity" "1" ] ++ Animation.render model.hp.animationState) [ heart model.device.heartImageSize ]
+            [ column columnModifiers [ class "is-4" ] [ heart ]
+            , column columnModifiers ([ class "is-4", style "opacity" "1" ] ++ Animation.render hp.animationState) [ heart ]
             , column columnModifiers [ class "is-4" ] []
             ]
 
         3 ->
-            [ column columnModifiers [ class "is-4" ] [ heart model.device.heartImageSize ]
-            , column columnModifiers [ class "is-4" ] [ heart model.device.heartImageSize ]
-            , column columnModifiers ([ class "is-4", style "opacity" "1" ] ++ Animation.render model.hp.animationState) [ heart model.device.heartImageSize ]
+            [ column columnModifiers [ class "is-4" ] [ heart ]
+            , column columnModifiers [ class "is-4" ] [ heart ]
+            , column columnModifiers ([ class "is-4", style "opacity" "1" ] ++ Animation.render hp.animationState) [ heart ]
             ]
 
         _ ->
             []
 
 
-heart : ImageSize -> Html Msg
-heart size =
+heart : Html Msg
+heart =
     div []
-        [ image (OneByOne size)
+        [ image (OneByOne X128)
             []
             [ img [ src "images/hero/heart.png" ] []
             ]
