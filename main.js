@@ -5235,11 +5235,6 @@ var $author$project$Main$Model = F6(
 	function (screen, hero, foodPanel, hp, score, bestResults) {
 		return {bestResults: bestResults, foodPanel: foodPanel, hero: hero, hp: hp, score: score, screen: screen};
 	});
-var $author$project$Main$Screen = F2(
-	function (width, screenType) {
-		return {screenType: screenType, width: width};
-	});
-var $author$project$Main$SelectHeroScreen = {$: 'SelectHeroScreen'};
 var $author$project$Main$Shuffle = function (a) {
 	return {$: 'Shuffle', a: a};
 };
@@ -6418,6 +6413,11 @@ var $author$project$Main$initHp = A2(
 				$mdgriffith$elm_style_animation$Animation$px(0),
 				$mdgriffith$elm_style_animation$Animation$px(0))
 			])));
+var $author$project$Main$NotSupported = {$: 'NotSupported'};
+var $author$project$Main$SelectHero = {$: 'SelectHero'};
+var $author$project$Main$initScreen = function (width) {
+	return (width <= 768) ? $author$project$Main$SelectHero : $author$project$Main$NotSupported;
+};
 var $elm$core$Array$fromListHelp = F3(
 	function (list, nodeList, nodeListSize) {
 		fromListHelp:
@@ -6827,7 +6827,7 @@ var $author$project$Main$init = function (width) {
 	return _Utils_Tuple2(
 		A6(
 			$author$project$Main$Model,
-			A2($author$project$Main$Screen, width, $author$project$Main$SelectHeroScreen),
+			$author$project$Main$initScreen(width),
 			$author$project$Main$arnold,
 			$author$project$Main$initFoodPanel,
 			$author$project$Main$initHp,
@@ -7020,7 +7020,7 @@ var $author$project$Main$HpCheck = function (a) {
 	return {$: 'HpCheck', a: a};
 };
 var $author$project$Main$Idle = {$: 'Idle'};
-var $author$project$Main$PlayScreen = {$: 'PlayScreen'};
+var $author$project$Main$Play = {$: 'Play'};
 var $author$project$Main$ShuffleFood = {$: 'ShuffleFood'};
 var $elm$core$List$isEmpty = function (xs) {
 	if (!xs.b) {
@@ -8711,9 +8711,7 @@ var $author$project$Main$update = F2(
 			case 'HpCheck':
 				var points = action.a;
 				var hpLeft = model.hp.value - points;
-				var newScreen = (!hpLeft) ? A2($author$project$Main$Screen, model.screen.width, $author$project$Main$SelectHeroScreen) : A2($author$project$Main$Screen, model.screen.width, $author$project$Main$PlayScreen);
-				var _v2 = newScreen.screenType;
-				if (_v2.$ === 'SelectHeroScreen') {
+				if (!hpLeft) {
 					var newBestResults = A2(
 						$author$project$Main$selectBestResults,
 						model.bestResults,
@@ -8721,7 +8719,7 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{bestResults: newBestResults, screen: newScreen}),
+							{bestResults: newBestResults, screen: $author$project$Main$SelectHero}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					var newHp = A2(
@@ -8739,7 +8737,7 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{hp: newHp, screen: newScreen}),
+							{hp: newHp, screen: $author$project$Main$Play}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 'ChangeHero':
@@ -8747,12 +8745,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{
-							hero: hero,
-							hp: $author$project$Main$initHp,
-							score: 0,
-							screen: A2($author$project$Main$Screen, model.screen.width, $author$project$Main$PlayScreen)
-						}),
+						{hero: hero, hp: $author$project$Main$initHp, score: 0, screen: $author$project$Main$Play}),
 					$elm$core$Platform$Cmd$none);
 			case 'ShuffleFood':
 				return _Utils_Tuple2(
@@ -8777,9 +8770,9 @@ var $author$project$Main$update = F2(
 				var aMsg = action.b;
 				if (aObj.$ === 'HpObject') {
 					var hp = model.hp;
-					var _v4 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, model.hp.animationState);
-					var stateHp = _v4.a;
-					var cmdHp = _v4.b;
+					var _v3 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, model.hp.animationState);
+					var stateHp = _v3.a;
+					var cmdHp = _v3.b;
 					var newHp = _Utils_update(
 						hp,
 						{animationState: stateHp});
@@ -8790,9 +8783,9 @@ var $author$project$Main$update = F2(
 						cmdHp);
 				} else {
 					var foodPanel = model.foodPanel;
-					var _v5 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, model.foodPanel.animationState);
-					var stateFood = _v5.a;
-					var cmdFood = _v5.b;
+					var _v4 = A2($mdgriffith$elm_style_animation$Animation$Messenger$update, aMsg, model.foodPanel.animationState);
+					var stateFood = _v4.a;
+					var cmdFood = _v4.b;
 					var newFoodPanel = _Utils_update(
 						foodPanel,
 						{animationState: stateFood});
@@ -8805,6 +8798,13 @@ var $author$project$Main$update = F2(
 		}
 	});
 var $surprisetalk$elm_bulma$Bulma$Layout$NotSpaced = {$: 'NotSpaced'};
+var $surprisetalk$elm_bulma$Bulma$Elements$H1 = {$: 'H1'};
+var $surprisetalk$elm_bulma$Bulma$Elements$H2 = {$: 'H2'};
+var $surprisetalk$elm_bulma$Bulma$Elements$H4 = {$: 'H4'};
+var $surprisetalk$elm_bulma$Bulma$Elements$OneByOne = function (a) {
+	return {$: 'OneByOne', a: a};
+};
+var $surprisetalk$elm_bulma$Bulma$Elements$X128 = {$: 'X128'};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -9268,10 +9268,6 @@ var $surprisetalk$elm_bulma$Bulma$Columns$TabletAndBeyond = {$: 'TabletAndBeyond
 var $surprisetalk$elm_bulma$Bulma$Columns$columnsModifiers = {centered: false, display: $surprisetalk$elm_bulma$Bulma$Columns$TabletAndBeyond, gap: $surprisetalk$elm_bulma$Bulma$Columns$Gap3, multiline: false};
 var $author$project$Main$Eat = function (a) {
 	return {$: 'Eat', a: a};
-};
-var $surprisetalk$elm_bulma$Bulma$Elements$H2 = {$: 'H2'};
-var $surprisetalk$elm_bulma$Bulma$Elements$OneByOne = function (a) {
-	return {$: 'OneByOne', a: a};
 };
 var $surprisetalk$elm_bulma$Bulma$Elements$Unbounded = {$: 'Unbounded'};
 var $surprisetalk$elm_bulma$Bulma$Classes$box = $elm$html$Html$Attributes$class('box');
@@ -10188,7 +10184,6 @@ var $author$project$Main$foodGrid = function (model) {
 var $author$project$Main$ChangeHero = function (a) {
 	return {$: 'ChangeHero', a: a};
 };
-var $surprisetalk$elm_bulma$Bulma$Elements$H1 = {$: 'H1'};
 var $author$project$Main$bestResultText = F2(
 	function (heroId, brs) {
 		var bestResults = A2(
@@ -10230,14 +10225,8 @@ var $author$project$Main$circle = F4(
 	});
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Main$bestScore = F3(
-	function (heroId, bestResults, screenType) {
-		var bottom = function () {
-			if (screenType.$ === 'PlayScreen') {
-				return '150px';
-			} else {
-				return '25px';
-			}
-		}();
+	function (heroId, bestResults, screen) {
+		var bottom = _Utils_eq(screen, $author$project$Main$Play) ? '150px' : '25px';
 		return A4(
 			$author$project$Main$circle,
 			'gold',
@@ -10394,7 +10383,7 @@ var $author$project$Main$heroList = function (model) {
 															]),
 														_List_Nil)
 													])),
-												A3($author$project$Main$bestScore, x.id, model.bestResults, $author$project$Main$SelectHeroScreen)
+												A3($author$project$Main$bestScore, x.id, model.bestResults, $author$project$Main$SelectHero)
 											])),
 										A2(
 										$surprisetalk$elm_bulma$Bulma$Layout$mediaContent,
@@ -10456,7 +10445,7 @@ var $surprisetalk$elm_bulma$Bulma$Components$modalContent = A2(
 	_List_fromArray(
 		[$surprisetalk$elm_bulma$Bulma$Classes$modalContent]));
 var $author$project$Main$gameModal = function (model) {
-	var isVisible = _Utils_eq(model.screen.screenType, $author$project$Main$SelectHeroScreen);
+	var isVisible = _Utils_eq(model.screen, $author$project$Main$SelectHero);
 	return A3(
 		$surprisetalk$elm_bulma$Bulma$Components$modal,
 		isVisible,
@@ -10518,7 +10507,6 @@ var $author$project$Main$currentScore = function (model) {
 					$elm$core$String$fromInt(model.score))
 				])));
 };
-var $surprisetalk$elm_bulma$Bulma$Elements$X128 = {$: 'X128'};
 var $author$project$Main$heart = A2(
 	$elm$html$Html$div,
 	_List_Nil,
@@ -10692,7 +10680,7 @@ var $author$project$Main$heroPanel = function (model) {
 													]),
 												_List_Nil)
 											])),
-										A3($author$project$Main$bestScore, model.hero.id, model.bestResults, $author$project$Main$PlayScreen),
+										A3($author$project$Main$bestScore, model.hero.id, model.bestResults, $author$project$Main$Play),
 										$author$project$Main$currentScore(model)
 									])),
 								A2(
@@ -10721,6 +10709,100 @@ var $author$project$Main$heroPanel = function (model) {
 						$author$project$Main$hpPanel(model.hp)
 					]))
 			]));
+};
+var $author$project$Main$notSupportedContainer = function (model) {
+	var _v0 = model.screen;
+	if (_v0.$ === 'NotSupported') {
+		return _List_fromArray(
+			[
+				A2(
+				$surprisetalk$elm_bulma$Bulma$Layout$container,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('has-text-centered')
+					]),
+				_List_fromArray(
+					[
+						A3(
+						$surprisetalk$elm_bulma$Bulma$Elements$title,
+						$surprisetalk$elm_bulma$Bulma$Elements$H1,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'font-size', '5rem')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('EatNotEat')
+							])),
+						A3(
+						$surprisetalk$elm_bulma$Bulma$Elements$title,
+						$surprisetalk$elm_bulma$Bulma$Elements$H2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Sorry, this screen size is not supported')
+							])),
+						A3(
+						$surprisetalk$elm_bulma$Bulma$Elements$title,
+						$surprisetalk$elm_bulma$Bulma$Elements$H4,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Try with phone (up to 768px)')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'text-align', '-webkit-center')
+							]),
+						_List_fromArray(
+							[
+								A3(
+								$surprisetalk$elm_bulma$Bulma$Elements$image,
+								$surprisetalk$elm_bulma$Bulma$Elements$OneByOne($surprisetalk$elm_bulma$Bulma$Elements$X128),
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$img,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$src($author$project$Main$arnold.picture),
+												$elm$html$Html$Attributes$class('is-rounded')
+											]),
+										_List_Nil)
+									]))
+							]))
+					]))
+			]);
+	} else {
+		return _List_fromArray(
+			[
+				A2(
+				$surprisetalk$elm_bulma$Bulma$Layout$container,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('has-text-centered')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'font-size', '5rem')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('EatNotEat')
+							])),
+						$author$project$Main$foodGrid(model),
+						$author$project$Main$heroPanel(model)
+					])),
+				$author$project$Main$gameModal(model)
+			]);
+	}
 };
 var $surprisetalk$elm_bulma$Bulma$Classes$isLarge = $elm$html$Html$Attributes$class('is-large');
 var $surprisetalk$elm_bulma$Bulma$Classes$isMedium = $elm$html$Html$Attributes$class('is-medium');
@@ -10753,31 +10835,7 @@ var $author$project$Main$body = function (model) {
 				A2($elm$html$Html$Attributes$style, 'padding', '1rem'),
 				A2($elm$html$Html$Attributes$style, 'font-family', 'Grandstander')
 			]),
-		_List_fromArray(
-			[
-				A2(
-				$surprisetalk$elm_bulma$Bulma$Layout$container,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('has-text-centered')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$span,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'font-size', '5rem')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('EatNotEat')
-							])),
-						$author$project$Main$foodGrid(model),
-						$author$project$Main$heroPanel(model)
-					])),
-				$author$project$Main$gameModal(model)
-			]));
+		$author$project$Main$notSupportedContainer(model));
 };
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(

@@ -46,15 +46,10 @@ type alias Model =
     }
 
 
-type alias Screen =
-    { width : Int
-    , screenType : ScreenType
-    }
-
-
-type ScreenType
-    = SelectHeroScreen
-    | PlayScreen
+type Screen
+    = NotSupported
+    | SelectHero
+    | Play
 
 
 type alias Hero =
@@ -149,7 +144,7 @@ terry =
 init : Int -> ( Model, Cmd Msg )
 init width =
     ( Model
-        (Screen width SelectHeroScreen)
+        (initScreen width)
         arnold
         initFoodPanel
         initHp
@@ -157,6 +152,15 @@ init width =
         [ BestResult 1 0, BestResult 2 0, BestResult 3 0 ]
     , generate Shuffle <| shuffle allFood
     )
+
+
+initScreen : Int -> Screen
+initScreen width =
+    if width <= 768 then
+        SelectHero
+
+    else
+        NotSupported
 
 
 initFoodPanel : FoodPanel
@@ -256,36 +260,28 @@ update action model =
             let
                 hpLeft =
                     model.hp.value - points
-
-                newScreen =
-                    if hpLeft == 0 then
-                        Screen model.screen.width SelectHeroScreen
-
-                    else
-                        Screen model.screen.width PlayScreen
             in
-            case newScreen.screenType of
-                SelectHeroScreen ->
-                    let
-                        newBestResults =
-                            selectBestResults model.bestResults (BestResult model.hero.id model.score)
-                    in
-                    ( { model | bestResults = newBestResults, screen = newScreen }, Cmd.none )
+            if hpLeft == 0 then
+                let
+                    newBestResults =
+                        selectBestResults model.bestResults (BestResult model.hero.id model.score)
+                in
+                ( { model | bestResults = newBestResults, screen = SelectHero }, Cmd.none )
 
-                PlayScreen ->
-                    let
-                        newHp =
-                            Hp hpLeft
-                                (Animation.style
-                                    [ Animation.opacity 1
-                                    , Animation.translate (px 0) (px 0)
-                                    ]
-                                )
-                    in
-                    ( { model | hp = newHp, screen = newScreen }, Cmd.none )
+            else
+                let
+                    newHp =
+                        Hp hpLeft
+                            (Animation.style
+                                [ Animation.opacity 1
+                                , Animation.translate (px 0) (px 0)
+                                ]
+                            )
+                in
+                ( { model | hp = newHp, screen = Play }, Cmd.none )
 
         ChangeHero hero ->
-            ( { model | hero = hero, screen = Screen model.screen.width PlayScreen, hp = initHp, score = 0 }, Cmd.none )
+            ( { model | hero = hero, screen = Play, hp = initHp, score = 0 }, Cmd.none )
 
         ShuffleFood ->
             ( model, generate Shuffle <| shuffle model.foodPanel.foods )
@@ -406,20 +402,42 @@ body : Model -> Html Msg
 body model =
     section NotSpaced
         [ style "padding" "1rem", style "font-family" "Grandstander" ]
-        [ container [ class "has-text-centered" ]
-            [ span [ style "font-size" "5rem" ] [ text "EatNotEat" ]
-            , foodGrid model
-            , heroPanel model
+    <|
+        notSupportedContainer
+            model
+
+
+notSupportedContainer : Model -> List (Html Msg)
+notSupportedContainer model =
+    case model.screen of
+        NotSupported ->
+            [ container [ class "has-text-centered" ]
+                [ title H1 [ style "font-size" "5rem" ] [ text "EatNotEat" ]
+                , title H2 [] [ text "Sorry, this screen size is not supported" ]
+                , title H4 [] [ text "Try with phone (up to 768px)" ]
+                , div [ style "text-align" "-webkit-center" ]
+                    [ image (OneByOne X128)
+                        []
+                        [ img [ src arnold.picture, class "is-rounded" ] [] ]
+                    ]
+                ]
             ]
-        , gameModal model
-        ]
+
+        _ ->
+            [ container [ class "has-text-centered" ]
+                [ span [ style "font-size" "5rem" ] [ text "EatNotEat" ]
+                , foodGrid model
+                , heroPanel model
+                ]
+            , gameModal model
+            ]
 
 
 gameModal : Model -> Html Msg
 gameModal model =
     let
         isVisible =
-            model.screen.screenType == SelectHeroScreen
+            model.screen == SelectHero
     in
     modal isVisible
         []
@@ -445,7 +463,7 @@ heroList model =
                                 []
                                 [ img [ src x.picture, class "is-rounded" ] []
                                 ]
-                            , bestScore x.id model.bestResults SelectHeroScreen
+                            , bestScore x.id model.bestResults SelectHero
                             ]
                         , mediaContent []
                             [ title H1 [] [ text x.name ]
@@ -526,7 +544,7 @@ heroPanel model =
                         []
                         [ img [ src model.hero.picture, class "is-rounded" ] []
                         ]
-                    , bestScore model.hero.id model.bestResults PlayScreen
+                    , bestScore model.hero.id model.bestResults Play
                     , currentScore model
                     ]
                 , mediaContent []
@@ -544,16 +562,15 @@ currentScore model =
     circle "white" "75px" "150px" <| span [ style "font-size" "4.5rem" ] [ text <| String.fromInt model.score ]
 
 
-bestScore : Int -> List BestResult -> ScreenType -> Html Msg
-bestScore heroId bestResults screenType =
+bestScore : Int -> List BestResult -> Screen -> Html Msg
+bestScore heroId bestResults screen =
     let
         bottom =
-            case screenType of
-                PlayScreen ->
-                    "150px"
+            if screen == Play then
+                "150px"
 
-                SelectHeroScreen ->
-                    "25px"
+            else
+                "25px"
     in
     circle "gold" "0px" bottom <| span [ style "font-size" "4.5rem" ] [ bestResultText heroId bestResults ]
 
