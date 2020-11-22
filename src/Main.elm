@@ -22,7 +22,7 @@ import Random.List exposing (shuffle)
 -- MAIN
 
 
-main : Program () Model Msg
+main : Program Int Model Msg
 main =
     Browser.element
         { init = init
@@ -46,7 +46,13 @@ type alias Model =
     }
 
 
-type Screen
+type alias Screen =
+    { width : Int
+    , screenType : ScreenType
+    }
+
+
+type ScreenType
     = SelectHeroScreen
     | PlayScreen
 
@@ -140,10 +146,10 @@ terry =
         ]
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
+init : Int -> ( Model, Cmd Msg )
+init width =
     ( Model
-        SelectHeroScreen
+        (Screen width SelectHeroScreen)
         arnold
         initFoodPanel
         initHp
@@ -253,12 +259,12 @@ update action model =
 
                 newScreen =
                     if hpLeft == 0 then
-                        SelectHeroScreen
+                        Screen model.screen.width SelectHeroScreen
 
                     else
-                        PlayScreen
+                        Screen model.screen.width PlayScreen
             in
-            case newScreen of
+            case newScreen.screenType of
                 SelectHeroScreen ->
                     let
                         newBestResults =
@@ -279,7 +285,7 @@ update action model =
                     ( { model | hp = newHp, screen = newScreen }, Cmd.none )
 
         ChangeHero hero ->
-            ( { model | hero = hero, screen = PlayScreen }, Cmd.none )
+            ( { model | hero = hero, screen = Screen model.screen.width PlayScreen }, Cmd.none )
 
         ShuffleFood ->
             ( model, generate Shuffle <| shuffle model.foodPanel.foods )
@@ -413,7 +419,7 @@ gameModal : Model -> Html Msg
 gameModal model =
     let
         isVisible =
-            model.screen == SelectHeroScreen
+            model.screen.screenType == SelectHeroScreen
     in
     modal isVisible
         []
@@ -538,11 +544,11 @@ currentScore model =
     circle "white" "75px" "150px" <| span [ style "font-size" "4.5rem" ] [ text <| String.fromInt model.score ]
 
 
-bestScore : Int -> List BestResult -> Screen -> Html Msg
-bestScore heroId bestResults screen =
+bestScore : Int -> List BestResult -> ScreenType -> Html Msg
+bestScore heroId bestResults screenType =
     let
         bottom =
-            case screen of
+            case screenType of
                 PlayScreen ->
                     "150px"
 
