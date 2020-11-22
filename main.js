@@ -8749,6 +8749,8 @@ var $author$project$Main$update = F2(
 						model,
 						{
 							hero: hero,
+							hp: $author$project$Main$initHp,
+							score: 0,
 							screen: A2($author$project$Main$Screen, model.screen.width, $author$project$Main$PlayScreen)
 						}),
 					$elm$core$Platform$Cmd$none);

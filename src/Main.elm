@@ -285,7 +285,7 @@ update action model =
                     ( { model | hp = newHp, screen = newScreen }, Cmd.none )
 
         ChangeHero hero ->
-            ( { model | hero = hero, screen = Screen model.screen.width PlayScreen }, Cmd.none )
+            ( { model | hero = hero, screen = Screen model.screen.width PlayScreen, hp = initHp, score = 0 }, Cmd.none )
 
         ShuffleFood ->
             ( model, generate Shuffle <| shuffle model.foodPanel.foods )
