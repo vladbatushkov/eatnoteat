@@ -2,6 +2,8 @@
 
 Tasty game to kill your free time © created by Vlad Batushkov.
 
+[Tap to play!](http://vladbatushkov.github.io/eatnoteat/)
+
 Written in pure [Elm](https://elm-lang.org) for pure fun.
 
 ![Elm](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Elm_logo.svg/200px-Elm_logo.svg.png)
